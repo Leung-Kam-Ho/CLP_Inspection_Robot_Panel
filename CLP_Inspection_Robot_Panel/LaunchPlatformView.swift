@@ -5,35 +5,27 @@ struct LaunchPlatformView : View{
     @State var viewModel = ViewModel()
     var enabled = true
     var body: some View{
-        VStack{
-            Text("Slot")
-                .font(.title)
-                .padding(.horizontal)
-                .tint(.primary)
-                .underline()
-                .frame(maxWidth: .infinity,alignment: .leading)
-            ZStack(alignment: .center){
-                if self.viewModel.show_slot{
-                    let slot =  Int(self.station.status.launch_platform_status.angle / 12) + 1
-                    Image(systemName: "\(slot).circle.fill")
-                        .tint(.primary)
-                }else{
-                    
-                    let display_text = String(self.station.status.launch_platform_status.angle)  + "°"
-                    ZStack{
-                        Circle()
-                            .tint(.primary)
-                        Text(display_text)
-                    }
-                }
-                Image("LaunchPlatform")
-                    .resizable()
-                    .padding()
+        ZStack(alignment: .center){
+            if self.viewModel.show_slot{
+                let slot =  Int(self.station.status.launch_platform_status.angle / 12) + 1
+                Image(systemName: "\(slot).circle.fill")
                     .tint(.primary)
-                    .aspectRatio(contentMode: .fit)
-                    .rotationEffect(.degrees(Double(self.station.status.launch_platform_status.angle)))
-            }.frame(maxHeight: .infinity)
-        }
+            }else{
+                
+                let display_text = String(self.station.status.launch_platform_status.angle)  + "°"
+                ZStack{
+                    Circle()
+                        .tint(.primary)
+                    Text(display_text)
+                }
+            }
+            Image("LaunchPlatform")
+                .resizable()
+                .padding()
+                .tint(.primary)
+                .aspectRatio(contentMode: .fit)
+                .rotationEffect(.degrees(Double(self.station.status.launch_platform_status.angle)))
+        }.frame(maxHeight: .infinity)
             
             
     }

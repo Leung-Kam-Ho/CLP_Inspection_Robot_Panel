@@ -12,7 +12,9 @@ struct ContentView: View {
             let notTooSmall = (Int(screen.size.width) >= minW) && (Int(screen.size.height) >= minH)
             TabView(selection: self.$viewModel.selectedTab){
                 if notTooSmall{
+                    
                     Tab("All", systemImage: "widget.small", value: .All){
+                        
                         ConceptView(selection : self.$viewModel.selectedTab)
                             .background(Image("Watermark"))
                     }
@@ -40,7 +42,7 @@ struct ContentView: View {
                         .background(Image("Watermark"))
                 }
                 
-            }
+            }.tabViewStyle(.sidebarAdaptable)
         }
         .scrollContentBackground(.hidden)
         //        .frame(maxWidth: .infinity,maxHeight: .infinity)

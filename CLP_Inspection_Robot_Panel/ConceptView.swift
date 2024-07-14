@@ -28,10 +28,20 @@ struct ConceptView : View{
                                 }
                             }){
                                 ZStack{
-                                    PressureView(enabled : false)
-                                        .padding()
-                                        .background(RoundedRectangle(cornerRadius: 25.0)
-                                            .fill(.ultraThinMaterial))
+                                    VStack{
+                                        Text("Pressure")
+                                            .font(.title)
+                                            .tint(.primary)
+                                            .underline()
+                                            .padding(.horizontal)
+                                            .frame(maxWidth: .infinity,alignment: .leading)
+                                        PressureView(enabled : false)
+                                            
+                                        
+                                    }
+                                    .padding()
+                                    .background(RoundedRectangle(cornerRadius: 25.0)
+                                        .fill(.ultraThinMaterial))
                                     RoundedRectangle(cornerRadius: 25.0)
                                         .fill(.black.opacity(0.1))
                                 }
@@ -52,17 +62,23 @@ struct ConceptView : View{
                                         self.selection = .LaunchPlatform
                                     }
                                 }){
-                                    LaunchPlatformView(enabled : false)
-                                        .padding()
+                                    VStack{
+                                        Text("Slot")
+                                            .font(.title)
+                                            .padding(.horizontal)
+                                            .tint(.primary)
+                                            .underline()
+                                            .frame(maxWidth: .infinity,alignment: .leading)
+                                        LaunchPlatformView(enabled : false)
+                                    }.padding()
                                         .background(RoundedRectangle(cornerRadius: 25.0)
                                             .fill(.ultraThinMaterial))
+                                    
                                 }
                                 
                             }
                         }
-                        
                     }
-                    
                 }.padding()
             }
         }

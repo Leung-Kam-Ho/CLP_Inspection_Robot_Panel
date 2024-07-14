@@ -40,7 +40,7 @@ struct AutoView : View{
                     HStack{
                         Menu(content: {
                             let inProgress = (self.station.status.auto_status.state != "Manual")
-                            if !inProgress{
+                            
                                 Section{
                                     ForEach(AutoMode.allCases, id: \.self){ mode in
                                         let name = mode.rawValue
@@ -55,6 +55,16 @@ struct AutoView : View{
                                         })
                                     }
                                 }
+                            if inProgress{
+                                Button(role: .destructive, action: {
+                                    self.station.post_request("/auto", value: "Manual")
+                                }, label: {
+                                    Text("Stop Inspection")
+                                        .font(.title)
+                                        .padding()
+                                    
+                                })
+                            }else{
                                 Button(action: {
                                     self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
                                 }, label: {
@@ -66,15 +76,6 @@ struct AutoView : View{
                                         
                                     
                                 }).foregroundStyle(.green)
-                            }else{
-                                Button(role: .destructive, action: {
-                                    self.station.post_request("/auto", value: "Manual")
-                                }, label: {
-                                    Text("Stop Inspection")
-                                        .font(.title)
-                                        .padding()
-                                    
-                                })
                             }
                         }, label: {
                             let inProgress = (self.station.status.auto_status.state != "Manual")
