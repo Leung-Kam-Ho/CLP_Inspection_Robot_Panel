@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct CLP_Inspection_Robot_PanelApp: App {
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
