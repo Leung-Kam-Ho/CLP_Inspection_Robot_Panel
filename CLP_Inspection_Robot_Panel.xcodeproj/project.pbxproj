@@ -10,18 +10,8 @@
 		23405EA12C42FC9B00A7281D /* CLP_Inspection_Robot_Panel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CLP_Inspection_Robot_Panel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2392F00D2C4388CD00A69A5C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"CLP-Inspection-Robot-Panel-Info.plist",
-			);
-			target = 23405EA02C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2392F00D2C4388CD00A69A5C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CLP_Inspection_Robot_Panel; sourceTree = "<group>"; };
+		23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CLP_Inspection_Robot_Panel; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
