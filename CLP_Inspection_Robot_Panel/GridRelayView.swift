@@ -30,6 +30,7 @@ struct Robot_Image : View{
                         .background(Capsule().fill(.ultraThickMaterial))
                 }else{
                     Image(systemName: "pause.circle.fill")
+                        .tint(.primary)
                     .opacity(0.4)
                 }
                 if leftPWM > 1500 || rightPWM > 1500{

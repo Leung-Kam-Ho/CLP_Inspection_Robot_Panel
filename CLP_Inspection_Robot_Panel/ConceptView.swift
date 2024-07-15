@@ -78,7 +78,7 @@ struct ConceptView : View{
                                 
                             }
                         }
-                    }
+                    }.frame(maxHeight: .infinity)
                 }.padding()
             }
         }

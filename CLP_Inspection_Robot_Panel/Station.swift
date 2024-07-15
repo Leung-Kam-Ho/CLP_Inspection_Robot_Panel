@@ -37,6 +37,9 @@ class Station : ObservableObject{
         var detail : String = "Nothing"
         var action_queue : [String] = [String]()
     }
+    class Camera_Status : Codable, ObservableObject{
+        var data : Data = Data()
+    }
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
         case pi = "cable.local"
@@ -45,11 +48,19 @@ class Station : ObservableObject{
     @Published var status = Station_Status()
     @Published var ip : String
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
+    @Published var camera_frames : UIImage = .watermark
+    
+    var camera_status = Camera_Status()
+    var image : UIImage? = UIImage()
+    var getImage = false
+    
     var data = Station_Status()
+    
     var port = Constants.PORT
     let timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
     let pressure_max = Constants.PRESSURE_MAX
     var free = true
+    var free2 = true
 
     init(){
         let defaults = UserDefaults.standard
@@ -68,36 +79,74 @@ class Station : ObservableObject{
             RunLoop.current.run()
         }
         thread.start()
+//        let thread2 = Thread{
+//            let timer = Timer.scheduledTimer(withTimeInterval: 1/30.0, repeats: true, block: { _ in
+//                if self.free2 && self.getImage{
+//                    self.get_frame()
+//                }
+//                
+//            })
+//            RunLoop.current.add(timer, forMode: .default)
+//            RunLoop.current.run()
+//        }
+//        thread2.start()
     }
     
     func create_url(_ route : String) -> URL{
         return URL(string: "http://\(self.ip):\(self.port)\(route)")!
     }
     func updateData(_: Date){
-        withAnimation{
-            self.status = self.data
+        if let image = self.image{
+            self.camera_frames = image
+        }
+        withAnimation(.easeOut(duration: 0.1)){
+            let temp = self.data
+            
+            self.status = temp
+        }
+    }
+    func get_frame(){
+        DispatchQueue.global(qos: .userInitiated).async{
+            let url = self.create_url("/frame")
+            let request = URLRequest(url: url, timeoutInterval: TimeInterval(1))
+            self.free2 = false
+            let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
+                defer{ self.free2 = true }
+                guard let data = data else { return }
+                do{
+                    self.camera_status = try JSONDecoder().decode(Camera_Status.self, from: data)
+                    self.image = UIImage(data: self.camera_status.data)
+                    print("a")
+                }catch{
+                    print(error)
+                }
+                
+            }
+            task.resume()
         }
     }
     func get_request(_ route : String = "/"){
-        let url = self.create_url(route)
-        let request = URLRequest(url: url, timeoutInterval: TimeInterval(1))
-        self.free = false
-        let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
-            defer{ self.free = true }
-            if let _ = error{
-                DispatchQueue.main.async{
-                    self.data = Station_Status()
+        DispatchQueue.global(qos: .userInitiated).async{
+            let url = self.create_url(route)
+            let request = URLRequest(url: url, timeoutInterval: TimeInterval(1))
+            self.free = false
+            let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
+                defer{ self.free = true }
+                if let _ = error{
+                    DispatchQueue.main.async{
+                        self.data = Station_Status()
+                    }
                 }
+                guard let data = data else { return }
+                do{
+                    self.data = try JSONDecoder().decode(Station_Status.self, from: data)
+                }catch{
+                    print(error)
+                }
+                
             }
-            guard let data = data else { return }
-            do{
-                self.data = try JSONDecoder().decode(Station_Status.self, from: data)
-            }catch{
-                print(error)
-            }
-            
+            task.resume()
         }
-        task.resume()
     }
 
     func test(){

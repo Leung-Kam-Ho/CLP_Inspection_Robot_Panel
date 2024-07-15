@@ -46,6 +46,11 @@ struct ContentView: View {
                         .padding()
                         .background(Image("Watermark"))
                 }
+//                Tab("Camera", systemImage:"ruler.fill", value: .Camera){
+//                    CameraView()
+//                        .padding()
+//                        .background(Image("Watermark"))
+//                }
                 
             }.tabViewStyle(.sidebarAdaptable)
         }
@@ -75,6 +80,7 @@ extension ContentView{
         case Pressure
         case LaunchPlatform
         case ToF
+        case Camera
     }
     @Observable
     class ViewModel{

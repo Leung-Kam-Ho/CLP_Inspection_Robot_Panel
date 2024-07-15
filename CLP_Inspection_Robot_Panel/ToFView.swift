@@ -15,7 +15,7 @@ struct ToFView: View {
     ]
     var body: some View {
         let data = self.station.status.robot_status.tof
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
                 .padding()
                 .font(.title)
@@ -31,7 +31,8 @@ struct ToFView: View {
                         .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
                 }
             }
-        }
+        }.padding()
+            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial).stroke(.white))
     }
 }
 

@@ -20,10 +20,32 @@ struct SensorBarView : View{
                 .font(.title)
                 .contentTransition(.numericText(countsDown: true))
                 .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-            
-            ScrollView(.horizontal,showsIndicators: false){
+            TabView(content: {
                 HStack{
-                    ForEach(ToF_Show, id:\.self){ idx in
+                    ForEach(ToF_Show[0..<6], id:\.self){ idx in
+                        Spacer()
+                        Label(String(format : "%03d",tof[idx]), systemImage: "\(idx+1).circle.fill")
+                            .padding()
+                            .font(.title)
+                            .contentTransition(.numericText(countsDown: true))
+                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                        
+                    }
+                }
+                HStack{
+                    ForEach(ToF_Show[6..<12], id:\.self){ idx in
+                        Spacer()
+                        Label(String(format : "%03d",tof[idx]), systemImage: "\(idx+1).circle.fill")
+                            .padding()
+                            .font(.title)
+                            .contentTransition(.numericText(countsDown: true))
+                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                    }
+                    
+                }
+                HStack{
+                    ForEach(ToF_Show[12..<18], id:\.self){ idx in
+                        Spacer()
                         Label(String(format : "%03d",tof[idx]), systemImage: "\(idx+1).circle.fill")
                             .padding()
                             .font(.title)
@@ -42,20 +64,14 @@ struct SensorBarView : View{
                             defaults.setValue(new, forKey: "IP")
                         })
                 }
-                
             }
-            
-            .frame(maxWidth: .infinity)
+            ).tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height : 70)
+                
         }.padding()
             .lineLimit(1)
             .background(
-                Button(action: {
-                    withAnimation{
-                        self.viewModel.showToF = self.viewModel.showToF.next()
-                    }
-                }, label: {
-                    RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial)
-                })
+                RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial)
             )
         
     }
