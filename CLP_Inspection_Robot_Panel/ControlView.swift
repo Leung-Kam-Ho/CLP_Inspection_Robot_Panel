@@ -128,113 +128,109 @@ struct ControlView: View {
                         .fill(state == "1" ? .green : notBlack))
             }
         }
-        VStack {
-            if compact{
-                Robot_Image()
-            }
-            HStack{
-                //Button Here
-                VStack{
-                    if !compact{
-                        
-                        connectIcon
-                    }
-                    
-                    
-                    Spacer()
-                        .frame(height : .infinity)
-                    
-                    
-                    if compact{
-                        
-                        Section{
-                            HStack{
-                                VStack{
-                                    connectIcon
-                                    SensorRelay
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                VStack{
-                                    Relay_1_3
-                                    
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                VStack{
-                                    Relay_4_6
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                
-                               
-                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                            HStack{
-                                L_Adj
-                                VStack{
-                                    controlButton_L
-                                    controlButton_S
-                                    controlButton_R
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                R_Adj
-                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                        }.padding()
-                            .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial))
-                        
-                    }else{
-                        VStack{
-                            SensorRelay
-                            Relay_1_3
-                            Relay_4_6
+        let minWidth = 364.0
+            VStack {
+                HStack{
+                    //Button Here
+                    VStack{
+                        if !compact{
                             
-                        }.padding()
-                            .background(Capsule()
-                                .fill(.ultraThinMaterial))
-                    }
-                    
-                    
-                }
-                
-                if !compact{
-                    Divider()
-                        .padding()
-                    HStack{
-                        VStack{
-                            Robot_Image()
-                            HStack{
-                                L_Adj
-                                Image("Robot_top")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding()
-                                R_Adj
-                                
+                            connectIcon
+                            
+                            Spacer()
+                                .frame(height : .infinity)
+                        }
+                        if compact{
+                            Section{
+                                HStack{
+                                    VStack{
+                                        connectIcon
+                                        SensorRelay
+                                    }.padding()
+                                        .background(Capsule()
+                                            .fill(.ultraThinMaterial))
+                                    Spacer()
+                                    VStack{
+                                        Relay_1_3
+                                        
+                                    }.padding()
+                                        .background(Capsule()
+                                            .fill(.ultraThinMaterial))
+                                    Spacer()
+                                    VStack{
+                                        Relay_4_6
+                                    }.padding()
+                                        .background(Capsule()
+                                            .fill(.ultraThinMaterial))
+                                }.frame(maxWidth: .infinity,maxHeight: .infinity)
+                                Text("\(self.station.status.robot_status.roll_angle)")
+                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                HStack{
+                                    L_Adj
+                                    VStack{
+                                        controlButton_L
+                                        controlButton_S
+                                        controlButton_R
+                                    }.padding()
+                                        .background(Capsule()
+                                            .fill(.ultraThinMaterial))
+                                    R_Adj
+                                }.frame(maxWidth: .infinity,maxHeight: .infinity)
+                            }.padding()
+                                .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial))
+                        }else{
+                            VStack{
+                                SensorRelay
+                                Relay_1_3
+                                Relay_4_6
                                 
                             }.padding()
+                                .background(Capsule()
+                                    .fill(.ultraThinMaterial))
                         }
-                    }
-                    .padding()
-                    Divider()
-                        .padding()
-                    
-                    
-                    VStack{
-                        Spacer()
-                            .frame(height : .infinity)
-                        VStack{
-                            controlButton_L
-                            controlButton_S
-                            controlButton_R
-                        }.padding()
-                            .background(Capsule()
-                                .fill(.ultraThinMaterial))
+                        
                         
                     }
+                    
+                    if !compact{
+                        Divider()
+                            .padding()
+                        HStack{
+                            VStack{
+                                Robot_Image()
+                                HStack{
+                                    L_Adj
+                                    Image("Robot_top")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding()
+                                    R_Adj
+                                    
+                                    
+                                }.padding()
+                            }
+                        }
+                        .padding()
+                        Divider()
+                            .padding()
+                        
+                        
+                        VStack{
+                            Spacer()
+                                .frame(height : .infinity)
+                            VStack{
+                                controlButton_L
+                                controlButton_S
+                                controlButton_R
+                            }.padding()
+                                .background(Capsule()
+                                    .fill(.ultraThinMaterial))
+                            
+                        }
+                    }
                 }
-            }
-        }
+            }.frame(minWidth: minWidth)
+        
         
     }
 }

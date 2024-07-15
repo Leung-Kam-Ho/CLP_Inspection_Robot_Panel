@@ -41,6 +41,11 @@ struct ContentView: View {
                         .padding()
                         .background(Image("Watermark"))
                 }
+                Tab("Sensor", systemImage:"ruler.fill", value: .ToF){
+                    ToFView()
+                        .padding()
+                        .background(Image("Watermark"))
+                }
                 
             }.tabViewStyle(.sidebarAdaptable)
         }
@@ -69,6 +74,7 @@ extension ContentView{
         case Robot
         case Pressure
         case LaunchPlatform
+        case ToF
     }
     @Observable
     class ViewModel{

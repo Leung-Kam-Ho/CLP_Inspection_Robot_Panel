@@ -1,0 +1,40 @@
+//
+//  ToFView.swift
+//  CLP_Inspection_Robot_Panel
+//
+//  Created by Kam Ho Leung on 14/7/2024.
+//
+
+import SwiftUI
+import Charts
+
+struct ToFView: View {
+    @EnvironmentObject var station : Station
+    let columns = [
+        GridItem(.adaptive(minimum: 130,maximum: 200))
+    ]
+    var body: some View {
+        let data = self.station.status.robot_status.tof
+        ScrollView {
+            Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                .padding()
+                .font(.title)
+                .contentTransition(.numericText(countsDown: true))
+                .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
+                .frame(maxWidth: .infinity,alignment: .leading)
+            LazyVGrid(columns: columns, spacing: 20) {
+                ForEach(Array(data.enumerated()), id: \.0) { idx, value in
+                    Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
+                        .padding()
+                        .font(.title)
+                        .contentTransition(.numericText(countsDown: true))
+                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    ToFView()
+}

@@ -30,23 +30,22 @@ struct SensorBarView : View{
                             .contentTransition(.numericText(countsDown: true))
                             .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
                     }
+                    Picker("IP", selection: self.$station.ip, content: {
+                        ForEach(Station.IP.allCases, id:\.self){ ip in
+                            Text(ip.rawValue)
+                                .padding()
+                                .tag(ip.rawValue)
+                        }.pickerStyle(.automatic)
+                    }).font(.title)
+                        .onChange(of: self.station.ip, { old, new in
+                            let defaults = UserDefaults.standard
+                            defaults.setValue(new, forKey: "IP")
+                        })
                 }
                 
             }
             
             .frame(maxWidth: .infinity)
-            Picker("IP", selection: self.$station.ip, content: {
-                ForEach(Station.IP.allCases, id:\.self){ ip in
-                    Text(ip.rawValue)
-                        .padding()
-                        .tag(ip.rawValue)
-                }.pickerStyle(.automatic)
-            }).font(.title)
-                .onChange(of: self.station.ip, { old, new in
-                    let defaults = UserDefaults.standard
-                    defaults.setValue(new, forKey: "IP")
-                })
-            
         }.padding()
             .lineLimit(1)
             .background(
