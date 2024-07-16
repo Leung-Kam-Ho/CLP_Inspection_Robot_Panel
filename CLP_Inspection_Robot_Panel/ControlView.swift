@@ -6,6 +6,15 @@ struct ControlView: View {
     let notBlack = Color(red: 24/255, green: 24/255, blue: 24/255)
     var compact : Bool = false
     var body: some View {
+        let roll_Section =
+        HStack{
+            (Image(systemName: "dial.low.fill"))
+            Text("\(self.station.status.robot_status.roll_angle)")
+        }
+        .foregroundStyle(.black)
+        .frame(maxWidth: .infinity,maxHeight: .infinity)
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 25).fill(Constants.offWhite))
         let R_Adj =
         VStack{
             let value = Int(self.viewModel.r * 100)
@@ -31,47 +40,47 @@ struct ControlView: View {
             
             .padding(.all,compact ? 0 : nil)
         }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
         let controlButton_L =
         Button(action:{
-                let left = 1500 - (400 * self.viewModel.leftPower / 100)
-                let right = 1500 - (400 * self.viewModel.rightPower / 100)
-                self.station.post_request("/servo", value: [left,right,
-                                                            left,right])
-            }){
-                Image(systemName: "arrowtriangle.up.fill")
-                    .padding()
-                    .tint(.primary)
-                    .background(Capsule()
-                        .fill(notBlack))
-            }
-            //                                        Spacer()
+            let left = 1500 - (400 * self.viewModel.leftPower / 100)
+            let right = 1500 - (400 * self.viewModel.rightPower / 100)
+            self.station.post_request("/servo", value: [left,right,
+                                                        left,right])
+        }){
+            Image(systemName: "arrowtriangle.up.fill")
+                .padding()
+                .tint(.primary)
+                .background(Capsule()
+                    .fill(notBlack))
+        }
+        //                                        Spacer()
         let controlButton_S =
         Button(action:{
-                self.station.post_request("/servo", value: [1500,1500,1500,1500])
-            }){
-                Image(systemName: "stop.fill")
-                    .padding()
-                    .tint(.primary)
-                    .background(Capsule()
-                        .fill(notBlack))
-            }
-            //                                        Spacer()
+            self.station.post_request("/servo", value: [1500,1500,1500,1500])
+        }){
+            Image(systemName: "stop.fill")
+                .padding()
+                .tint(.primary)
+                .background(Capsule()
+                    .fill(notBlack))
+        }
+        //                                        Spacer()
         let controlButton_R =
         Button(action:{
-                let left = 1500 + (400 * self.viewModel.leftPower / 100)
-                let right = 1500 + (400 * self.viewModel.rightPower / 100)
-                self.station.post_request("/servo", value: [left,right,
-                                                            left,right])
-            }){
-                Image(systemName: "arrowtriangle.down.fill")
-                    .padding()
-                    .tint(.primary)
-                    .background(Capsule()
-                        .fill(notBlack))
-                
-            }
+            let left = 1500 + (400 * self.viewModel.leftPower / 100)
+            let right = 1500 + (400 * self.viewModel.rightPower / 100)
+            self.station.post_request("/servo", value: [left,right,
+                                                        left,right])
+        }){
+            Image(systemName: "arrowtriangle.down.fill")
+                .padding()
+                .tint(.primary)
+                .background(Capsule()
+                    .fill(notBlack))
+            
+        }
         
         let connectIcon =
         Image(systemName: "link.circle.fill")
@@ -129,116 +138,113 @@ struct ControlView: View {
             }
         }
         let minWidth = 350.0
-            VStack {
-                HStack{
-                    //Button Here
-                    VStack{
-                        if !compact{
-                            
-                            connectIcon
-                            
-                            Spacer()
-                                .frame(height : .infinity)
-                        }
-                        if compact{
-                                
-                            VStack{
-                                HStack{
-                                    (Image(systemName: "dial.low.fill"))
-                                    Text("\(self.station.status.robot_status.roll_angle)")
-                                }
-                                .foregroundStyle(.black)
-                                .frame(maxWidth: .infinity,maxHeight: .infinity)
-                                .padding()
-                                .background(RoundedRectangle(cornerRadius: 25).fill(Constants.offWhite))
-                                HStack{
-                                    VStack{
-                                        connectIcon
-                                        SensorRelay
-                                    }.padding()
-                                        .background(Capsule()
-                                            .fill(.ultraThinMaterial))
-                                    Spacer()
-                                    VStack{
-                                        Relay_1_3
-                                        
-                                    }.padding()
-                                        .background(Capsule()
-                                            .fill(.ultraThinMaterial))
-                                    Spacer()
-                                    VStack{
-                                        Relay_4_6
-                                    }.padding()
-                                        .background(Capsule()
-                                            .fill(.ultraThinMaterial))
-                                }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                                
-                                HStack{
-                                    L_Adj
-                                    Spacer()
-                                    VStack{
-                                        controlButton_L
-                                        Spacer()
-                                        controlButton_S
-                                        Spacer()
-                                        controlButton_R
-                                    }.padding()
-                                        .background(Capsule()
-                                            .fill(.ultraThinMaterial))
-                                    Spacer()
-                                    R_Adj
-                                }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                            }//.padding()
-                        }else{
-                            VStack{
-                                SensorRelay
-                                Relay_1_3
-                                Relay_4_6
-                            }.padding()
-                                .background(Capsule()
-                                    .fill(.ultraThinMaterial))
-                        }
-                    }
-                    
+        VStack {
+            HStack{
+                //Button Here
+                VStack{
                     if !compact{
-                        Divider()
-                            .padding()
-                        HStack{
-                            VStack{
-                                Robot_Image()
-                                HStack{
-                                    L_Adj
-                                    Image("Robot_top")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding()
-                                    R_Adj
-                                    
-                                }.padding()
-                            }
-                        }
-                        .padding()
-                        Divider()
-                            .padding()
                         
+                        connectIcon
+                        
+                        Spacer()
+                            .frame(height : .infinity)
+                    }
+                    if compact{
                         
                         VStack{
-                            Spacer()
-                                .frame(height : .infinity)
-                            VStack{
-                                controlButton_L
-                                controlButton_S
-                                controlButton_R
-                            }.padding()
-                                .background(Capsule()
-                                    .fill(.ultraThinMaterial))
+                            roll_Section
+                            HStack{
+                                VStack{
+                                    connectIcon
+                                    SensorRelay
+                                }.padding()
+                                    .background(Capsule()
+                                        .fill(.ultraThinMaterial))
+                                Spacer()
+                                VStack{
+                                    Relay_1_3
+                                    
+                                }.padding()
+                                    .background(Capsule()
+                                        .fill(.ultraThinMaterial))
+                                Spacer()
+                                VStack{
+                                    Relay_4_6
+                                }.padding()
+                                    .background(Capsule()
+                                        .fill(.ultraThinMaterial))
+                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
                             
+                            HStack{
+                                L_Adj
+                                Spacer()
+                                VStack{
+                                    controlButton_L
+                                    Spacer()
+                                    controlButton_S
+                                    Spacer()
+                                    controlButton_R
+                                }.padding()
+                                    .background(Capsule()
+                                        .fill(.ultraThinMaterial))
+                                Spacer()
+                                R_Adj
+                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
+                        }//.padding()
+                    }else{
+                        VStack{
+                            SensorRelay
+                            Relay_1_3
+                            Relay_4_6
+                        }.padding()
+                            .background(Capsule()
+                                .fill(.ultraThinMaterial))
+                    }
+                }
+                
+                if !compact{
+                    Divider()
+                        .padding()
+                    HStack{
+                        VStack{
+                            Robot_Image()
+                            
+                            HStack{
+                                L_Adj
+                                
+                                
+                                Image("Robot_top")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding()
+                                
+                                R_Adj
+                                
+                            }.padding()
                         }
+                    }
+                    .padding()
+                    Divider()
+                        .padding()
+                    
+                    
+                    VStack{
+                        Spacer()
+                            .frame(height : .infinity)
+                        VStack{
+                            controlButton_L
+                            controlButton_S
+                            controlButton_R
+                        }.padding()
+                            .background(Capsule()
+                                .fill(.ultraThinMaterial))
+                        
                     }
                 }
             }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial).stroke(.white))
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial).stroke(.white))
         
         
     }
