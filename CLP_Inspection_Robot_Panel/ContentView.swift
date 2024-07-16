@@ -23,16 +23,25 @@ struct ContentView: View {
                 Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: .Auto){
                     AutoView()
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
+                        .background(RoundedRectangle(cornerRadius: 25.0)
+                            .fill(.ultraThinMaterial)
+                            .stroke(.white)
+                        )
                         .padding()
                         .background(Image("Watermark"))
                 }
                 Tab("Robot", systemImage:"robotic.vacuum",value: .Robot){
                     ControlView(compact: !notTooSmall)
-                        .padding().background(Image("Watermark"))
+                        .padding()
+                        .background(Image("Watermark"))
                 }
                 Tab("Pressure", systemImage:"dial.low", value: .Pressure){
                     PressureView()
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 25.0)
+                            .fill(.ultraThinMaterial)
+                            .stroke(.white)
+                        )
                         .padding()
                         .background(Image("Watermark"))
                 }

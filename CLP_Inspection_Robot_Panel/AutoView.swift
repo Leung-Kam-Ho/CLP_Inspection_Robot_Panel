@@ -25,7 +25,8 @@ struct AutoView : View{
                                 
                             }
                             if q.count > 1{
-                                ForEach(0...q.count-1, id:\.self){ action in 
+                                let extendTo = q.count > 5 ? 5 : q.count
+                                ForEach(0..<extendTo, id:\.self){ action in
                                     if action != 0{
                                         Text(q[action])
                                         .contentTransition(.numericText(countsDown: true))
@@ -40,7 +41,6 @@ struct AutoView : View{
                     HStack{
                         Menu(content: {
                             let inProgress = (self.station.status.auto_status.state != "Manual")
-                            
                                 Section{
                                     ForEach(AutoMode.allCases, id: \.self){ mode in
                                         let name = mode.rawValue

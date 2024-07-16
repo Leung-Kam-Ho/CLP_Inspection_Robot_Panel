@@ -21,6 +21,7 @@ struct ConceptView : View{
                                 .fill(.ultraThinMaterial)
                                 .stroke(.white)
                             )
+                            
                         VStack{
                             Button(action:{
                                 withAnimation{

@@ -9,18 +9,6 @@ struct PressureView : View{
         
         
         VStack{
-//            if enabled{
-//                Chart(Array(self.station.status.digital_valve_status.pressure.enumerated()), id: \.0, content: { idx, value in
-//                    BarMark(
-//                        x: .value("X values", idx),
-//                        y: .value("Y values", value),
-//                        width: .fixed(40)
-//                    ).interpolationMethod(.cardinal)
-//                }).chartYScale(domain: 0...self.viewModel.pressure_max)
-//                    .padding()
-//                    .padding()
-//                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial).stroke(.white))
-//            }
             HStack{
                 ForEach(1...4, id:\.self){ channel in
                     VStack{
@@ -34,7 +22,7 @@ struct PressureView : View{
                             //                            return Image(systemName: "\(channel).circle.fill")
                             let baseValue = (enabled ? self.viewModel.pressure[channel - 1] : r)
                             let value = baseValue * self.viewModel.pressure_max
-                            return Text(String(format : "%.1f", value))
+                            return Text(String(format : "%.1f", value)).font(.largeTitle)
                         })
                     }
                 }

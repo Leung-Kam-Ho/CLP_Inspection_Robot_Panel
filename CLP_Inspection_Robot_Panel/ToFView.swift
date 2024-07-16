@@ -15,20 +15,25 @@ struct ToFView: View {
     ]
     var body: some View {
         let data = self.station.status.robot_status.tof
-        ScrollView(showsIndicators: false) {
+        VStack{
             Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
                 .padding()
                 .font(.title)
                 .contentTransition(.numericText(countsDown: true))
+                .frame(maxWidth: .infinity,alignment: .center)
                 .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-                .frame(maxWidth: .infinity,alignment: .leading)
-            LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(Array(data.enumerated()), id: \.0) { idx, value in
-                    Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
-                        .padding()
-                        .font(.title)
-                        .contentTransition(.numericText(countsDown: true))
-                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                .padding()
+                
+            ScrollView(showsIndicators: false) {
+                
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(Array(data.enumerated()), id: \.0) { idx, value in
+                        Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
+                            .padding()
+                            .font(.title)
+                            .contentTransition(.numericText(countsDown: true))
+                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                    }
                 }
             }
         }.padding()

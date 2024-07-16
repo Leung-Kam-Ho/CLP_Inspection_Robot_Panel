@@ -128,7 +128,7 @@ struct ControlView: View {
                         .fill(state == "1" ? .green : notBlack))
             }
         }
-        let minWidth = 364.0
+        let minWidth = 350.0
             VStack {
                 HStack{
                     //Button Here
@@ -141,7 +141,16 @@ struct ControlView: View {
                                 .frame(height : .infinity)
                         }
                         if compact{
-                            Section{
+                                
+                            VStack{
+                                HStack{
+                                    (Image(systemName: "dial.low.fill"))
+                                    Text("\(self.station.status.robot_status.roll_angle)")
+                                }
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 25).fill(Constants.offWhite))
                                 HStack{
                                     VStack{
                                         connectIcon
@@ -163,33 +172,32 @@ struct ControlView: View {
                                         .background(Capsule()
                                             .fill(.ultraThinMaterial))
                                 }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                                Text("\(self.station.status.robot_status.roll_angle)")
-                                    .frame(maxWidth: .infinity,maxHeight: .infinity)
+                                
                                 HStack{
                                     L_Adj
+                                    Spacer()
                                     VStack{
                                         controlButton_L
+                                        Spacer()
                                         controlButton_S
+                                        Spacer()
                                         controlButton_R
                                     }.padding()
                                         .background(Capsule()
                                             .fill(.ultraThinMaterial))
+                                    Spacer()
                                     R_Adj
                                 }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                            }.padding()
-                                .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial))
+                            }//.padding()
                         }else{
                             VStack{
                                 SensorRelay
                                 Relay_1_3
                                 Relay_4_6
-                                
                             }.padding()
                                 .background(Capsule()
                                     .fill(.ultraThinMaterial))
                         }
-                        
-                        
                     }
                     
                     if !compact{
@@ -205,7 +213,6 @@ struct ControlView: View {
                                         .scaledToFit()
                                         .padding()
                                     R_Adj
-                                    
                                     
                                 }.padding()
                             }
@@ -229,7 +236,9 @@ struct ControlView: View {
                         }
                     }
                 }
-            }.frame(minWidth: minWidth)
+            }
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial).stroke(.white))
         
         
     }
