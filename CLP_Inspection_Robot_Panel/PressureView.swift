@@ -28,7 +28,7 @@ struct PressureView : View{
                 }
             }
         }.frame(maxHeight: .infinity)
-        
+            .contentTransition(.numericText(countsDown: true))
             .onAppear{
                 for idx in 0...self.station.status.digital_valve_status.pressure.count - 1{
                     self.viewModel.pressure[idx] = self.station.status.digital_valve_status.pressure[idx] / self.viewModel.pressure_max

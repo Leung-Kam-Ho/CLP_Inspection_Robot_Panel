@@ -137,7 +137,6 @@ struct ControlView: View {
                         .fill(state == "1" ? .green : notBlack))
             }
         }
-        let minWidth = 350.0
         VStack {
             HStack{
                 //Button Here

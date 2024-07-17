@@ -55,22 +55,19 @@ struct ContentView: View {
                         .padding()
                         .background(Image("Watermark"))
                 }
-//                Tab("Camera", systemImage:"ruler.fill", value: .Camera){
-//                    CameraView()
-//                        .padding()
-//                        .background(Image("Watermark"))
-//                }
                 
             }.tabViewStyle(.sidebarAdaptable)
         }
         .scrollContentBackground(.hidden)
         //        .frame(maxWidth: .infinity,maxHeight: .infinity)
+        
         .bold()
         .font(.largeTitle)
         .environmentObject(station)
         .background(notBlack)
         .preferredColorScheme(.dark)
         .onReceive(station.timer, perform: station.updateData)
+        .monospacedDigit()
         
     }
     

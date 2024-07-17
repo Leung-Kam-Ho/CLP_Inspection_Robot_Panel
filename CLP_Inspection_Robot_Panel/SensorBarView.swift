@@ -39,6 +39,7 @@ struct SensorBarView : View{
                             .font(.title)
                             .contentTransition(.numericText(countsDown: true))
                             .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                            
                     }
                     
                 }
@@ -65,7 +66,7 @@ struct SensorBarView : View{
                 }
             }
             ).tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height : 70)
+                .frame(height : 70, alignment: .center)
                 
         }.padding()
             .lineLimit(1)

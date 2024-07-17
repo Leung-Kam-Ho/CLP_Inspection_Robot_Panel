@@ -30,7 +30,9 @@ struct VerticalSlider: View {
             .sequenced(before: DragGesture(minimumDistance: 0)
                 .onChanged {
                     let t = self.startingValue - (($0.location.y - $0.startLocation.y) / geometry.size.height)
-                    self.value = min(max(0.0, t), 1.0)
+                    withAnimation(){
+                        self.value = min(max(0.0, t), 1.0)
+                    }
                 }
                 .onEnded({ _ in
                     if let func_onEnd = self.onEnd{
@@ -81,6 +83,7 @@ struct VerticalSlider: View {
                     }
                 }
             }
+            
             .cornerRadius(geometry.size.width/3.3)
             .gesture(
                 self.onLongPress == nil && self.enabled ?

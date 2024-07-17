@@ -10,9 +10,7 @@ struct ConceptView : View{
                 let width = screen.size.width
                 //                let height = screen.size.height
                 VStack{
-                    
                     SensorBarView()
-                    
                     HStack{
                         AutoView()
                             .frame(width : width * 0.3)
@@ -21,7 +19,6 @@ struct ConceptView : View{
                                 .fill(.ultraThinMaterial)
                                 .stroke(.white)
                             )
-                            
                         VStack{
                             Button(action:{
                                 withAnimation{
@@ -37,7 +34,7 @@ struct ConceptView : View{
                                             .padding(.horizontal)
                                             .frame(maxWidth: .infinity,alignment: .leading)
                                         PressureView(enabled : false)
-                                            
+                                        
                                         
                                     }
                                     .padding()
