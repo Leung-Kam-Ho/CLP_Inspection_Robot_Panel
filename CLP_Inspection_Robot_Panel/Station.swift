@@ -25,7 +25,8 @@ class Station : ObservableObject{
         var connected : Bool = false
     }
     class Automation_Status : Codable, ObservableObject{
-        var state : String = "Manual"
+        var state : String = "IDLE"
+        var mode : String = "Manual"
         var detail : String = "Nothing"
         var action_queue : [String] = [String]()
     }

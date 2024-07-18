@@ -8,6 +8,11 @@ struct AutoView : View{
             ZStack{
                 Color.clear
                 VStack{
+                    Text(self.station.status.auto_status.state)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding()
+                        .contentTransition(.numericText(countsDown: true))
+                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
                     ScrollView(.vertical,showsIndicators: false){
                         VStack(alignment : .leading,spacing : 40){
                             let q = self.station.status.auto_status.action_queue
@@ -40,7 +45,7 @@ struct AutoView : View{
                     .padding()
                     HStack{
                         Menu(content: {
-                            let inProgress = (self.station.status.auto_status.state != "Manual")
+                            let inProgress = (self.station.status.auto_status.mode != "Manual")
                                 Section{
                                     ForEach(AutoMode.allCases, id: \.self){ mode in
                                         let name = mode.rawValue
@@ -78,7 +83,7 @@ struct AutoView : View{
                                 }).foregroundStyle(.green)
                             }
                         }, label: {
-                            let inProgress = (self.station.status.auto_status.state != "Manual")
+                            let inProgress = (self.station.status.auto_status.mode != "Manual")
                                 Image(systemName: inProgress ? "stop.fill" : "play.fill" )
                                 .padding()
                                 .padding(.horizontal)
@@ -87,7 +92,7 @@ struct AutoView : View{
                                     .fill( inProgress ? .red : .green))
                         })
                         Spacer()
-                        Text(station.status.auto_status.state)
+                        Text(station.status.auto_status.mode)
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
                             .padding()

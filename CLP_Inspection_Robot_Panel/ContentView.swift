@@ -3,15 +3,13 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var station = Station()
     @State var viewModel = ViewModel()
-    let offWhite = Color(red: 255/255, green: 255/255, blue: 242/255)
-    let notBlack = Color(red: 33/255, green: 33/255, blue: 36/255)
     var body: some View {
         GeometryReader{ screen in
             let minW = 1040
             let minH = 810
-            let notTooSmall = (Int(screen.size.width) >= minW) && (Int(screen.size.height) >= minH)
+            let bigEnough = (Int(screen.size.width) >= minW) && (Int(screen.size.height) >= minH)
             TabView(selection: self.$viewModel.selectedTab){
-                if notTooSmall{
+                if bigEnough{
                     
                     Tab("All", systemImage: "widget.small", value: .All){
                         
@@ -31,7 +29,7 @@ struct ContentView: View {
                         .background(Image("Watermark"))
                 }
                 Tab("Robot", systemImage:"robotic.vacuum",value: .Robot){
-                    ControlView(compact: !notTooSmall)
+                    ControlView(compact: !bigEnough)
                         .padding()
                         .background(Image("Watermark"))
                 }
@@ -46,7 +44,12 @@ struct ContentView: View {
                         .background(Image("Watermark"))
                 }
                 Tab("Launch Platform", systemImage:"rotate.3d.circle.fill", value: .LaunchPlatform){
-                    LaunchPlatformView()
+                    LaunchPlatformView(compact: !bigEnough)
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 25.0)
+                            .fill(.ultraThinMaterial)
+                            .stroke(.white)
+                        )
                         .padding()
                         .background(Image("Watermark"))
                 }
@@ -64,7 +67,7 @@ struct ContentView: View {
         .bold()
         .font(.largeTitle)
         .environmentObject(station)
-        .background(notBlack)
+        .background(Constants.notBlack)
         .preferredColorScheme(.dark)
         .onReceive(station.timer, perform: station.updateData)
         .monospacedDigit()

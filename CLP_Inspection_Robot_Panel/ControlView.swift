@@ -15,10 +15,20 @@ struct ControlView: View {
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding()
         .background(RoundedRectangle(cornerRadius: 25).fill(Constants.offWhite))
+        let roll_Section_Round =
+        HStack{
+            Image(systemName: "dial.low.fill")
+            Text(String(format : "%03d",self.station.status.robot_status.roll_angle))
+        }
+        .foregroundStyle(.primary)
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial))
+        .monospacedDigit()
         let R_Adj =
         VStack{
             let value = Int(self.viewModel.r * 100)
             Text(String(value))
+                .contentTransition(.numericText(countsDown: true))
             VerticalSlider(value: self.$viewModel.r, referenceValue: nil, onEnd: {
                 self.viewModel.rightPower = value
             } ,icon: { _ in
@@ -32,6 +42,7 @@ struct ControlView: View {
         let L_Adj = VStack{
             let value = Int(self.viewModel.l * 100)
             Text(String(value))
+                .contentTransition(.numericText(countsDown: true))
             VerticalSlider(value: self.$viewModel.l, referenceValue: nil, onEnd: {
                 self.viewModel.leftPower = value
             } ,icon: { _ in
@@ -142,7 +153,6 @@ struct ControlView: View {
                 //Button Here
                 VStack{
                     if !compact{
-                        
                         connectIcon
                         
                         Spacer()
@@ -207,16 +217,25 @@ struct ControlView: View {
                     HStack{
                         VStack{
                             Robot_Image()
-                            
+                                .overlay(alignment: .topLeading,content: {
+                                    VStack{
+                                        Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                            .padding()
+                                            .font(.title)
+                                            .contentTransition(.numericText(countsDown: true))
+                                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
+                                    }.padding()
+                                })
                             HStack{
                                 L_Adj
-                                
-                                
-                                Image("Robot_top")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding()
-                                
+                                VStack{
+                                    Image("Robot_top")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding()
+                                    roll_Section_Round
+                                }
+                                .padding()
                                 R_Adj
                                 
                             }.padding()
@@ -228,8 +247,22 @@ struct ControlView: View {
                     
                     
                     VStack{
+                        let data = self.station.status.robot_status.tof
+                        
+                        VStack(spacing : 20){
+                            
+                            ForEach(Array(data[0...6].enumerated()), id: \.0) { idx, value in
+                                Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
+                                    .padding()
+                                    .font(.title)
+                                    .contentTransition(.numericText(countsDown: true))
+                                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                            }
+                            
+                            
+                        }.frame(height : .infinity)
                         Spacer()
-                            .frame(height : .infinity)
+                        
                         VStack{
                             controlButton_L
                             controlButton_S

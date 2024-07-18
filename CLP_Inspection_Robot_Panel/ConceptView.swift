@@ -21,9 +21,7 @@ struct ConceptView : View{
                             )
                         VStack{
                             Button(action:{
-                                withAnimation{
-                                    self.selection = .Pressure
-                                }
+                                self.selection = .Pressure
                             }){
                                 ZStack{
                                     VStack{
@@ -46,9 +44,9 @@ struct ConceptView : View{
                             }
                             HStack{
                                 Button(action:{
-                                    withAnimation{
-                                        self.selection = .Robot
-                                    }
+                                    
+                                    self.selection = .Robot
+                                    
                                 }){
                                     GridRelayView()
                                         .padding()
@@ -56,12 +54,11 @@ struct ConceptView : View{
                                             .fill(.ultraThinMaterial))
                                 }
                                 Button(action:{
-                                    withAnimation{
-                                        self.selection = .LaunchPlatform
-                                    }
+                                    self.selection = .LaunchPlatform
+                                    
                                 }){
                                     VStack{
-                                        Text("Slot")
+                                        Text("Launch Platform")
                                             .font(.title)
                                             .padding(.horizontal)
                                             .tint(.primary)
