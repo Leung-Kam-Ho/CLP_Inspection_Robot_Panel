@@ -82,8 +82,9 @@ struct LaunchPlatformView : View{
         let LaunchPlatform_Drag_overlay =
         GeometryReader{ geometry in
             let length = min(geometry.size.height,geometry.size.width)
+            
             LP_image
-                .frame(maxWidth: .infinity,alignment: .center)
+                .frame(maxWidth: .infinity ,alignment: .center)
                 .padding()
                 .overlay(content: {
                     ZStack{
@@ -120,6 +121,8 @@ struct LaunchPlatformView : View{
                     )
                 })
         }
+        .frame(maxHeight: 828.0)
+        
         
         HStack{
             if !self.enabled{

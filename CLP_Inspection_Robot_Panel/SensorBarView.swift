@@ -46,6 +46,9 @@ struct SensorTabsView : View{
             }
             HStack{
                 RangeToFView(ToF: tof, idx: ToF_Show[12..<ToF_Show.count])
+                
+            }
+            HStack{
                 Picker("IP", selection: self.$station.ip, content: {
                     ForEach(Station.IP.allCases, id:\.self){ ip in
                         Text(ip.rawValue)
