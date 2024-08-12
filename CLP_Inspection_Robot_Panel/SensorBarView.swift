@@ -14,7 +14,6 @@ struct SensorBarView : View{
         HStack{
             Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
                 .padding()
-                .font(.title)
                 .contentTransition(.numericText(countsDown: true))
                 .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
             SensorTabsView()
@@ -79,7 +78,7 @@ struct RangeToFView : View{
             Spacer()
             Label(String(format : "%03d",ToF[idx]), systemImage: "\(idx+1).circle.fill")
                 .padding()
-                .font(.title)
+//                .font(.title)
                 .contentTransition(.numericText(countsDown: true))
                 .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
             

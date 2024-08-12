@@ -6,9 +6,13 @@ struct LaunchPlatformView : View{
     var enabled = true
     var compact = false
     var body: some View{
+        let connectIcon =
+        Image(systemName: "link.circle.fill")
+            .padding()
+            .background(Circle().fill(self.station.status.launch_platform_status.connected ? .green : .red))
         let controlButton_F =
         Button(action:{
-            MovePlatform()
+            MovePlatform(value: 1)
         }){
             Image(systemName: "arrowtriangle.up.fill")
                 .padding()
@@ -18,9 +22,20 @@ struct LaunchPlatformView : View{
         }
         let controlButton_B =
         Button(action:{
-            MovePlatform()
+            MovePlatform(value : -1)
         }){
             Image(systemName: "arrowtriangle.down.fill")
+                .padding()
+                .tint(.primary)
+                .background(Capsule()
+                    .fill(Constants.notBlack))
+            
+        }
+        let controlButton_S =
+        Button(action:{
+            MovePlatform(value: 0)
+        }){
+            Image(systemName: "stop.fill")
                 .padding()
                 .tint(.primary)
                 .background(Capsule()
@@ -35,45 +50,20 @@ struct LaunchPlatformView : View{
             .aspectRatio(contentMode: .fit)
             .rotationEffect(.degrees(Double(self.station.status.launch_platform_status.angle)))
             .overlay(alignment: .center, content: {
-                
                 ZStack{
                     Image(systemName: "circle.fill")
                         .font(.system(size: enabled && !compact ? 400 : 150))
                         .foregroundStyle(.ultraThickMaterial)
                     VStack{
-                        if self.viewModel.show_slot{
-                            let preview_slot =  Int(self.viewModel.previewLP_angle / 12) + 1
-                            let slot = Int(self.station.status.launch_platform_status.angle / 12 + 1)
-                            Text("Slot")
-                                .foregroundStyle(Constants.offWhite)
-                                .font(enabled && !compact ? .title : .caption)
-                            Text("\(preview_slot)")
-                                .tint(.primary)
-                                .contentTransition(.numericText(countsDown: true))
-                                .font(.system(size: enabled && !compact ? 200 : 70))
-                            if enabled{
-                                if slot == preview_slot{
-                                    Text(" ")
-                                        .font(compact ? .caption : .title)
-                                    
-                                }else{
-                                    Button(action: {
-                                        //go to function
-                                        RotatePlatform(Angle: .degrees(0))
-                                        
-                                    }) {
-                                        Label("Go to", systemImage: "arrow.right.circle.fill")
-                                            .font(compact ? .caption : .title)
-                                    }
-                                }
-                            }
-                        }else{
-                            Text("\(Int(self.viewModel.previewLP_angle))°")
-                                .tint(.primary)
-                                .contentTransition(.numericText(countsDown: true))
-                                .font(.system(size: enabled && !compact ? 200 : 70))
-                        }
-                        
+                        let preview_slot =  Int(self.viewModel.previewLP_angle / 12) + 1
+                        let slot = Int(self.station.status.launch_platform_status.angle / 12 + 1)
+                        Text("Slot")
+                            .foregroundStyle(Constants.offWhite)
+                            .font(enabled && !compact ? .title : .caption)
+                        Text(enabled ? String(format : "%02d",preview_slot) : String(format : "%02d",slot))
+                            .tint(.primary)
+                            .contentTransition(.numericText(countsDown: true))
+                            .font(.system(size: enabled && !compact ? 200 : 70))
                     }
                     
                 }
@@ -81,81 +71,117 @@ struct LaunchPlatformView : View{
             })
         let LaunchPlatform_Drag_overlay =
         GeometryReader{ geometry in
-            let length = min(geometry.size.height,geometry.size.width)
             
-            LP_image
-                .frame(maxWidth: .infinity ,alignment: .center)
-                .padding()
-                .overlay(content: {
-                    ZStack{
-                        Image("LaunchPlatform")
-                            .resizable()
-                            .padding()
-                            .frame(maxWidth: .infinity,alignment: .center)
-                            .opacity(0.5)
-                            .aspectRatio(contentMode: .fit)
-                        Image(systemName: "arrow.left.and.right.circle.fill")
-                            .offset(y: self.compact ? -150 : -410)
-                            .foregroundStyle(.orange)
-                    }
-                    .rotationEffect(.degrees(self.viewModel.previewLP_angle))
+            VStack{
+                Spacer()
+                let length = min(geometry.size.height,geometry.size.width)
+                LP_image
+                    .frame(maxWidth: .infinity ,alignment: .center)
                     .padding()
-                    .gesture(DragGesture()
-                        .onChanged{ v in
-                            var theta = (atan2(v.location.x - length / 2, length / 2 - v.location.y) - atan2(v.startLocation.x - length / 2, length / 2 - v.startLocation.y)) * 180 / .pi
-                            if (theta < 0) { theta += 360 }
-                            let result = Double(Int(theta + self.viewModel.previewLP_angle_lastAngle)).truncatingRemainder(dividingBy: 360)
-                            withAnimation(.easeInOut(duration: 0.2)){
-                                if self.viewModel.show_slot{
-                                    self.viewModel.previewLP_angle = Double(self.viewModel.closestMultipleOf12(for: Int(result))) + self.viewModel.offset
-                                }else{
-                                    self.viewModel.previewLP_angle = result + self.viewModel.offset
-                                }
-                                
+                    .overlay(content: {
+                        ZStack{
+                            Image("LaunchPlatform")
+                                .resizable()
+                                .padding()
+                                .frame(maxWidth: .infinity,alignment: .center)
+                                .opacity(0.5)
+                                .aspectRatio(contentMode: .fit)
+                            Image(systemName: "arrow.left.and.right.circle.fill")
+                                .offset(y: length / -2)
+                                .foregroundStyle(.orange)
+                        }
+                        .rotationEffect(.degrees(self.viewModel.previewLP_angle))
+                        .padding()
+                        .gesture(DragGesture()
+                            .onChanged{ v in
+                                var theta = (atan2(v.location.x - length / 2, length / 2 - v.location.y) - atan2(v.startLocation.x - length / 2, length / 2 - v.startLocation.y)) * 180 / .pi
+                                if (theta < 0) { theta += 360 }
+                                let result = Double(Int(theta + self.viewModel.previewLP_angle_lastAngle)).truncatingRemainder(dividingBy: 360)
+                                withAnimation(.easeInOut(duration: 0.2)){
+                                    if viewModel.locked{
+                                        self.viewModel.previewLP_angle = Double(self.viewModel.closestMultipleOf12(for: Int(result))) + self.viewModel.offset
+                                    }else{
+                                        self.viewModel.previewLP_angle = result + self.viewModel.offset
+                                    }
+                                    
                                     self.viewModel.previewLP_angle = self.viewModel.previewLP_angle.truncatingRemainder(dividingBy: 360)
+                                }
                             }
-                        }
-                        .onEnded { v in
-                            self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
-                        }
-                    )
-                })
+                            .onEnded { v in
+                                self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
+                            }
+                        )
+                    })
+                Spacer()
+            }
         }
-        .frame(maxHeight: 828.0)
+        .frame(maxHeight: 828.0, alignment : .center)
         
         
         HStack{
             if !self.enabled{
+                Spacer()
+                LP_image
+                Spacer()
                 
-                    Spacer()
-                    LP_image
-                    Spacer()
-                
-            }else if self.compact{
+            }else{
                 VStack{
-                    Spacer()
                     LaunchPlatform_Drag_overlay
-//                    Spacer()
-                    HStack{
-                        VStack{
-                            controlButton_F
-                            controlButton_B
-                        }.padding()
+                        .frame(maxHeight: .infinity, alignment : .center)
+                }.overlay(alignment: .topLeading, content: {
+                    // show image whether the launchplatform is connected
+                    connectIcon
+                })
+                .overlay(alignment: .topTrailing, content: {
+                    let ang = self.station.status.launch_platform_status.angle
+                    let tar = Int(viewModel.previewLP_angle)
+                    VStack(alignment : .trailing){
+                        Text("curPos : \(String(format: "%03d", ang))°")
+                            .padding()
                             .background(Capsule()
                                 .fill(.ultraThinMaterial))
-                        
+                        Text("Target : \(String(format: "%03d", tar))°")
+                            .padding()
+                            .background(Capsule()
+                                .fill(.ultraThinMaterial))
+                    }.contentTransition(.numericText(countsDown: true))
+                })
+                .overlay(alignment: .bottomLeading, content: {
+                    VStack(alignment : .leading){
+                        Button(action: {
+                            //go to function
+                            RotatePlatform(Angle: .degrees(viewModel.previewLP_angle))
+                            
+                        }) {
+                            Label("Go To", systemImage: "return.right")
+                                .padding()
+                                .background(Capsule()
+                                    .fill(.ultraThinMaterial))
+                        }
+                        Button(action:{
+                            withAnimation{
+                                viewModel.locked.toggle()
+                            }
+                        }){
+                            Label(viewModel.locked ? "30 Slots" : "360 Degrees", systemImage: viewModel.locked ? "lock.fill" : "lock.open.fill")
+                                .padding()
+                                .background(Capsule()
+                                    .fill(.ultraThinMaterial))
+                        }
                     }
-                }
-            }else{
-                LaunchPlatform_Drag_overlay
-                    .overlay(alignment: .bottomLeading, content: {
+                    
+                })
+                .overlay(alignment: .bottomTrailing, content: {
                     VStack{
                         controlButton_F
+                        controlButton_S
                         controlButton_B
                     }.padding()
                         .background(Capsule()
                             .fill(.ultraThinMaterial))
                 })
+                
+                
             }
             
         }
@@ -165,7 +191,7 @@ struct LaunchPlatformView : View{
             
         }
         .frame(maxHeight: .infinity)
-        .padding()
+        
         
         
     }
@@ -178,6 +204,7 @@ extension LaunchPlatformView{
         var previewLP_angle = 0.0
         let offset = 6.0
         var show_slot = true
+        var locked = true
         
         func closestMultipleOf12(for number: Int) -> Int {
             let remainder = number % 12
@@ -187,10 +214,12 @@ extension LaunchPlatformView{
     }
     
     func MovePlatform(value : Int = 0){
-        
+        // negative is backward, positive is forward, 0 is stop
+        station.post_request("/launch_platform_movement",value: [value])
     }
     func RotatePlatform(Angle : Angle = .degrees(0)){
-        
+        print(Angle.degrees)
+        station.post_request("/launch_platform",value: [Int(Angle.degrees)])
     }
     
     

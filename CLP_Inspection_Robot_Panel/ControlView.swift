@@ -37,6 +37,7 @@ struct ControlView: View {
             .padding(.all,compact ? 0 : nil)
             
         }
+        .frame(maxHeight: .infinity)
         .padding()
         .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
         let L_Adj = VStack{
@@ -50,7 +51,7 @@ struct ControlView: View {
             })
             
             .padding(.all,compact ? 0 : nil)
-        }
+        }.frame(maxHeight: .infinity)
             .padding()
             .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
         let controlButton_L =
@@ -214,21 +215,25 @@ struct ControlView: View {
                 if !compact{
                     Divider()
                         .padding()
-                    HStack{
+                    
                         VStack{
-                            Robot_Image()
-                                .overlay(alignment: .topLeading,content: {
-                                    VStack{
-                                        Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
-                                            .padding()
-                                            .font(.title)
-                                            .contentTransition(.numericText(countsDown: true))
-                                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-                                    }.padding()
-                                })
+//                            Robot_Image()
+                            HStack{
+                                VStack{
+                                    Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                        .padding()
+                                        
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
+                                        .frame(maxHeight: .infinity,alignment : .top)
+                                }.padding()
+                                PressureView(enabled : true)
+                            }.padding()
+
                             HStack{
                                 L_Adj
                                 VStack{
+                                    Spacer()
                                     Image("Robot_top")
                                         .resizable()
                                         .scaledToFit()
@@ -239,8 +244,8 @@ struct ControlView: View {
                                 R_Adj
                                 
                             }.padding()
-                        }
-                    }
+                        }.frame(maxHeight: .infinity)
+                    
                     .padding()
                     Divider()
                         .padding()
@@ -249,18 +254,20 @@ struct ControlView: View {
                     VStack{
                         let data = self.station.status.robot_status.tof
                         
-                        VStack(spacing : 20){
-                            
-                            ForEach(Array(data[0...6].enumerated()), id: \.0) { idx, value in
-                                Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
-                                    .padding()
-                                    .font(.title)
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
-                            }
-                            
-                            
-                        }.frame(height : .infinity)
+                        ScrollView{
+                            VStack(spacing : 20){
+                                
+                                ForEach(Array(data[0...6].enumerated()), id: \.0) { idx, value in
+                                    Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
+                                        .padding()
+                                        .font(.title)
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                                }
+                                
+                                
+                            }.frame(height : .infinity)
+                        }
                         Spacer()
                         
                         VStack{

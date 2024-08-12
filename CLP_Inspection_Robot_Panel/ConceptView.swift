@@ -11,6 +11,7 @@ struct ConceptView : View{
                 //                let height = screen.size.height
                 VStack{
                     SensorBarView()
+                        .opacity(self.station.status.robot_status.connected ? 1 : 0.5)
                     HStack{
                         AutoView()
                             .frame(width : width * 0.3)
@@ -41,6 +42,7 @@ struct ConceptView : View{
                                     RoundedRectangle(cornerRadius: 25.0)
                                         .fill(.black.opacity(0.1))
                                 }
+                                .opacity(self.station.status.digital_valve_status.connected ? 1 : 0.5)
                             }
                             HStack{
                                 Button(action:{
@@ -52,7 +54,7 @@ struct ConceptView : View{
                                         .padding()
                                         .background(RoundedRectangle(cornerRadius: 25.0)
                                             .fill(.ultraThinMaterial))
-                                }
+                                }.opacity(self.station.status.robot_status.connected ? 1 : 0.5)
                                 Button(action:{
                                     self.selection = .LaunchPlatform
                                     
@@ -65,11 +67,13 @@ struct ConceptView : View{
                                             .underline()
                                             .frame(maxWidth: .infinity,alignment: .leading)
                                         LaunchPlatformView(enabled : false)
+                                            
                                     }.padding()
                                         .background(RoundedRectangle(cornerRadius: 25.0)
                                             .fill(.ultraThinMaterial))
                                     
-                                }
+                                    
+                                }.opacity(self.station.status.launch_platform_status.connected ? 1 : 0.5)
                                 
                             }
                         }

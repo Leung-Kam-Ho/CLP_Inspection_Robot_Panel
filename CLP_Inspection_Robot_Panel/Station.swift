@@ -25,10 +25,11 @@ class Station : ObservableObject{
         var connected : Bool = false
     }
     class Automation_Status : Codable, ObservableObject{
-        var state : String = "IDLE"
+        var sequence_name : String = ""
         var mode : String = "Manual"
-        var detail : String = "Nothing"
-        var action_queue : [String] = [String]()
+        var action_update : String = ""
+        var action_name : String = ""
+        var tree_ascii : String = ""
     }
     class Camera_Status : Codable, ObservableObject{
         var data : Data = Data()
@@ -36,7 +37,8 @@ class Station : ObservableObject{
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
         case pi = "cable.local"
-        case statiom = "station.local"
+        case station = "station.local"
+        case studio = "kamholeung.local"
     }
     @Published var status = Station_Status()
     @Published var ip : String
@@ -48,6 +50,7 @@ class Station : ObservableObject{
     var getImage = false
     
     var data = Station_Status()
+    var tree = "No Tree"
     
     var port = Constants.PORT
     let timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
@@ -83,9 +86,10 @@ class Station : ObservableObject{
         }
         withAnimation(.easeOut(duration: 0.1)){
             let temp = self.data
-            
             self.status = temp
+            self.tree = self.status.auto_status.tree_ascii
         }
+        
     }
     func get_frame(){
         DispatchQueue.global(qos: .userInitiated).async{
@@ -101,7 +105,6 @@ class Station : ObservableObject{
                 }catch{
                     print(error)
                 }
-                
             }
             task.resume()
         }
@@ -144,13 +147,10 @@ class Station : ObservableObject{
         let RP = Int.random(in: 0...400)
         a.robot_status.tof = Array(repeating: Int.random(in: 0...255), count: 16)
         a.robot_status.servo = [direction * LP + 1500,direction * RP + 1500,1500,1500]
-        var temp2 = [String]()
-        for i in 0...Int.random(in: 1...10){
-            let action = ["Checking Clearance", "Open Feet 1", "Change Pressure of Feet"]
-            temp2.append("\(i+1). \(action[Int.random(in: 0...2)])")
-        }
-        a.auto_status.action_queue = temp2
-        a.auto_status.detail = "Checking TOF 1"
+        let temp2 = "asdfasdfahsdfah"
+        
+        a.auto_status.action_name = temp2
+        a.auto_status.action_update = "Checking TOF 1"
         self.self.data = a
         
     }

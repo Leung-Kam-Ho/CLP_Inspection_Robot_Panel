@@ -5,12 +5,9 @@ struct ContentView: View {
     @State var viewModel = ViewModel()
     var body: some View {
         GeometryReader{ screen in
-            let minW = 1040
-            let minH = 810
-            let bigEnough = (Int(screen.size.width) >= minW) && (Int(screen.size.height) >= minH)
+            let bigEnough = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
             TabView(selection: self.$viewModel.selectedTab){
                 if bigEnough{
-                    
                     Tab("All", systemImage: "widget.small", value: .All){
                         
                         ConceptView(selection : self.$viewModel.selectedTab)
@@ -60,12 +57,10 @@ struct ContentView: View {
                 }
                 
             }.tabViewStyle(.sidebarAdaptable)
+                .font(.system(size: bigEnough ? screen.size.width / 50 : screen.size.width/15, weight: .bold, design: .rounded))
         }
         .scrollContentBackground(.hidden)
-        //        .frame(maxWidth: .infinity,maxHeight: .infinity)
-        
         .bold()
-        .font(.largeTitle)
         .environmentObject(station)
         .background(Constants.notBlack)
         .preferredColorScheme(.dark)
