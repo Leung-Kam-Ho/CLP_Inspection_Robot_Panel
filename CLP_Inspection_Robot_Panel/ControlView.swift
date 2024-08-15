@@ -222,26 +222,37 @@ struct ControlView: View {
                                 VStack{
                                     Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
                                         .padding()
-                                        
                                         .contentTransition(.numericText(countsDown: true))
                                         .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-                                        .frame(maxHeight: .infinity,alignment : .top)
-                                }.padding()
-                                PressureView(enabled : true)
+                                        .padding()
+//                                        .frame(maxHeight: .infinity,alignment : .top)
+                                    VStack{
+                                        Spacer()
+                                        Image("Robot_top")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .padding()
+                                        roll_Section_Round
+                                    }
+                                    
+                                }
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 25.0).stroke(.white))
+                                VStack{
+                                    Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
+                                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundStyle(Constants.notBlack)
+                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                                        
+                                    PressureView(enabled : true)
+                                }
                             }.padding()
 
                             HStack{
                                 L_Adj
-                                VStack{
-                                    Spacer()
-                                    Image("Robot_top")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding()
-                                    roll_Section_Round
-                                }
-                                .padding()
                                 R_Adj
+                                    
                                 
                             }.padding()
                         }.frame(maxHeight: .infinity)

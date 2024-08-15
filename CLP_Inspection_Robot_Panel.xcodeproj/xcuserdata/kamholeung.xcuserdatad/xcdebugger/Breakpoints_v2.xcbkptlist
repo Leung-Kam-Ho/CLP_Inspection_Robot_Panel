@@ -3,4 +3,34 @@
    uuid = "58CCB78B-054D-4376-835B-7037DB76A274"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C20DC6B8-31BA-4337-97A2-BE252A51F5F2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../var/folders/mn/52s3mnvs36b1mmwtmqv8y7_c0000gn/T/swift-generated-sources/@__swiftmacro_26CLP_Inspection_Robot_Panel0B12ProgressViewV0F5ModelC14slots_progress18ObservationTrackedfMp_.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1"
+            endingLineNumber = "1">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "21D6C8A7-FDD8-4AD0-8E42-B85CB418B53C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../var/folders/mn/52s3mnvs36b1mmwtmqv8y7_c0000gn/T/swift-generated-sources/@__swiftmacro_26CLP_Inspection_Robot_Panel0B12ProgressViewV0F5ModelC8progress18ObservationTrackedfMp_.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1"
+            endingLineNumber = "1">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

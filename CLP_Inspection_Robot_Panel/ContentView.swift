@@ -14,7 +14,6 @@ struct ContentView: View {
                             .background(Image("Watermark"))
                     }
                 }
-                
                 Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: .Auto){
                     AutoView()
                         .padding()
@@ -30,16 +29,21 @@ struct ContentView: View {
                         .padding()
                         .background(Image("Watermark"))
                 }
-                Tab("Pressure", systemImage:"dial.low", value: .Pressure){
-                    PressureView()
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 25.0)
-                            .fill(.ultraThinMaterial)
-                            .stroke(.white)
-                        )
+                Tab("Progress", systemImage:"switch.programmable", value: .ToF){
+                    InspectionProgressView()
                         .padding()
                         .background(Image("Watermark"))
                 }
+//                Tab("Pressure", systemImage:"dial.low", value: .Pressure){
+//                    PressureView()
+//                        .padding()
+//                        .background(RoundedRectangle(cornerRadius: 25.0)
+//                            .fill(.ultraThinMaterial)
+//                            .stroke(.white)
+//                        )
+//                        .padding()
+//                        .background(Image("Watermark"))
+//                }
                 Tab("Launch Platform", systemImage:"rotate.3d.circle.fill", value: .LaunchPlatform){
                     LaunchPlatformView(compact: !bigEnough)
                         .padding()
