@@ -150,6 +150,11 @@ struct ControlView: View {
             }
         }
         VStack {
+            Label("Robot Control", systemImage: "macstudio.fill")
+                .padding()
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+                .background(RoundedRectangle(cornerRadius: 25.0).fill(self.station.status.robot_status.connected ? .green : .red))
             HStack{
                 //Button Here
                 VStack{
@@ -157,7 +162,7 @@ struct ControlView: View {
                         connectIcon
                         
                         Spacer()
-                            .frame(height : .infinity)
+                            .frame(maxHeight : .infinity)
                     }
                     if compact{
                         
@@ -217,7 +222,6 @@ struct ControlView: View {
                         .padding()
                     
                         VStack{
-//                            Robot_Image()
                             HStack{
                                 VStack{
                                     Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
@@ -238,23 +242,29 @@ struct ControlView: View {
                                 }
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 25.0).stroke(.white))
-                                VStack{
-                                    Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .foregroundStyle(Constants.notBlack)
-                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
-                                        
-                                    PressureView(enabled : true)
-                                }
-                            }.padding()
-
-                            HStack{
-                                L_Adj
-                                R_Adj
-                                    
+                                .padding()
                                 
-                            }.padding()
+                                VStack{
+                                        VStack{
+                                            Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
+                                                .padding()
+                                                .frame(maxWidth: .infinity)
+                                                .foregroundStyle(Constants.notBlack)
+                                                .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                                                
+                                            PressureView(enabled : true)
+                                        }.padding()
+                                    
+
+                                    HStack{
+                                        L_Adj
+                                        Spacer()
+                                        R_Adj
+                                            
+                                        
+                                    }.padding()
+                                }
+                            }
                         }.frame(maxHeight: .infinity)
                     
                     .padding()
@@ -277,7 +287,7 @@ struct ControlView: View {
                                 }
                                 
                                 
-                            }.frame(height : .infinity)
+                            }.frame(maxHeight : .infinity)
                         }
                         Spacer()
                         

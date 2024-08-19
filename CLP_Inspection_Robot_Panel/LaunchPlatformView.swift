@@ -14,7 +14,7 @@ struct LaunchPlatformView : View{
         Button(action:{
             MovePlatform(value: 1)
         }){
-            Image(systemName: "arrowtriangle.up.fill")
+            Label("Forward",systemImage: "arrowtriangle.up.fill")
                 .padding()
                 .tint(.primary)
                 .background(Capsule()
@@ -24,7 +24,7 @@ struct LaunchPlatformView : View{
         Button(action:{
             MovePlatform(value : -1)
         }){
-            Image(systemName: "arrowtriangle.down.fill")
+            Label("Backward",systemImage: "arrowtriangle.down.fill")
                 .padding()
                 .tint(.primary)
                 .background(Capsule()
@@ -35,7 +35,7 @@ struct LaunchPlatformView : View{
         Button(action:{
             MovePlatform(value: 0)
         }){
-            Image(systemName: "stop.fill")
+            Label("Stop",systemImage: "stop.fill")
                 .padding()
                 .tint(.primary)
                 .background(Capsule()
@@ -88,7 +88,7 @@ struct LaunchPlatformView : View{
                                 .aspectRatio(contentMode: .fit)
                             Image(systemName: "arrow.left.and.right.circle.fill")
                                 .offset(y: length / -2)
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(.blue)
                         }
                         .rotationEffect(.degrees(self.viewModel.previewLP_angle))
                         .padding()
@@ -126,26 +126,25 @@ struct LaunchPlatformView : View{
                 
             }else{
                 VStack{
+                    Label("Launch Platform CTRL", systemImage: "chart.bar.yaxis")
+                        .padding()
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity)
+                        .background(RoundedRectangle(cornerRadius: 25.0).fill(self.station.status.launch_platform_status.connected ? .orange : .red))
                     LaunchPlatform_Drag_overlay
-                        .frame(maxHeight: .infinity, alignment : .center)
-                }.overlay(alignment: .topLeading, content: {
-                    // show image whether the launchplatform is connected
-                    connectIcon
-                })
-                .overlay(alignment: .topTrailing, content: {
-                    let ang = self.station.status.launch_platform_status.angle
-                    let tar = Int(viewModel.previewLP_angle)
-                    VStack(alignment : .trailing){
-                        Text("curPos : \(String(format: "%03d", ang))°")
-                            .padding()
-                            .background(Capsule()
-                                .fill(.ultraThinMaterial))
-                        Text("Target : \(String(format: "%03d", tar))°")
-                            .padding()
-                            .background(Capsule()
-                                .fill(.ultraThinMaterial))
-                    }.contentTransition(.numericText(countsDown: true))
-                })
+                        .frame(maxHeight: .infinity, alignment : .top)
+                        .overlay(alignment: .topLeading ,content: {
+                            let ang = self.station.status.launch_platform_status.angle
+                            let tar = Int(viewModel.previewLP_angle)
+                            Text("curPos : \(String(format: "%03d", ang))° -> \(String(format: "%03d", tar))°")
+                                .contentTransition(.numericText(countsDown: true))
+                                .padding()
+                                .lineLimit(1)
+                                .background(Capsule()
+                                    .fill(.ultraThinMaterial))
+                        })
+                        
+                }
                 .overlay(alignment: .bottomLeading, content: {
                     VStack(alignment : .leading){
                         Button(action: {
@@ -172,13 +171,17 @@ struct LaunchPlatformView : View{
                     
                 })
                 .overlay(alignment: .bottomTrailing, content: {
-                    VStack{
-                        controlButton_F
-                        controlButton_S
+                    Menu(content: {
                         controlButton_B
-                    }.padding()
-                        .background(Capsule()
-                            .fill(.ultraThinMaterial))
+                        controlButton_S
+                        controlButton_F
+                    }, label: {
+                        Image(systemName: "keyboard.fill")
+                            .padding()
+                            .tint(.primary)
+                            .background(Capsule()
+                                .fill(Constants.notBlack))
+                    }).buttonStyle(.plain)
                 })
                 
                 
@@ -225,7 +228,6 @@ extension LaunchPlatformView{
     
     
 }
-
 
 #Preview {
     @Previewable @StateObject var station = Station()

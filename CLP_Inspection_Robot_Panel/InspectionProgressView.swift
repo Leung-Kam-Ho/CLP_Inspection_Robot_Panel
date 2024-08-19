@@ -11,12 +11,18 @@ struct InspectionProgressView: View {
     @EnvironmentObject var station : Station
     @State var viewModel = ViewModel()
     let columns = [
-        GridItem(.adaptive(minimum: 170,maximum: 500))
+        GridItem(.adaptive(minimum: 190,maximum: 500))
     ]
     var body: some View {
         let data = viewModel.progress
         let slot_now = Int(station.status.launch_platform_status.angle / 12) + 1
         VStack{
+            Label("Progress", systemImage: "chart.bar.yaxis")
+                .padding()
+                .frame(maxWidth: .infinity)
+                .foregroundStyle(Constants.notBlack)
+                .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                
             ScrollViewReader{ proxy in
                 ScrollView(showsIndicators: false) {
                     LazyVGrid(columns: columns, spacing: 20) {
@@ -25,15 +31,26 @@ struct InspectionProgressView: View {
                             VStack{
                                 HStack{
                                     Image(systemName: "\(slot.slot_id).circle.fill")
-    //                                Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle.fill")
-    //                                    .foregroundStyle(.orange)
+                                        
                                     Spacer()
                                     Image(systemName: slot.EL_CID_Progress != 1.0 ? "xmark.circle.fill" : "checkmark.circle.fill")
                                         .foregroundStyle(slot.EL_CID_Progress != 1.0 ? .red : .green)
+                                    Spacer()
+                                    if current_slot{
+                                        Button(action:{
+                                            
+                                        }){
+                                            Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle.fill")
+                                        }
+                                    }else{
+                                        Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle.fill")
+                                            .foregroundStyle(.clear)
+                                    }
                                     
                                 }.padding()
                                 Text(String(format: "%03d",slot.EL_CID_Progress * 100) + "%")
-                                    .foregroundStyle(current_slot ? .white : .clear)
+                                    .lineLimit(1)
+                                    .foregroundStyle(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .contentTransition(.numericText(countsDown: true))
@@ -41,17 +58,18 @@ struct InspectionProgressView: View {
                                 VStack{
                                     if let result = slot.Knocker_result{
                                         Text(String(format: "%03d", result * 100) + "%")
-                                            .foregroundStyle(current_slot ? .white : .clear)
-                                        
+                                            .lineLimit(1)
+                                            .foregroundStyle(.white)
                                     }else{
                                         Text("-")
-                                            .foregroundStyle(current_slot ? .white : .clear)
+                                            .foregroundStyle(.white)
                                     }
                                 }
                                 .frame(maxWidth: .infinity).padding()
                                 .contentTransition(.numericText(countsDown: true))
                                 .background(RoundedRectangle(cornerRadius: 25.0).stroke(current_slot ? .white : .clear,lineWidth: 5).fill(slot.Knocker_result == nil ? .gray : (slot.Knocker_result! >= 0.6 ? .green : .red )))
-                            }.id(slot.slot_id)
+                            }
+                            .id(slot.slot_id)
                             .padding()
                             .font(.title)
                             .contentTransition(.numericText(countsDown: true))
@@ -60,9 +78,14 @@ struct InspectionProgressView: View {
                         }
                     }.onAppear(perform: {
                         withAnimation{
-                            
                             proxy.scrollTo(slot_now)
                         }
+                    })
+                    .onChange(of: station.status.launch_platform_status.angle, { old, new in
+                        withAnimation{
+                            proxy.scrollTo(Int(station.status.launch_platform_status.angle / 12) + 1)
+                        }
+                        
                     })
                 }
             }

@@ -18,12 +18,15 @@ struct PressureView : View{
                                 let value = Float(self.viewModel.pressure[channel - 1] * self.viewModel.pressure_max)
                                 self.station.post_request("/pressure", value: [Float(channel - 1), value])
                             }
+                        },icon: { _ in
+                            return Image(systemName: "\(channel).circle.fill")
                         } ,text: { _ in
                             //                            return Image(systemName: "\(channel).circle.fill")
                             let baseValue = (enabled ? self.viewModel.pressure[channel - 1] : r)
                             let value = baseValue * self.viewModel.pressure_max
-                            return Text(String(format : "%.1f", value)).font(.largeTitle)
-                        })
+                            return Text((String(format : "%.1f", value)))
+                                .font(.largeTitle)
+                        }).multilineTextAlignment(.center)
                     }
                 }
             }
@@ -42,5 +45,6 @@ extension PressureView{
     class ViewModel{
         var pressure : [Double] = [0.0,0.0,0.0,0.0]
         let pressure_max = 6.6
+        let channel_name_map : [String] = ["Feet","Tank","EL-CID","Tapper"]
     }
 }
