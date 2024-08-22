@@ -25,9 +25,10 @@ To install the CLP Inspection Robot Panel, follow these steps:
 
 ## Usage
 
-Once the CLP Inspection Robot Panel is installed, you can access it through a web browser. Simply open the application URL and log in with your credentials.
+Once the CLP Inspection Robot Panel is installed, you can start using it by following these Siri shortcuts:
 
-For more information on how to use the panel, please refer to the (not yet).
+- [Start Robot](https://www.icloud.com/shortcuts/d40e66d086da4a589ca3df6a436ce7e0)
+- [Stop Robot](https://www.icloud.com/shortcuts/f4537067d1434e32a2c0067a7b7df71c)
 
 ## License
 
