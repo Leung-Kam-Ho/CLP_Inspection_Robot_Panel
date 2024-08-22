@@ -24,11 +24,21 @@ struct AutoView : View{
                                 })
                         }
                     }, label: {
-                        Text(connected ? "System online" : "System offline")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding()
-                            .contentTransition(.numericText(countsDown: true))
-                            .background(RoundedRectangle(cornerRadius: 25.0).fill(connected ? .green : .red))
+                        VStack{
+                            let mt = self.station.status.auto_status.action_update == ""
+                            Text(connected ? (mt ? "System online" : "Current Action") : "System offline")
+                                
+                                .padding()
+                                .contentTransition(.numericText(countsDown: true))
+                            Text(self.station.status.auto_status.action_update == "" ? "No Action": self.station.status.auto_status.action_update)
+                                .padding()
+                                .contentTransition(.numericText(countsDown: true))
+                                .frame(maxWidth: .infinity)
+                                .background(RoundedRectangle(cornerRadius: 17.0).fill(.ultraThinMaterial))
+                                .padding()
+                        }
+                        .background(RoundedRectangle(cornerRadius: 25.0)
+                            .fill(connected ? .green : .red))
                     }).buttonStyle(.plain)
                    
                     ScrollViewReader{ scrollView in

@@ -17,7 +17,7 @@ struct ContentView: View {
                     HStack{
                         AutoView()
                             .padding()
-                            .background(RoundedRectangle(cornerRadius: 25.0)
+                            .background(RoundedRectangle(cornerRadius: 33.0)
                                 .fill(.ultraThinMaterial)
                                 .stroke(.white)
                             )
@@ -37,7 +37,7 @@ struct ContentView: View {
                         
                         LaunchPlatformView(compact: !bigEnough)
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 25.0)
+                        .background(RoundedRectangle(cornerRadius: 33.0)
                             .fill(.ultraThinMaterial)
                             .stroke(.white)
                         )
@@ -55,7 +55,7 @@ struct ContentView: View {
                             .padding()
                     }
                     .padding()
-                    .background(RoundedRectangle(cornerRadius: 25.0)
+                    .background(RoundedRectangle(cornerRadius: 33.0)
                         .fill(.ultraThinMaterial)
                         .stroke(.white)
                     )

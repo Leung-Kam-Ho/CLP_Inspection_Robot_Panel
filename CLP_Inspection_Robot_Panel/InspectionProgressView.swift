@@ -48,13 +48,14 @@ struct InspectionProgressView: View {
                                     }
                                     
                                 }.padding()
+                                    .background(RoundedRectangle(cornerRadius: 18.0).fill(.ultraThinMaterial))
                                 Text(String(format: "%03d",slot.EL_CID_Progress * 100) + "%")
                                     .lineLimit(1)
                                     .foregroundStyle(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .contentTransition(.numericText(countsDown: true))
-                                    .background(RoundedRectangle(cornerRadius: 25.0).stroke(current_slot ? .white : .clear, lineWidth: 5).fill(slot.EL_CID_Progress != 1.0 ? .red : .green))
+                                    .background(RoundedRectangle(cornerRadius: 18.0).stroke(current_slot ? .white : .clear, lineWidth: 5).fill(slot.EL_CID_Progress != 1.0 ? .red : .green))
                                 VStack{
                                     if let result = slot.Knocker_result{
                                         Text(String(format: "%03d", result * 100) + "%")
@@ -67,7 +68,7 @@ struct InspectionProgressView: View {
                                 }
                                 .frame(maxWidth: .infinity).padding()
                                 .contentTransition(.numericText(countsDown: true))
-                                .background(RoundedRectangle(cornerRadius: 25.0).stroke(current_slot ? .white : .clear,lineWidth: 5).fill(slot.Knocker_result == nil ? .gray : (slot.Knocker_result! >= 0.6 ? .green : .red )))
+                                .background(RoundedRectangle(cornerRadius: 18.0).stroke(current_slot ? .white : .clear,lineWidth: 5).fill(slot.Knocker_result == nil ? .gray : (slot.Knocker_result! >= 0.6 ? .green : .red )))
                             }
                             .id(slot.slot_id)
                             .padding()
@@ -90,7 +91,7 @@ struct InspectionProgressView: View {
                 }
             }
         }.padding()
-            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial).stroke(.white))
+            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial).stroke(.white))
     }
 }
 

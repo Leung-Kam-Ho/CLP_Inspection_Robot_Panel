@@ -95,9 +95,43 @@ struct ControlView: View {
         }
         
         let connectIcon =
-        Image(systemName: "link.circle.fill")
-            .padding()
-            .background(Circle().fill(self.station.status.robot_status.connected ? .green : .red))
+        Button(action:{
+            withAnimation{
+                viewModel.popup.toggle()
+            }
+        }){
+            Text(String(station.status.launch_platform_status.angle))
+                .padding()
+                .foregroundStyle(.green)
+                .background(Circle().fill(.ultraThinMaterial))
+        }.popover(isPresented: $viewModel.popup, content: {
+            HStack{
+                Button(action:{
+                    viewModel.angleTarget -= 1
+                }){
+                    Image(systemName: "minus.circle.fill")
+                        .padding()
+
+                }
+                Text(String(viewModel.angleTarget))
+                    .padding()
+                    .foregroundStyle(.green)
+                    .onAppear{
+                        viewModel.angleTarget = station.status.launch_platform_status.angle
+                    }
+                    .onDisappear{
+                        // send command on disapper
+                        sendCommand()
+                    }
+                Button(action:{
+                    viewModel.angleTarget += 1
+                }){
+                    Image(systemName: "plus.circle.fill")
+                        .padding()
+                }
+                
+            }.buttonStyle(.plain).presentationCompactAdaptation(.popover)
+        })
         let SensorRelay =
         ForEach(7...8, id:\.self){ idx in
             Button(action:{
@@ -159,7 +193,10 @@ struct ControlView: View {
                 //Button Here
                 VStack{
                     if !compact{
-                        connectIcon
+                        VStack{
+                            Text("CurPos")
+                            connectIcon
+                        }.padding()
                         
                         Spacer()
                             .frame(maxHeight : .infinity)
@@ -231,19 +268,18 @@ struct ControlView: View {
                                         .padding()
 //                                        .frame(maxHeight: .infinity,alignment : .top)
                                     VStack{
-                                        Spacer()
                                         Image("Robot_top")
                                             .resizable()
                                             .scaledToFit()
-                                            .padding()
+                                            .frame(maxHeight: .infinity)
                                         roll_Section_Round
                                     }
-                                    
-                                }
+                                        
+                                }.frame(maxHeight: .infinity)
+                                
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 25.0).stroke(.white))
                                 .padding()
-                                
                                 VStack{
                                         VStack{
                                             Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
@@ -254,8 +290,6 @@ struct ControlView: View {
                                                 
                                             PressureView(enabled : true)
                                         }.padding()
-                                    
-
                                     HStack{
                                         L_Adj
                                         Spacer()
@@ -267,7 +301,7 @@ struct ControlView: View {
                             }
                         }.frame(maxHeight: .infinity)
                     
-                    .padding()
+//                    .padding()
                     Divider()
                         .padding()
                     
@@ -275,10 +309,9 @@ struct ControlView: View {
                     VStack{
                         let data = self.station.status.robot_status.tof
                         
-                        ScrollView{
+                        ScrollView(showsIndicators: false){
                             VStack(spacing : 20){
-                                
-                                ForEach(Array(data[0...6].enumerated()), id: \.0) { idx, value in
+                                ForEach(Array(data[0...10].enumerated()), id: \.0) { idx, value in
                                     Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
                                         .padding()
                                         .font(.title)
@@ -304,7 +337,7 @@ struct ControlView: View {
             }
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial).stroke(.white))
+        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial).stroke(.white))
         
         
     }
@@ -317,5 +350,12 @@ extension ControlView {
         var r = 1.0
         var leftPower = 100
         var rightPower = 100
+        var popup = false
+        var angleTarget = 0
+        
+    }
+    
+    func sendCommand(){
+        station.RotatePlatform(Angle: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
     }
 }

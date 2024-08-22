@@ -22,7 +22,6 @@ struct ToFView: View {
                 .contentTransition(.numericText(countsDown: true))
                 .frame(maxWidth: .infinity,alignment: .center)
                 .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-                .padding()
                 
             ScrollView(showsIndicators: false) {
                 
@@ -37,7 +36,7 @@ struct ToFView: View {
                 }
             }
         }.padding()
-            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial).stroke(.white))
+            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial).stroke(.white))
     }
 }
 

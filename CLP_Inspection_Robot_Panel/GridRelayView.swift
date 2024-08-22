@@ -53,60 +53,62 @@ struct GridRelayView : View{
     @EnvironmentObject var station : Station
     let notBlack = Color(red: 24/255, green: 24/255, blue: 24/255)
     var body: some View{
-        ZStack{
-            Robot_Image()
-            VStack(spacing : 20){
-                HStack{
-                    ForEach(1...4, id:\.self){ idx in 
+        VStack{
+            ZStack{
+                Robot_Image()
+                VStack(spacing : 20){
+                    HStack{
+                        ForEach(1...4, id:\.self){ idx in
+                                let opened = get_state(idx)
+                                Image(systemName: "\(idx).circle.fill")
+                                    .padding()
+                                    .foregroundStyle(Constants.offWhite)
+                                    .background(RoundedRectangle(cornerRadius: 25.0)
+                                        .fill(opened ? .green : notBlack))
+                            if idx != 4{
+                                Spacer()
+                            }
+                        }
+                    }
+                    Spacer()
+                    HStack{
+                        Section{
+                            let idx = 8
                             let opened = get_state(idx)
                             //                                        let state = "1"
                             
                             Image(systemName: "\(idx).circle.fill")
                                 .padding()
                                 .tint(.primary)
-                                .background(RoundedRectangle(cornerRadius: 25.0)
-                                    .fill(opened ? .green : notBlack))
-//                                .foregroundStyle()
-                        if idx != 4{
-                            Spacer()
+                                .foregroundStyle(Constants.offWhite)
+                                .background(Circle()
+                                    .fill(opened ? .orange : notBlack))
+    //                            .foregroundStyle(.background)
                         }
-                    }
-                }
-                Spacer()
-                HStack{
-                    Section{
-                        let idx = 8
-                        let opened = get_state(idx)
-                        //                                        let state = "1"
-                        
-                        Image(systemName: "\(idx).circle.fill")
-                            .padding()
-                            .tint(.primary)
-                            .background(Circle()
-                                .fill(opened ? .orange : notBlack))
-//                            .foregroundStyle(.background)
-                    }
-                    Spacer()
-                    Section{
-                        let idx = 7
-                        let opened = get_state(idx)
-                        Image(systemName: "\(idx).circle.fill")
-                            .padding()
-                            .tint(.primary)
-                            .background( Circle()
-                                .fill(opened ? .orange : notBlack))
-                    }
-                    Spacer()
-                    
-                    ForEach(5...6, id:\.self){ idx in 
+                        Spacer()
+                        Section{
+                            let idx = 7
                             let opened = get_state(idx)
                             Image(systemName: "\(idx).circle.fill")
                                 .padding()
+                                .foregroundStyle(Constants.offWhite)
                                 .tint(.primary)
-                                .background(RoundedRectangle(cornerRadius: 25.0)
-                                    .fill(opened ? .green : notBlack))
-                        if idx != 6{
-                            Spacer()
+                                .background( Circle()
+                                    .fill(opened ? .orange : notBlack))
+                        }
+                        Spacer()
+                        
+                        ForEach(5...6, id:\.self){ idx in
+                                let opened = get_state(idx)
+                                Image(systemName: "\(idx).circle.fill")
+                                    .padding()
+                                    .foregroundStyle(Constants.offWhite)
+                                    
+                                    .background(RoundedRectangle(cornerRadius: 25.0)
+                                        .fill(opened ? .green : notBlack))
+                            if idx != 6{
+                                Spacer()
+                            }
                         }
                     }
                 }

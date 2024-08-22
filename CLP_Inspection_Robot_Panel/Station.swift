@@ -23,6 +23,7 @@ class Station : ObservableObject{
     class LaunchPlatform_Status : Codable, ObservableObject{
         var angle : Int = 6
         var connected : Bool = false
+        var setpoint : Int = 0
     }
     class Automation_Status : Codable, ObservableObject{
         var sequence_name : String = ""
@@ -153,6 +154,10 @@ class Station : ObservableObject{
         a.auto_status.action_update = "Checking TOF 1"
         self.self.data = a
         
+    }
+    func RotatePlatform(Angle : Angle = .degrees(0)){
+        print(Angle.degrees)
+        post_request("/launch_platform",value: [Int(Angle.degrees)])
     }
     func post_request(_ route : String = "/", value : [Int]){
         DispatchQueue.global(qos: .userInitiated).async{

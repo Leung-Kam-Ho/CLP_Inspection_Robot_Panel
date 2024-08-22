@@ -6,10 +6,6 @@ struct LaunchPlatformView : View{
     var enabled = true
     var compact = false
     var body: some View{
-        let connectIcon =
-        Image(systemName: "link.circle.fill")
-            .padding()
-            .background(Circle().fill(self.station.status.launch_platform_status.connected ? .green : .red))
         let controlButton_F =
         Button(action:{
             MovePlatform(value: 1)
@@ -113,7 +109,7 @@ struct LaunchPlatformView : View{
                         )
                     })
                 Spacer()
-            }
+            }.scaleEffect(0.9)
         }
         .frame(maxHeight: 828.0, alignment : .center)
         
@@ -135,7 +131,7 @@ struct LaunchPlatformView : View{
                         .frame(maxHeight: .infinity, alignment : .top)
                         .overlay(alignment: .topLeading ,content: {
                             let ang = self.station.status.launch_platform_status.angle
-                            let tar = Int(viewModel.previewLP_angle)
+                            let tar = self.station.status.launch_platform_status.setpoint
                             Text("curPos : \(String(format: "%03d", ang))° -> \(String(format: "%03d", tar))°")
                                 .contentTransition(.numericText(countsDown: true))
                                 .padding()
@@ -149,7 +145,7 @@ struct LaunchPlatformView : View{
                     VStack(alignment : .leading){
                         Button(action: {
                             //go to function
-                            RotatePlatform(Angle: .degrees(viewModel.previewLP_angle))
+                            station.RotatePlatform(Angle: .degrees(viewModel.previewLP_angle))
                             
                         }) {
                             Label("Go To", systemImage: "return.right")
@@ -162,7 +158,8 @@ struct LaunchPlatformView : View{
                                 viewModel.locked.toggle()
                             }
                         }){
-                            Label(viewModel.locked ? "30 Slots" : "360 Degrees", systemImage: viewModel.locked ? "lock.fill" : "lock.open.fill")
+                            let tar = Int(viewModel.previewLP_angle)
+                            Label(viewModel.locked ? "30 Slots" : "\(String(format: "%03d",tar)) Degrees", systemImage: viewModel.locked ? "lock.fill" : "lock.open.fill")
                                 .padding()
                                 .background(Capsule()
                                     .fill(.ultraThinMaterial))
@@ -219,10 +216,6 @@ extension LaunchPlatformView{
     func MovePlatform(value : Int = 0){
         // negative is backward, positive is forward, 0 is stop
         station.post_request("/launch_platform_movement",value: [value])
-    }
-    func RotatePlatform(Angle : Angle = .degrees(0)){
-        print(Angle.degrees)
-        station.post_request("/launch_platform",value: [Int(Angle.degrees)])
     }
     
     

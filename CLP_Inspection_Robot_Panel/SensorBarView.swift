@@ -21,7 +21,7 @@ struct SensorBarView : View{
         }.padding()
             .lineLimit(1)
             .background(
-                RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial)
             )
         
     }
