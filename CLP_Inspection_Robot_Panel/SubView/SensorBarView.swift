@@ -34,16 +34,6 @@ struct LazerView : View{
     }
 }
 
-struct WedgeView : View{
-    @EnvironmentObject var station : Station
-    var body: some View {
-        let num = self.station.status.robot_status.lazer
-        Text("Wedge : " + String(format : "%04d",num))
-            .padding()
-            .contentTransition(.numericText(countsDown: true))
-            .background(RoundedRectangle(cornerRadius: 25.0).fill(.indigo))
-    }
-}
 
 struct SensorTabsView : View{
     @EnvironmentObject var station : Station

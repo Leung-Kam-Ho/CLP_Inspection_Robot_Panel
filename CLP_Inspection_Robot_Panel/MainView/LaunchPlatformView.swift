@@ -197,17 +197,6 @@ struct LaunchPlatformView : View{
     }
 }
 
-struct SlotView : View {
-    @EnvironmentObject var station : Station
-    var body: some View {
-        let data = Int(self.station.status.launch_platform_status.angle / Int(Constants.SLOT_DISTANCE_DEGREE)) + 1
-        Text("Slot : " + String(format : "%02d",data))
-            .padding()
-            .contentTransition(.numericText(countsDown: true))
-            .foregroundStyle(Constants.notBlack)
-            .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
-    }
-}
 
 extension LaunchPlatformView{
     @Observable

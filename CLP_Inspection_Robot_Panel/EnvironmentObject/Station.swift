@@ -38,11 +38,15 @@ class Station : ObservableObject{
     }
     class Audio_Status : Codable, ObservableObject{
         var recording : Bool = false
-        var most_recent_FFT : [Float] = []
-        var most_recent_FFT_freq : [Float] = []
-        var most_recent_Audio : [Float] = []
-        
+        var file_num : Int = 0
+        var date: String = ""
+        var slot : Int = 0
+        var distance : Int = 0
+        var FFT : [Float] = []
+        var FFT_freq : [Float] = []
+        var Audio : [Float] = []
     }
+
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
         case station = "station.local"
@@ -53,6 +57,7 @@ class Station : ObservableObject{
     @Published var ip : String
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
     @Published var camera_frames : UIImage = .watermark
+    @Published var audio_log : [Audio_Status] = []
     
     var camera_status = Camera_Status()
     var image : UIImage? = UIImage()
@@ -62,7 +67,7 @@ class Station : ObservableObject{
     var tree = "No Tree"
     var most_recent_FFT = [Float]()
     var connected = false
-    
+
     var port = Constants.PORT
     let timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
     let timer2 = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -73,6 +78,11 @@ class Station : ObservableObject{
     init(){
         let defaults = UserDefaults.standard
         self.ip = defaults.string(forKey: "IP") ?? IP.station.rawValue
+
+        if let data = UserDefaults.standard.data(forKey: "audio_log"),
+           let log = try? JSONDecoder().decode([Audio_Status].self, from: data) {
+            self.audio_log = log
+        }
         self.init_RunLoop()
     }
     
@@ -101,6 +111,7 @@ class Station : ObservableObject{
             self.status = temp
             self.tree = self.status.auto_status.tree_ascii
             self.server_connected = self.connected
+            self.save_audio(self.data.audio_status)
         }
         
     }
@@ -151,28 +162,36 @@ class Station : ObservableObject{
             task.resume()
         }
     }
-    
-    func test(){
-        let a = Station.Station_Status()
-        var temp = ""
-        for _ in 0...7{
-            temp += String(Int.random(in: 0...1))
+
+    func checkAudioLogExistence(audioLogs: [Audio_Status], newAudioLog: Audio_Status) -> Bool {
+        for existingLog in audioLogs {
+            if existingLog.date == newAudioLog.date && existingLog.slot == newAudioLog.slot && existingLog.distance == newAudioLog.distance && existingLog.file_num == newAudioLog.file_num {
+                return true // AudioLog already exists
+            }
         }
-        a.robot_status.relay = temp
-        a.digital_valve_status.pressure = [Double.random(in: 0...6),Double.random(in: 0...6),Double.random(in: 0...6),Double.random(in: 0...6)]
-        a.launch_platform_status.angle = Int.random(in: 0...360)
-        let direction = Int.random(in: -1...1)
-        let LP = Int.random(in: 0...400)
-        let RP = Int.random(in: 0...400)
-        a.robot_status.tof = Array(repeating: Int.random(in: 0...255), count: 16)
-        a.robot_status.servo = [direction * LP + 1500,direction * RP + 1500,1500,1500]
-        let temp2 = "asdfasdfahsdfah"
-        
-        a.auto_status.action_name = temp2
-        a.auto_status.action_update = "Checking TOF 1"
-        self.self.data = a
-        
+        return false // AudioLog does not exist
     }
+
+    func save_audio(_ log : Audio_Status){
+        // check if log.date in self.audio_log
+        let exist = checkAudioLogExistence(audioLogs: self.audio_log, newAudioLog: log)
+        if !exist{
+            if log.date != "" && !log.Audio.isEmpty && !log.FFT.isEmpty{
+                DispatchQueue.main.async{
+                    self.audio_log.append(log)
+                    //save to UserDefaults
+                    let encoder = JSONEncoder()
+                    if let data = try? encoder.encode(self.audio_log) {
+                        UserDefaults.standard.set(data, forKey: "audio_log")
+                    }
+                    print(self.audio_log.count)
+                }
+            }
+            print(self.audio_log.count)
+        }
+       
+    }
+    
     func RotatePlatform(Angle : Angle = .degrees(0)){
         print(Angle.degrees)
         post_request("/launch_platform",value: [Int(Angle.degrees)])
