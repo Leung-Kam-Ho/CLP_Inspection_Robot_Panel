@@ -14,5 +14,6 @@ enum Constants{
     static let PRESSURE_MAX = 6.6
     static let offWhite = Color(red: 221/255, green: 221/255, blue: 221/255)
     static let notBlack = Color(red: 33/255, green: 33/255, blue: 36/255)
+    static let SLOT_DISTANCE_DEGREE : Double = 12
 }
 

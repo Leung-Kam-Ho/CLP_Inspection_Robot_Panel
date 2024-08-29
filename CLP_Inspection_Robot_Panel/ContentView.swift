@@ -73,6 +73,16 @@ struct ContentView: View {
                         .padding()
                         .background(Image("Watermark"))
                 }
+                Tab("Audio", systemImage:"waveform", value: .Audio){
+                    AudioSystemView()
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 33.0)
+                            .fill(.ultraThinMaterial)
+                            .stroke(.white)
+                        )
+                        .padding()
+                        .background(Image("Watermark"))
+                }
                 
             }
             .tabViewStyle(.sidebarAdaptable)
@@ -105,6 +115,7 @@ extension ContentView{
         case ToF
         case Camera
         case Progress
+        case Audio
     }
     @Observable
     class ViewModel{

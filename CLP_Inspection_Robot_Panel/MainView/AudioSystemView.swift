@@ -21,13 +21,6 @@ struct AudioSystemView: View {
                 .frame(maxWidth: .infinity)
                 .foregroundStyle(Constants.notBlack)
                 .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
-            if data.isEmpty {
-                VStack {
-                    Text("No Audio Data")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.red)
-                }
-            }
             GroupBox("Most recent Audio data"){
                 Chart(Array(data.enumerated()), id:\.0){ nr,value in
                     LineMark(
@@ -39,7 +32,12 @@ struct AudioSystemView: View {
                 .chartXScale(domain: [0,data.count])
                 .chartXAxisLabel("Time(s)")
                 .chartYAxisLabel("Amplitude")
-            }
+            }.overlay(content: {
+                if data.isEmpty{
+                    
+                    Text("No Audio Record")
+                }
+            })
             .clipShape(.rect(cornerRadius: 25.0))
             GroupBox("Fourier Transform of the most recent audio data"){
                 Chart(Array(y_data.enumerated()), id:\.0){ nr,value in
