@@ -7,6 +7,7 @@ class Station : ObservableObject{
         var digital_valve_status = Digital_Valve_Status()
         var launch_platform_status = LaunchPlatform_Status()
         var auto_status = Automation_Status()
+        var audio_status = Audio_Status()
     }
     class Robot_Status : Codable, ObservableObject{
         var servo : [Int] = [1500,1500,1500,1500]
@@ -35,13 +36,20 @@ class Station : ObservableObject{
     class Camera_Status : Codable, ObservableObject{
         var data : Data = Data()
     }
+    class Audio_Status : Codable, ObservableObject{
+        var recording : Bool = false
+        var most_recent_FFT : [Float] = []
+        var most_recent_FFT_freq : [Float] = []
+        var most_recent_Audio : [Float] = []
+        
+    }
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
-        case pi = "cable.local"
         case station = "station.local"
         case studio = "kamholeung.local"
     }
     @Published var status = Station_Status()
+    @Published var server_connected = false
     @Published var ip : String
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
     @Published var camera_frames : UIImage = .watermark
@@ -52,16 +60,19 @@ class Station : ObservableObject{
     
     var data = Station_Status()
     var tree = "No Tree"
+    var most_recent_FFT = [Float]()
+    var connected = false
     
     var port = Constants.PORT
     let timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
+    let timer2 = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let pressure_max = Constants.PRESSURE_MAX
     var free = true
     var free2 = true
     
     init(){
         let defaults = UserDefaults.standard
-        self.ip = defaults.string(forKey: "IP") ?? IP.pi.rawValue
+        self.ip = defaults.string(forKey: "IP") ?? IP.station.rawValue
         self.init_RunLoop()
     }
     
@@ -89,6 +100,7 @@ class Station : ObservableObject{
             let temp = self.data
             self.status = temp
             self.tree = self.status.auto_status.tree_ascii
+            self.server_connected = self.connected
         }
         
     }
@@ -119,14 +131,20 @@ class Station : ObservableObject{
                 defer{ self.free = true }
                 if let _ = error{
                     DispatchQueue.main.async{
-                        self.data = Station_Status()
+                        self.connected = false
+                        // make everything offline
+                        self.status.robot_status.connected = false
+                        self.status.digital_valve_status.connected = false
+                        self.status.launch_platform_status.connected = false
                     }
                 }
                 guard let data = data else { return }
                 do{
                     self.data = try JSONDecoder().decode(Station_Status.self, from: data)
+                    self.connected = true
                 }catch{
                     print(error)
+                    self.connected = false
                 }
                 
             }
@@ -178,6 +196,26 @@ class Station : ObservableObject{
             task.resume()
         }
     }
+    
+    func post_request(_ route : String = "/", value : Bool){
+        DispatchQueue.global(qos: .userInitiated).async{
+            let url = self.create_url(route)
+            var request = URLRequest(url: url, timeoutInterval: TimeInterval(1))
+            request.setValue(
+                "application/json",
+                forHTTPHeaderField: "Content-Type"
+            )
+            request.httpMethod = "POST"
+            let message = ["value":value]
+            let data = try! JSONEncoder().encode(message)
+            request.httpBody = data
+            let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
+                guard let _ = data else { return }
+            }
+            task.resume()
+        }
+    }
+    
     func post_request(_ route : String = "/", value : String){
         // Value : [1100,1100,1100,1100] or [8]
         DispatchQueue.global(qos: .userInitiated).async{
