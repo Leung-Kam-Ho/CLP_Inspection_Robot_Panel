@@ -26,11 +26,15 @@ struct AudioSystemView: View {
             let y_domain = [(data.min() ?? 0.0) * 1.3, (data.max() ?? 100.0 ) * 1.3]
             let x_domain = [0,data.count]
             VStack{
-                Label("Audio System", systemImage: "waveform")
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(Constants.notBlack)
-                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
+                Button(action:{
+                    viewModel.showingOption.toggle()
+                }){
+                    Label("Audio System", systemImage: "waveform")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(Constants.notBlack)
+                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
+                }
                 GroupBox("Pulse in Audio"){
                     Chart{
                         LinePlot(dataPoints,
@@ -218,10 +222,14 @@ struct AudioSystemView: View {
         viewModel.audio_log = station.audio_log
     }
     func goto_latest(){
-        viewModel.date_selection = viewModel.audio_log.last?.date ?? nil as String?
-        viewModel.distance_selection = viewModel.audio_log.last?.distance ?? nil as Int?
-        viewModel.slot_selection = viewModel.audio_log.last?.slot ?? nil as Int?
-        viewModel.file_num_selection = viewModel.audio_log.last?.file_num ?? nil as Int?
+//        viewModel.date_selection = viewModel.audio_log.last?.date ?? nil as String?
+//        viewModel.distance_selection = viewModel.audio_log.last?.distance ?? nil as Int?
+//        viewModel.slot_selection = viewModel.audio_log.last?.slot ?? nil as Int?
+//        viewModel.file_num_selection = viewModel.audio_log.last?.file_num ?? nil as Int?
+        viewModel.date_selection = station.status.audio_status.date
+        viewModel.distance_selection = station.status.audio_status.distance
+        viewModel.slot_selection = station.status.audio_status.slot
+        viewModel.file_num_selection = station.status.audio_status.file_num
     }
 }
 
