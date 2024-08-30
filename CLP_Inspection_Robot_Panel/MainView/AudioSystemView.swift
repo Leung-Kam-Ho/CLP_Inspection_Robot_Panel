@@ -8,186 +8,200 @@
 import SwiftUI
 import Charts
 
+struct DataPoint: Identifiable {
+    var id: Double { Double(xValue) }
+    let xValue: Int
+    let yValue: Double
+}
+
 struct AudioSystemView: View {
+    @Binding var current_tab : ContentView.Tabs
     @EnvironmentObject var station: Station
     @State var viewModel = ViewModel()
     let bigEnough = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
     var body: some View {
-        let (data,y_data,x_data) = self.get_log()
-        let y_domain = [data.min() ?? 0.0, (data.max() ?? 100.0 ) * 1.3]
-        let x_domain = [0,data.count]
-        VStack{
-            Label("Audio System", systemImage: "waveform")
-                .padding()
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(Constants.notBlack)
-                .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
-            GroupBox("Pulse in Audio"){
-                Chart(Array(data.enumerated()), id:\.0){ nr,value in
-                    LineMark(
-                        x: .value("Time(s)", nr),
-                        y: .value("Amplitude", value)
-                    ).interpolationMethod(.cardinal).foregroundStyle(.indigo)
+        if current_tab == .Audio{
+            let (data,y_data,x_data) = self.get_log()
+            let dataPoints = (0..<data.count).map{DataPoint(xValue: $0, yValue: Double(data[$0]))}
+            let y_domain = [(data.min() ?? 0.0) * 1.3, (data.max() ?? 100.0 ) * 1.3]
+            let x_domain = [0,data.count]
+            VStack{
+                Label("Audio System", systemImage: "waveform")
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .foregroundStyle(Constants.notBlack)
+                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
+                GroupBox("Pulse in Audio"){
+                    Chart{
+                        LinePlot(dataPoints,
+                                 x: .value("Time(s)", \.xValue),
+                                 y: .value("Amplitude", \.yValue)
+                        )
+                    }
+                    .chartYScale(domain: y_domain)
+                    .chartXScale(domain: x_domain)
+                    .chartXAxisLabel("Time(s)")
+                    .chartYAxisLabel("Amplitude")
+                }.overlay(content: {
+                    if data.isEmpty{
+                        Text("No Audio Record")
+                    }
+                })
+                .clipShape(.rect(cornerRadius: 25.0))
+                GroupBox("Fourier Transform of the Pulse"){
+                    Chart(Array(y_data.enumerated()), id:\.0){ nr,value in
+                        LineMark(
+                            x: .value("Frequency(Hz)", x_data[nr]),
+                            y: .value("Amplitude", value)
+                        ).interpolationMethod(.cardinal).foregroundStyle(.green)
+                    }
+                    .chartYScale(domain: [y_data.min() ?? 0.0, (y_data.max() ?? 100.0 ) * 1.3])
+                    .chartXScale(domain: [x_data.min() ?? 0.0, (x_data.max() ?? 100.0)])
+                    .chartXAxisLabel("Frequency(Hz)")
+                    .chartYAxisLabel("Amplitude")
                 }
-                .chartYScale(domain: y_domain)
-                .chartXScale(domain: x_domain)
-                .chartXAxisLabel("Time(s)")
-                .chartYAxisLabel("Amplitude")
-            }.overlay(content: {
-                if data.isEmpty{
-                    Text("No Audio Record")
-                }
-            })
-            .clipShape(.rect(cornerRadius: 25.0))
-            GroupBox("Fourier Transform of the Pulse"){
-                Chart(Array(y_data.enumerated()), id:\.0){ nr,value in
-                    LineMark(
-                        x: .value("Frequency(Hz)", x_data[nr]),
-                        y: .value("Amplitude", value)
-                    ).interpolationMethod(.cardinal).foregroundStyle(.green)
-                }
-                .chartYScale(domain: [y_data.min() ?? 0.0, (y_data.max() ?? 100.0 ) * 1.3])
-                .chartXScale(domain: [x_data.min() ?? 0.0, (x_data.max() ?? 100.0)])
-                .chartXAxisLabel("Frequency(Hz)")
-                .chartYAxisLabel("Amplitude")
-            }
-            .clipShape(.rect(cornerRadius: 25.0))
-            if bigEnough{
-                HStack{
+                .clipShape(.rect(cornerRadius: 25.0))
+                if bigEnough{
                     HStack{
                         HStack{
                             HStack{
-                                Picker("Date",selection: $viewModel.date_selection){
-                                    let list_of_slot = Array(Set(viewModel.audio_log.map{$0.date}).sorted() )
-                                    Section("Date"){
-                                        
-                                        ForEach(list_of_slot, id: \.self){ slot in
-                                            Text("\(slot)")
-                                                .tag(slot)
+                                HStack{
+                                    Picker("Date",selection: $viewModel.date_selection){
+                                        let list_of_slot = Array(Set(viewModel.audio_log.map{$0.date}).sorted() )
+                                        Section("Date"){
+                                            
+                                            ForEach(list_of_slot, id: \.self){ slot in
+                                                Text("\(slot)")
+                                                    .tag(slot)
+                                            }
+                                            Text("-")
+                                                .tag(nil as String?)
                                         }
-                                        Text("-")
-                                            .tag(nil as String?)
                                     }
                                 }
-                            }
-                            HStack{
-                                Picker("Slot", selection: $viewModel.slot_selection){
-                                    let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection}).map{$0.slot}).sorted() )
-                                    Section("Slot"){
-                                        ForEach(list_of_slot, id: \.self){ slot in
-                                            Text("\(slot)")
-                                                .tag(slot)
+                                HStack{
+                                    Picker("Slot", selection: $viewModel.slot_selection){
+                                        let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection}).map{$0.slot}).sorted() )
+                                        Section("Slot"){
+                                            ForEach(list_of_slot, id: \.self){ slot in
+                                                Text("\(slot)")
+                                                    .tag(slot)
+                                            }
+                                            Text("-")
+                                                .tag(nil as Int?)
                                         }
-                                        Text("-")
-                                            .tag(nil as Int?)
                                     }
                                 }
-                            }
-                            HStack{
-                                Picker("Wedge", selection: $viewModel.distance_selection){
-                                    let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection && $0.slot == viewModel.slot_selection}).map{$0.distance}).sorted() )
-                                    Section("Wedge"){
-                                        ForEach(list_of_slot, id: \.self){ slot in
-                                            Text("\(slot)")
-                                                .tag(slot)
+                                HStack{
+                                    Picker("Wedge", selection: $viewModel.distance_selection){
+                                        let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection && $0.slot == viewModel.slot_selection}).map{$0.distance}).sorted() )
+                                        Section("Wedge"){
+                                            ForEach(list_of_slot, id: \.self){ slot in
+                                                Text("\(slot)")
+                                                    .tag(slot)
+                                            }
+                                            Text("-")
+                                                .tag(nil as Int?)
                                         }
-                                        Text("-")
-                                            .tag(nil as Int?)
                                     }
                                 }
-                            }
-                            HStack{
-                                Picker("Number", selection: $viewModel.file_num_selection){
-                                    let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection && $0.slot == viewModel.slot_selection && $0.distance == viewModel.distance_selection}).map{$0.file_num}).sorted() )
-                                    Section("Audio Number"){
-                                        ForEach(list_of_slot, id: \.self){ slot in
-                                            Text("\(slot)")
-                                                .tag(slot)
+                                HStack{
+                                    Picker("Number", selection: $viewModel.file_num_selection){
+                                        let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection && $0.slot == viewModel.slot_selection && $0.distance == viewModel.distance_selection}).map{$0.file_num}).sorted() )
+                                        Section("Audio Number"){
+                                            ForEach(list_of_slot, id: \.self){ slot in
+                                                Text("\(slot)")
+                                                    .tag(slot)
+                                            }
+                                            Text("-")
+                                                .tag(nil as Int?)
                                         }
-                                        Text("-")
-                                            .tag(nil as Int?)
-                                    }
-                                }.foregroundStyle(Constants.notBlack)
+                                    }.foregroundStyle(Constants.notBlack)
+                                }
                             }
+                            .padding()
+                                .contentTransition(.numericText(countsDown: true))
+                                .foregroundStyle(Constants.notBlack)
+                                .background(Capsule().fill(.white))
+                            Button(action:{
+                                withAnimation{
+                                    goto_latest()
+                                }
+                            }){
+                                Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
+                                    .padding()
+                                    .foregroundStyle(Constants.notBlack)
+                                    .background(Circle().fill(.yellow))
+                            }
+                            .buttonStyle(.plain)
+                            
                         }
                         .padding()
-                            .contentTransition(.numericText(countsDown: true))
-                            .foregroundStyle(Constants.notBlack)
-                            .background(Capsule().fill(.white))
-                        Button(action:{
-                            withAnimation{
-                                refresh_Log()
+                        .background(Capsule().fill(.ultraThinMaterial))
+                        .frame(maxWidth: .infinity, alignment: .bottomLeading)
+                        HStack{
+                            Button(action:{
+                                withAnimation{
+                                    viewModel.showingOption.toggle()
+                                }
+                            }){
+                                Image(systemName: "option")
+                                    .padding()
+                                    .background(Circle().fill(.red))
                             }
-                        }){
-                            Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                                .padding()
-                                .foregroundStyle(Constants.notBlack)
-                                .background(Circle().fill(.yellow))
-                        }
-                        .buttonStyle(.plain)
-                        
-                    }
-                    .padding()
-                    .background(Capsule().fill(.ultraThinMaterial))
-                    .frame(maxWidth: .infinity, alignment: .bottomLeading)
-                    HStack{
-                        
-                        Button(action:{
-                            withAnimation{
-                                viewModel.showingOption.toggle()
+                            .buttonStyle(.plain)
+                            
+                            .confirmationDialog("Option", isPresented: $viewModel.showingOption) {
+                                Button("Download") { download_log() }
+                                Button("Upload") {}
+                                Button("Delete", role: .destructive) {
+
+                                    viewModel.showingConfirmation = true
+                                }
+                                Button("Cancel", role: .cancel) { }
+                            } message: {
+                                Text("Please select an action")
                             }
-                        }){
-                            Image(systemName: "option")
-                                .padding()
-                                .background(Circle().fill(.red))
                         }
-                        .buttonStyle(.plain)
-                        
-                        .confirmationDialog("Option", isPresented: $viewModel.showingOption) {
-                            Button("Download") { download_log() }
-                            Button("Upload") {}
-                            Button("Delete", role: .destructive) {
-//                                download_log()
-                                viewModel.showingConfirmation = true
-                            }
-                            Button("Cancel", role: .cancel) { }
-                        } message: {
-                            Text("Please select an action")
+                    }.padding()
+                        .confirmationDialog("Clear Data", isPresented: $viewModel.showingConfirmation) {
+                        Button("Delete", role: .destructive) {
+                            station.audio_log.removeAll()
+                            station.save_audio_to_user_defaults()
+                            refresh_Log()
                         }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                        Text("Are you sure you want to clear the audio log?")
                     }
-                }.padding()
-                    .confirmationDialog("Clear Data", isPresented: $viewModel.showingConfirmation) {
-                    Button("Delete", role: .destructive) {
-//                                download_log()
-                        station.audio_log.removeAll()
-                        station.save_audio_to_user_defaults()
-                    }
-                    Button("Cancel", role: .cancel) { }
-                } message: {
-                    Text("Are you sure you want to clear the audio log?")
+                }
+            }
+            .onReceive(viewModel.timer_chart, perform: refresh_Log)
+            .animation(.easeInOut(duration:0.1), value: viewModel.file_num_selection)
+            .animation(.easeInOut(duration:0.1), value: viewModel.slot_selection)
+            .animation(.easeInOut(duration:0.1), value: viewModel.date_selection)
+            .onAppear{
+                refresh_Log()
+                goto_latest()
+            }
+               
+            .alert("File Save Failed", isPresented: $viewModel.showAlert, actions: {
+                Button(action:{
+                    
+                }){
+                    Text("OK")
+                }
+            })
+            .fileExporter(isPresented: $viewModel.showingExporter, document: viewModel.Document, contentType: .plainText) { result in
+                switch result {
+                case .success(let url):
+                    print("Saved to \(url)")
+                case .failure(let error):
+                    print(error.localizedDescription)
                 }
             }
         }
-        .alert("File Save Failed", isPresented: $viewModel.showAlert, actions: {
-            Button(action:{
-                
-            }){
-                Text("OK")
-            }
-        })
-        .fileExporter(isPresented: $viewModel.showingExporter, document: viewModel.Document, contentType: .plainText) { result in
-            switch result {
-            case .success(let url):
-                print("Saved to \(url)")
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-        .onAppear(perform: {
-            withAnimation{
-                refresh_Log()
-            }
-        })
+  
         
     }
     func download_log(){
@@ -200,8 +214,10 @@ struct AudioSystemView: View {
             viewModel.showAlert = true
         }
     }
-    func refresh_Log(){
+    func refresh_Log(_: Date = Date()){
         viewModel.audio_log = station.audio_log
+    }
+    func goto_latest(){
         viewModel.date_selection = viewModel.audio_log.last?.date ?? nil as String?
         viewModel.distance_selection = viewModel.audio_log.last?.distance ?? nil as Int?
         viewModel.slot_selection = viewModel.audio_log.last?.slot ?? nil as Int?
@@ -242,6 +258,7 @@ extension AudioSystemView{
         var distance_selection : Int? = nil as Int?
         var file_num_selection : Int? = nil as Int?
         var date_selection : String? = nil as String?
+        let timer_chart = Timer.publish(every: Constants.CHART_RATE, on: .main, in: .default).autoconnect()
     }
     
     func get_log() -> ([Float],[Float],[Float]){

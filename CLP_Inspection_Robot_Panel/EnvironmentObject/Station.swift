@@ -57,7 +57,7 @@ class Station : ObservableObject{
     @Published var ip : String
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
     @Published var camera_frames : UIImage = .watermark
-    @Published var audio_log : [Audio_Status] = []
+    var audio_log : [Audio_Status] = []
     
     var camera_status = Camera_Status()
     var image : UIImage? = UIImage()
@@ -69,7 +69,7 @@ class Station : ObservableObject{
     var connected = false
 
     var port = Constants.PORT
-    let timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
+    var timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
     let timer2 = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let pressure_max = Constants.PRESSURE_MAX
     var free = true
@@ -78,7 +78,6 @@ class Station : ObservableObject{
     init(){
         let defaults = UserDefaults.standard
         self.ip = defaults.string(forKey: "IP") ?? IP.station.rawValue
-
         if let data = UserDefaults.standard.data(forKey: "audio_log"),
            let log = try? JSONDecoder().decode([Audio_Status].self, from: data) {
             self.audio_log = log
@@ -111,7 +110,8 @@ class Station : ObservableObject{
             self.status = temp
             self.tree = self.status.auto_status.tree_ascii
             self.server_connected = self.connected
-            self.save_audio(self.data.audio_status)
+            self.save_audio(self.status.audio_status)
+            
         }
         
     }
@@ -181,18 +181,21 @@ class Station : ObservableObject{
 
     func save_audio(_ log : Audio_Status){
         // check if log.date in self.audio_log
-        let exist = checkAudioLogExistence(audioLogs: self.audio_log, newAudioLog: log)
-        if !exist{
-            if log.date != "" && !log.Audio.isEmpty && !log.FFT.isEmpty{
-                DispatchQueue.main.async{
-                    self.audio_log.append(log)
-                    //save to UserDefaults
-                    self.save_audio_to_user_defaults()
-                    print(self.audio_log.count)
+        if !log.recording{
+            let exist = checkAudioLogExistence(audioLogs: self.audio_log, newAudioLog: log)
+            if !exist{
+                if log.date != "" && !log.Audio.isEmpty && !log.FFT.isEmpty{
+                    DispatchQueue.main.async{
+                        self.audio_log.append(log)
+                        //save to UserDefaults
+                        self.save_audio_to_user_defaults()
+                        print(self.audio_log.count)
+                    }
                 }
+                print(self.audio_log.count)
             }
-            print(self.audio_log.count)
         }
+        
        
     }
     

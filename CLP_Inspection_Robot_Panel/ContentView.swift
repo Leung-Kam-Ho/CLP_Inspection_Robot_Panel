@@ -74,7 +74,7 @@ struct ContentView: View {
                         .background(Image("Watermark"))
                 }
                 Tab("Audio", systemImage:"waveform", value: .Audio){
-                    AudioSystemView()
+                    AudioSystemView(current_tab:$viewModel.selectedTab)
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 33.0)
                             .fill(.ultraThinMaterial)
@@ -88,6 +88,14 @@ struct ContentView: View {
             .tabViewStyle(.sidebarAdaptable)
             .font(.system(size: bigEnough ? screen.size.width / 50 : screen.size.width/15, weight: .bold, design: .rounded))
         }
+        // Change the data update rate, since all chart and ui are update in the main the main thread, and the cpu usage of chart is higher
+        .onChange(of: viewModel.selectedTab, { old, new in
+            if new == .Audio{
+                station.timer = Timer.publish(every: Constants.CHART_RATE, on: .main, in: .common).autoconnect()
+            }else{
+                station.timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
+            }
+        })
         .scrollContentBackground(.hidden)
         .bold()
         .environmentObject(station)
