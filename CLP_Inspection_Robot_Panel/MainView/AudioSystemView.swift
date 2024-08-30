@@ -56,65 +56,64 @@ struct AudioSystemView: View {
                 HStack{
                     HStack{
                         HStack{
-                            Text("Date :")
-                                .font(.caption)
-                            Picker("Audio Log", selection: $viewModel.date_selection){
-                                let list_of_slot = Array(Set(viewModel.audio_log.map{$0.date}).sorted() )
-                                Text("-")
-                                    .tag(nil as String?)
-                                ForEach(list_of_slot, id: \.self){ slot in
-                                    Text("\(slot)")
-                                        .tag(slot)
+                            HStack{
+                                Picker("Date",selection: $viewModel.date_selection){
+                                    let list_of_slot = Array(Set(viewModel.audio_log.map{$0.date}).sorted() )
+                                    Section("Date"){
+                                        
+                                        ForEach(list_of_slot, id: \.self){ slot in
+                                            Text("\(slot)")
+                                                .tag(slot)
+                                        }
+                                        Text("-")
+                                            .tag(nil as String?)
+                                    }
                                 }
                             }
-                        }.padding()
+                            HStack{
+                                Picker("Slot", selection: $viewModel.slot_selection){
+                                    let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection}).map{$0.slot}).sorted() )
+                                    Section("Slot"){
+                                        ForEach(list_of_slot, id: \.self){ slot in
+                                            Text("\(slot)")
+                                                .tag(slot)
+                                        }
+                                        Text("-")
+                                            .tag(nil as Int?)
+                                    }
+                                }
+                            }
+                            HStack{
+                                Picker("Wedge", selection: $viewModel.distance_selection){
+                                    let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection && $0.slot == viewModel.slot_selection}).map{$0.distance}).sorted() )
+                                    Section("Wedge"){
+                                        ForEach(list_of_slot, id: \.self){ slot in
+                                            Text("\(slot)")
+                                                .tag(slot)
+                                        }
+                                        Text("-")
+                                            .tag(nil as Int?)
+                                    }
+                                }
+                            }
+                            HStack{
+                                Picker("Number", selection: $viewModel.file_num_selection){
+                                    let list_of_slot = Array(Set(viewModel.audio_log.filter({$0.date == viewModel.date_selection && $0.slot == viewModel.slot_selection && $0.distance == viewModel.distance_selection}).map{$0.file_num}).sorted() )
+                                    Section("Audio Number"){
+                                        ForEach(list_of_slot, id: \.self){ slot in
+                                            Text("\(slot)")
+                                                .tag(slot)
+                                        }
+                                        Text("-")
+                                            .tag(nil as Int?)
+                                    }
+                                }.foregroundStyle(Constants.notBlack)
+                            }
+                        }
+                        .padding()
                             .contentTransition(.numericText(countsDown: true))
                             .foregroundStyle(Constants.notBlack)
                             .background(Capsule().fill(.white))
-                        HStack{
-                            Text("Slot :")
-                            Picker("Audio Log", selection: $viewModel.slot_selection){
-                                let list_of_slot = Array(Set(viewModel.audio_log.map{$0.slot}).sorted() )
-                                Text("-")
-                                    .tag(nil as Int?)
-                                ForEach(list_of_slot, id: \.self){ slot in
-                                    Text("\(slot)")
-                                        .tag(slot)
-                                }
-                            }
-                        }.padding()
-                            .contentTransition(.numericText(countsDown: true))
-                            .foregroundStyle(Constants.notBlack)
-                            .background(Capsule().fill(.white))
-                        HStack{
-                            Text("Wedge :")
-                            Picker("Audio Log", selection: $viewModel.distance_selection){
-                                let list_of_slot = Array(Set(viewModel.audio_log.map{$0.distance}).sorted() )
-                                Text("-")
-                                    .tag(nil as Int?)
-                                ForEach(list_of_slot, id: \.self){ slot in
-                                    Text("\(slot)")
-                                        .tag(slot)
-                                }
-                            }
-                        }.padding()
-                            .contentTransition(.numericText(countsDown: true))
-                            .background(Capsule().fill(.indigo))
-                        HStack{
-                            Text("No :")
-                                
-                            Picker("Audio Log", selection: $viewModel.file_num_selection){
-                                let list_of_slot = Array(Set(viewModel.audio_log.map{$0.file_num}).sorted() )
-                                Text("-")
-                                    .tag(nil as Int?)
-                                ForEach(list_of_slot, id: \.self){ slot in
-                                    Text("\(slot)")
-                                        .tag(slot)
-                                }
-                            }.foregroundStyle(Constants.notBlack)
-                        }.padding()
-                            .foregroundStyle(Constants.notBlack)
-                            .background(Capsule().fill(Constants.offWhite))
                         Button(action:{
                             withAnimation{
                                 refresh_Log()
@@ -135,26 +134,54 @@ struct AudioSystemView: View {
                         
                         Button(action:{
                             withAnimation{
-                                viewModel.showingConfirmation.toggle()
+                                viewModel.showingOption.toggle()
                             }
                         }){
-                            Image(systemName: "trash.fill")
+                            Image(systemName: "option")
                                 .padding()
                                 .background(Circle().fill(.red))
                         }
                         .buttonStyle(.plain)
-                        .confirmationDialog("Clear Data", isPresented: $viewModel.showingConfirmation) {
-                            Button("Clear", role: .destructive) { station.audio_log.removeAll() }
+                        
+                        .confirmationDialog("Option", isPresented: $viewModel.showingOption) {
+                            Button("Download") { download_log() }
+                            Button("Upload") {}
+                            Button("Delete", role: .destructive) {
+//                                download_log()
+                                viewModel.showingConfirmation = true
+                            }
                             Button("Cancel", role: .cancel) { }
                         } message: {
-                            Text("Are you sure you want to clear the audio log?")
+                            Text("Please select an action")
                         }
                     }
-                    
                 }.padding()
+                    .confirmationDialog("Clear Data", isPresented: $viewModel.showingConfirmation) {
+                    Button("Delete", role: .destructive) {
+//                                download_log()
+                        station.audio_log.removeAll()
+                        station.save_audio_to_user_defaults()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Are you sure you want to clear the audio log?")
+                }
             }
-            
+        }
+        .alert("File Save Failed", isPresented: $viewModel.showAlert, actions: {
+            Button(action:{
                 
+            }){
+                Text("OK")
+            }
+        })
+        .fileExporter(isPresented: $viewModel.showingExporter, document: viewModel.Document, contentType: .plainText) { result in
+            switch result {
+            case .success(let url):
+                print("Saved to \(url)")
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
         }
         .onAppear(perform: {
             withAnimation{
@@ -163,12 +190,22 @@ struct AudioSystemView: View {
         })
         
     }
+    func download_log(){
+        let encoder = JSONEncoder()
+        if let data = try? encoder.encode(viewModel.audio_log) {
+            let str = String(decoding: data, as: UTF8.self)
+            viewModel.Document.text = str
+            viewModel.showingExporter = true
+        }else{
+            viewModel.showAlert = true
+        }
+    }
     func refresh_Log(){
         viewModel.audio_log = station.audio_log
-        viewModel.date_selection = viewModel.date_selection ?? viewModel.audio_log.first?.date ?? nil as String?
-        viewModel.distance_selection = viewModel.distance_selection ?? viewModel.audio_log.first?.distance ?? nil as Int?
-        viewModel.slot_selection = viewModel.slot_selection ?? viewModel.audio_log.first?.slot ?? nil as Int?
-        viewModel.file_num_selection = viewModel.file_num_selection ?? viewModel.audio_log.first?.file_num ?? nil as Int?
+        viewModel.date_selection = viewModel.audio_log.last?.date ?? nil as String?
+        viewModel.distance_selection = viewModel.audio_log.last?.distance ?? nil as Int?
+        viewModel.slot_selection = viewModel.audio_log.last?.slot ?? nil as Int?
+        viewModel.file_num_selection = viewModel.audio_log.last?.file_num ?? nil as Int?
     }
 }
 
@@ -195,8 +232,12 @@ struct RecordingButton: View {
 extension AudioSystemView{
     @Observable
     class ViewModel {
+        var Document = TextFile()
         var audio_log = [Station.Audio_Status]()
+        var showingOption = false
         var showingConfirmation = false
+        var showingExporter = false
+        var showAlert = false
         var slot_selection : Int? = nil as Int?
         var distance_selection : Int? = nil as Int?
         var file_num_selection : Int? = nil as Int?

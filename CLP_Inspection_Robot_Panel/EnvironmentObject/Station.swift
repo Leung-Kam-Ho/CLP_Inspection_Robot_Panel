@@ -171,6 +171,13 @@ class Station : ObservableObject{
         }
         return false // AudioLog does not exist
     }
+    
+    func save_audio_to_user_defaults(){
+        let encoder = JSONEncoder()
+        if let data = try? encoder.encode(self.audio_log) {
+            UserDefaults.standard.set(data, forKey: "audio_log")
+        }
+    }
 
     func save_audio(_ log : Audio_Status){
         // check if log.date in self.audio_log
@@ -180,10 +187,7 @@ class Station : ObservableObject{
                 DispatchQueue.main.async{
                     self.audio_log.append(log)
                     //save to UserDefaults
-                    let encoder = JSONEncoder()
-                    if let data = try? encoder.encode(self.audio_log) {
-                        UserDefaults.standard.set(data, forKey: "audio_log")
-                    }
+                    self.save_audio_to_user_defaults()
                     print(self.audio_log.count)
                 }
             }
