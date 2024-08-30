@@ -56,7 +56,23 @@ struct AudioSystemView: View {
                 HStack{
                     HStack{
                         HStack{
-                            Text("Slot : ")
+                            Text("Date :")
+                                .font(.caption)
+                            Picker("Audio Log", selection: $viewModel.date_selection){
+                                let list_of_slot = Array(Set(viewModel.audio_log.map{$0.date}).sorted() )
+                                Text("-")
+                                    .tag(nil as String?)
+                                ForEach(list_of_slot, id: \.self){ slot in
+                                    Text("\(slot)")
+                                        .tag(slot)
+                                }
+                            }
+                        }.padding()
+                            .contentTransition(.numericText(countsDown: true))
+                            .foregroundStyle(Constants.notBlack)
+                            .background(Capsule().fill(.white))
+                        HStack{
+                            Text("Slot :")
                             Picker("Audio Log", selection: $viewModel.slot_selection){
                                 let list_of_slot = Array(Set(viewModel.audio_log.map{$0.slot}).sorted() )
                                 Text("-")
@@ -71,7 +87,7 @@ struct AudioSystemView: View {
                             .foregroundStyle(Constants.notBlack)
                             .background(Capsule().fill(.white))
                         HStack{
-                            Text("Wedge : ")
+                            Text("Wedge :")
                             Picker("Audio Log", selection: $viewModel.distance_selection){
                                 let list_of_slot = Array(Set(viewModel.audio_log.map{$0.distance}).sorted() )
                                 Text("-")
@@ -149,6 +165,7 @@ struct AudioSystemView: View {
     }
     func refresh_Log(){
         viewModel.audio_log = station.audio_log
+        viewModel.date_selection = viewModel.date_selection ?? viewModel.audio_log.first?.date ?? nil as String?
         viewModel.distance_selection = viewModel.distance_selection ?? viewModel.audio_log.first?.distance ?? nil as Int?
         viewModel.slot_selection = viewModel.slot_selection ?? viewModel.audio_log.first?.slot ?? nil as Int?
         viewModel.file_num_selection = viewModel.file_num_selection ?? viewModel.audio_log.first?.file_num ?? nil as Int?
@@ -183,10 +200,11 @@ extension AudioSystemView{
         var slot_selection : Int? = nil as Int?
         var distance_selection : Int? = nil as Int?
         var file_num_selection : Int? = nil as Int?
+        var date_selection : String? = nil as String?
     }
     
     func get_log() -> ([Float],[Float],[Float]){
-            let log = viewModel.audio_log.filter({$0.file_num == viewModel.file_num_selection && $0.slot == viewModel.slot_selection && $0.distance == viewModel.distance_selection})
+        let log = viewModel.audio_log.filter({$0.file_num == viewModel.file_num_selection && $0.slot == viewModel.slot_selection && $0.distance == viewModel.distance_selection && $0.date == viewModel.date_selection})
             if log.isEmpty{
                 return ([Float](),[Float](),[Float]())
             }
