@@ -19,12 +19,12 @@ struct ControlView: View {
         
         let roll_Section_Round =
         HStack{
-            Image(systemName: "dial.low.fill")
+            Image(systemName: "arrow.trianglehead.clockwise")
             Text(String(format : "%03d",self.station.status.robot_status.roll_angle))
         }
         .foregroundStyle(.primary)
         .padding()
-        .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial))
+//        .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial)) 
         .monospacedDigit()
         let R_Adj =
         VStack{
@@ -51,7 +51,6 @@ struct ControlView: View {
             } ,icon: { _ in
                 return Image(systemName: "l.circle.fill")
             })
-            
             .padding(.all,compact ? 0 : nil)
         }.frame(maxHeight: .infinity)
             .padding()
@@ -113,7 +112,7 @@ struct ControlView: View {
                 }){
                     Image(systemName: "minus.circle.fill")
                         .padding()
-
+                    
                 }
                 Text(String(viewModel.angleTarget))
                     .padding()
@@ -198,7 +197,6 @@ struct ControlView: View {
                         VStack{
                             Text("CurPos")
                             connectIcon
-                            RecordingButton()
                             
                         }.padding()
                         
@@ -247,10 +245,10 @@ struct ControlView: View {
                             }.frame(maxWidth: .infinity,maxHeight: .infinity)
                             HStack{
                                 roll_Section
-                            
+                                
                                 RecordingButton()
                             }.padding().background(Capsule().fill(.ultraThinMaterial))
-                           
+                            
                         }//.padding()
                     }else{
                         VStack{
@@ -267,50 +265,54 @@ struct ControlView: View {
                     Divider()
                         .padding()
                     
-                        VStack{
-                            HStack{
+                    VStack{
+                        HStack{
+                            VStack{
+                                Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                    .padding()
+                                    .contentTransition(.numericText(countsDown: true))
+                                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
+                                    .padding()
+                                //                                        .frame(maxHeight: .infinity,alignment : .top)
                                 VStack{
-                                    Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
-                                        .padding()
-                                        .contentTransition(.numericText(countsDown: true))
-                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-                                        .padding()
-//                                        .frame(maxHeight: .infinity,alignment : .top)
-                                    VStack{
-                                        Image("Robot_top")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(maxHeight: .infinity)
+                                    Image("Robot_top")
+                                        .resizable()
+                                        .scaledToFit()
+                                    //                                            .frame(maxHeight: .infinity)
+//                                    roll_Section_Round
+                                    HStack{
                                         roll_Section_Round
-                                    }
-                                        
-                                }.frame(maxHeight: .infinity)
+                                        RecordingButton()
+                                    }.padding().background(Capsule().fill(.ultraThinMaterial))
+                                }
                                 
+                            }.frame(maxHeight: .infinity)
+                            
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 25.0).stroke(.white))
                                 .padding()
+                            VStack{
                                 VStack{
-                                        VStack{
-                                            Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
-                                                .padding()
-                                                .frame(maxWidth: .infinity)
-                                                .foregroundStyle(Constants.notBlack)
-                                                .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
-                                                
-                                            PressureView(enabled : true)
-                                        }.padding()
-                                    HStack{
-                                        L_Adj
-                                        Spacer()
-                                        R_Adj
-                                            
-                                        
-                                    }.padding()
-                                }
+                                    Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
+                                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundStyle(Constants.notBlack)
+                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                                    
+                                    PressureView(enabled : true)
+                                }.padding()
+                                HStack{
+                                    L_Adj
+                                    Spacer()
+                                    R_Adj
+                                    
+                                    
+                                }.padding()
                             }
-                        }.frame(maxHeight: .infinity)
+                        }
+                    }.frame(maxHeight: .infinity)
                     
-//                    .padding()
+                    //                    .padding()
                     Divider()
                         .padding()
                     
@@ -320,6 +322,7 @@ struct ControlView: View {
                         
                         ScrollView(showsIndicators: false){
                             VStack(spacing : 20){
+                                
                                 ForEach(Array(data[0...10].enumerated()), id: \.0) { idx, value in
                                     Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
                                         .padding()
@@ -340,13 +343,11 @@ struct ControlView: View {
                         }.padding()
                             .background(Capsule()
                                 .fill(.ultraThinMaterial))
-                        
                     }
                 }
             }
         }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial).stroke(.white))
+        
         
         
     }

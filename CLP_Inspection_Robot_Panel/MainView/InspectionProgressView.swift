@@ -48,7 +48,6 @@ struct InspectionProgressView: View {
                                     }
                                     
                                 }.padding()
-                                    .background(RoundedRectangle(cornerRadius: 18.0).fill(.ultraThinMaterial))
                                 Text(String(format: "%03d",slot.EL_CID_Progress * 100) + "%")
                                     .lineLimit(1)
                                     .foregroundStyle(.white)

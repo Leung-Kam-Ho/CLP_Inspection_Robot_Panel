@@ -11,12 +11,12 @@ import Charts
 struct ToFView: View {
     @EnvironmentObject var station : Station
     let columns = [
-        GridItem(.adaptive(minimum: 130,maximum: 200))
+        GridItem(.adaptive(minimum: 150,maximum: 200))
     ]
     var body: some View {
         let data = self.station.status.robot_status.tof
         VStack{
-            Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+            Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
                 .padding()
                 .font(.title)
                 .contentTransition(.numericText(countsDown: true))

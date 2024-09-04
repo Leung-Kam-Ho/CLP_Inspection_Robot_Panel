@@ -27,7 +27,7 @@ struct SensorBarView : View{
 struct LazerView : View{
     @EnvironmentObject var station : Station
     var body: some View {
-        Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+        Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
             .padding()
             .contentTransition(.numericText(countsDown: true))
             .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))

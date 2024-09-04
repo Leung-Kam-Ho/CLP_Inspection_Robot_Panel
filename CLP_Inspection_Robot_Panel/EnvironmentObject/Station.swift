@@ -70,7 +70,6 @@ class Station : ObservableObject{
 
     var port = Constants.PORT
     var timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
-    let timer2 = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let pressure_max = Constants.PRESSURE_MAX
     var free = true
     var free2 = true
@@ -87,12 +86,12 @@ class Station : ObservableObject{
     
     func init_RunLoop(){
         let thread = Thread{
-            let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
+            let timer = Timer.scheduledTimer(withTimeInterval: Constants.DATA_RATE, repeats: true, block: { _ in
                 if self.free{
                     self.get_request("/data")
                 }
             })
-            RunLoop.current.add(timer, forMode: .default)
+            RunLoop.current.add(timer, forMode: .common)
             RunLoop.current.run()
         }
         thread.start()

@@ -31,6 +31,8 @@ struct ContentView: View {
                 Tab("Robot", systemImage:"macstudio.fill",value: .Robot){
                     ControlView(compact: !bigEnough)
                         .padding()
+                        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial).stroke(.white))
+                        .padding()
                         .background(Image("Watermark"))
                 }
                 Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: .LaunchPlatform){
@@ -92,6 +94,8 @@ struct ContentView: View {
         .onChange(of: viewModel.selectedTab, { old, new in
             if new == .Audio{
                 station.timer = Timer.publish(every: Constants.CHART_RATE, on: .main, in: .common).autoconnect()
+            }else if new == .Robot || new == .ToF{
+                station.timer = Timer.publish(every: Constants.INTENSE_UI_RATE, on: .main, in: .common).autoconnect()
             }else{
                 station.timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
             }
