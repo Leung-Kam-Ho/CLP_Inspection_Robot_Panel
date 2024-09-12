@@ -49,12 +49,12 @@ class Station : ObservableObject{
 
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
-        case station = "station.local"
-        case studio = "kamholeung.local"
+        case station = "192.168.10.5"
+        case cable_connection = "192.168.20.1"
     }
     @Published var status = Station_Status()
     @Published var server_connected = false
-    @Published var ip : String
+    @AppStorage("ip_selection") var ip : String = ""
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
     @Published var camera_frames : UIImage = .watermark
     var audio_log : [Audio_Status] = []
@@ -75,8 +75,6 @@ class Station : ObservableObject{
     var free2 = true
     
     init(){
-        let defaults = UserDefaults.standard
-        self.ip = defaults.string(forKey: "IP") ?? IP.station.rawValue
         if let data = UserDefaults.standard.data(forKey: "audio_log"),
            let log = try? JSONDecoder().decode([Audio_Status].self, from: data) {
             self.audio_log = log

@@ -13,15 +13,15 @@ struct AutoView : View{
                         HStack{
                             Picker("IP", selection: self.$station.ip, content: {
                                 ForEach(Station.IP.allCases, id:\.self){ ip in
-                                    Text(ip.rawValue)
+                                    Text(String(describing: ip))
                                         .padding()
                                         .tag(ip.rawValue)
                                 }.pickerStyle(.automatic)
                             }).font(.title)
-                                .onChange(of: self.station.ip, { old, new in
-                                    let defaults = UserDefaults.standard
-                                    defaults.setValue(new, forKey: "IP")
-                                })
+//                                .onChange(of: self.station.ip, { old, new in
+//                                    let defaults = UserDefaults.standard
+//                                    defaults.setValue(new, forKey: "IP")
+//                                })
                         }
                     }, label: {
                         VStack{
