@@ -50,7 +50,7 @@ class Station : ObservableObject{
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
         case station = "192.168.10.5"
-        case cable_connection = "192.168.20.1"
+        case cable_connection = "10.10.10.1"
     }
     @Published var status = Station_Status()
     @Published var server_connected = false
