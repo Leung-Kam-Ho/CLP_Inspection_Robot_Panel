@@ -4,28 +4,9 @@ import Charts
 struct ControlView: View {
     @State var viewModel = ViewModel()
     @EnvironmentObject var station : Station
-    let notBlack = Color(red: 24/255, green: 24/255, blue: 24/255)
+    let notBlack = Color(red: 24/335, green: 24/335, blue: 24/335)
     var compact : Bool = false
     var body: some View {
-        let roll_Section =
-        HStack{
-            (Image(systemName: "dial.low.fill"))
-            Text("\(self.station.status.robot_status.roll_angle)")
-        }
-        .padding()
-        .foregroundStyle(.black)
-        .frame(maxWidth: .infinity)
-        .background(Capsule().fill(Constants.offWhite))
-        
-        let roll_Section_Round =
-        HStack{
-            Image(systemName: "arrow.trianglehead.clockwise")
-            Text(String(format : "%03d",self.station.status.robot_status.roll_angle))
-        }
-        .foregroundStyle(.primary)
-        .padding()
-//        .background(RoundedRectangle(cornerRadius: 25).fill(.ultraThinMaterial)) 
-        .monospacedDigit()
         let R_Adj =
         VStack{
             let value = Int(self.viewModel.r * 100)
@@ -41,7 +22,7 @@ struct ControlView: View {
         }
         .frame(maxHeight: .infinity)
         .padding()
-        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
+        .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial))
         let L_Adj = VStack{
             let value = Int(self.viewModel.l * 100)
             Text(String(value))
@@ -54,7 +35,7 @@ struct ControlView: View {
             .padding(.all,compact ? 0 : nil)
         }.frame(maxHeight: .infinity)
             .padding()
-            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
+            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial))
         let controlButton_L =
         Button(action:{
             let left = 1500 - (400 * self.viewModel.leftPower / 100)
@@ -101,20 +82,20 @@ struct ControlView: View {
                 viewModel.popup.toggle()
             }
         }){
-            Text(String(station.status.launch_platform_status.angle))
+            Text(String(format:"%03d",Int(station.status.launch_platform_status.angle)))
                 .padding()
-                .foregroundStyle(.green)
+                .foregroundStyle( station.status.launch_platform_status.connected ? .green : .red)
                 .background(Circle().fill(.ultraThinMaterial))
         }.popover(isPresented: $viewModel.popup, content: {
             HStack{
                 Button(action:{
-                    viewModel.angleTarget -= 1
+                    viewModel.angleTarget -= 0.1
                 }){
                     Image(systemName: "minus.circle.fill")
                         .padding()
                     
                 }
-                Text(String(viewModel.angleTarget))
+                Text(String(format:"%05.1f",viewModel.angleTarget))
                     .padding()
                     .foregroundStyle(.green)
                     .onAppear{
@@ -125,7 +106,7 @@ struct ControlView: View {
                         sendCommand()
                     }
                 Button(action:{
-                    viewModel.angleTarget += 1
+                    viewModel.angleTarget += 0.1
                 }){
                     Image(systemName: "plus.circle.fill")
                         .padding()
@@ -185,11 +166,18 @@ struct ControlView: View {
             }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
         }
         VStack {
-            Label("Robot Control", systemImage: "macstudio.fill")
-                .padding()
-                .lineLimit(1)
-                .frame(maxWidth: .infinity)
-                .background(RoundedRectangle(cornerRadius: 25.0).fill(self.station.status.robot_status.connected ? .green : .red))
+            Button(action:{
+                withAnimation{
+                    viewModel.webShow.toggle()
+                }
+            }){
+                Label("Robot Control", systemImage: "macstudio.fill")
+                    .padding()
+                    .padding(.vertical)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity)
+                    .background(RoundedRectangle(cornerRadius: 33.0).fill(self.station.status.robot_status.connected ? .green : .red))
+            }.buttonStyle(.plain)
             HStack{
                 //Button Here
                 VStack{
@@ -206,28 +194,80 @@ struct ControlView: View {
                     if compact{
                         
                         VStack{
-                            HStack{
-                                VStack{
-                                    connectIcon
-                                    SensorRelay
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                Spacer()
-                                VStack{
-                                    Relay_1_3
+//                            HStack{
+//                                VStack{
+//                                    Spacer()
+//                                    SensorRelay
+//                                }.padding()
+//                                    .background(Capsule()
+//                                        .fill(.ultraThinMaterial))
+//                                Spacer()
+//                                VStack{
+//                                    Relay_1_3
+//                                    
+//                                }.padding()
+//                                    .background(Capsule()
+//                                        .fill(.ultraThinMaterial))
+//                                Spacer()
+//                                VStack{
+//                                    Relay_4_6
+//                                }.padding()
+//                                    .background(Capsule()
+//                                        .fill(.ultraThinMaterial))
+//                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
+                            VStack{
+                                HStack{
+                                    ForEach(1...4, id:\.self){ idx in
+                                        Button(action:{
+                                            self.station.post_request("/relay", value: [idx-1])
+                                        }){
+                                            let s = self.station.status.robot_status.relay
+                                            let index = s.index(s.startIndex, offsetBy: idx-1)
+                                            let state : String = String(self.station.status.robot_status.relay[index])
+                                            //                                        let state = "1"
+                                            
+                                            Image(systemName: "\(idx).circle.fill")
+                                                .padding()
+                                                .tint(.primary)
+                                                .background(Circle()
+                                                    .fill(state == "1" ? .green : notBlack))
+                                        }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
+                                    }
+                                }
+                                HStack{
+                                    ForEach(5...8, id:\.self){ idx in
+                                        Button(action:{
+                                            self.station.post_request("/relay", value: [idx-1])
+                                        }){
+                                            let s = self.station.status.robot_status.relay
+                                            let index = s.index(s.startIndex, offsetBy: idx-1)
+                                            let state : String = String(self.station.status.robot_status.relay[index])
+                                            //                                        let state = "1"
+                                            
+                                            Image(systemName: "\(idx).circle.fill")
+                                                .padding()
+                                                .tint(.primary)
+                                                .background(Circle()
+                                                    .fill(state == "1" ? .green : notBlack))
+                                        }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
+                                    }
+                                }
                                     
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                Spacer()
-                                VStack{
-                                    Relay_4_6
-                                }.padding()
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity,maxHeight: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
                             
+                            
+                            
+                            HStack{
+                                connectIcon
+                                EL_CID_TriggerButton()
+                                RecordingButton()
+                            }
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 33 ).fill(.ultraThinMaterial))
+                            .frame(maxWidth: .infinity)
                             HStack{
                                 L_Adj
                                 Spacer()
@@ -242,12 +282,9 @@ struct ControlView: View {
                                         .fill(.ultraThinMaterial))
                                 Spacer()
                                 R_Adj
-                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
-                            HStack{
-                                roll_Section
-                                
-                                RecordingButton()
-                            }.padding().background(Capsule().fill(.ultraThinMaterial))
+                            }
+                            
+                            .frame(maxWidth: .infinity,maxHeight: .infinity)
                             
                         }//.padding()
                     }else{
@@ -268,11 +305,51 @@ struct ControlView: View {
                     VStack{
                         HStack{
                             VStack{
-                                Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
-                                    .padding()
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
-                                    .padding()
+                                Menu(content: {
+                                    let inProgress = (self.station.status.auto_status.mode != "Manual")
+                                        Section{
+                                            ForEach(AutoView.AutoMode.allCases, id: \.self){ mode in
+                                                let name = mode.rawValue
+                                                Button(action: {
+                                                    self.station.post_request("/auto", value: name)
+                                                }, label: {
+                                                    Text(name)
+                                                        .font(.title)
+                                                        .padding()
+                                                        
+                                                    
+                                                })
+                                            }
+                                        }
+                                    if inProgress{
+                                        Button(role: .destructive, action: {
+                                            self.station.post_request("/auto", value: "Manual")
+                                        }, label: {
+                                            Text("Stop Inspection")
+                                                .font(.title)
+                                                .padding()
+                                        }).keyboardShortcut("s",modifiers: .command)
+                                    }else{
+                                        Button(action: {
+                                            self.station.post_request("/auto", value: AutoView.AutoMode.Manual.rawValue)
+                                        }, label: {
+                                            Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
+                        //                                        .font(.title)
+                                                .bold()
+                                                .foregroundStyle(.green)
+                                                .padding()
+                                                
+                                            
+                                        }).foregroundStyle(.green)
+                                    }
+                                }, label: {
+                                    Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                        .padding()
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(.red))
+                                        .padding()
+                                }).buttonStyle(.plain)
+                                
                                 //                                        .frame(maxHeight: .infinity,alignment : .top)
                                 VStack{
                                     Image("Robot_top")
@@ -281,7 +358,7 @@ struct ControlView: View {
                                     //                                            .frame(maxHeight: .infinity)
 //                                    roll_Section_Round
                                     HStack{
-                                        roll_Section_Round
+                                        EL_CID_TriggerButton()
                                         RecordingButton()
                                     }.padding().background(Capsule().fill(.ultraThinMaterial))
                                 }
@@ -289,7 +366,7 @@ struct ControlView: View {
                             }.frame(maxHeight: .infinity)
                             
                                 .padding()
-                                .background(RoundedRectangle(cornerRadius: 25.0).stroke(.white))
+                                .background(RoundedRectangle(cornerRadius: 33.0).stroke(.white))
                                 .padding()
                             VStack{
                                 VStack{
@@ -297,7 +374,7 @@ struct ControlView: View {
                                         .padding()
                                         .frame(maxWidth: .infinity)
                                         .foregroundStyle(Constants.notBlack)
-                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(Constants.offWhite))
                                     
                                     PressureView(enabled : true)
                                 }.padding()
@@ -328,7 +405,7 @@ struct ControlView: View {
                                         .padding()
                                         .font(.title)
                                         .contentTransition(.numericText(countsDown: true))
-                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
                                 }
                                 
                                 
@@ -347,6 +424,20 @@ struct ControlView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $viewModel.webShow) {
+            WebView()
+                .overlay(alignment: .bottomTrailing, content: {
+                    Button(action:{
+                        viewModel.webShow = false
+                    }){
+                        Image(systemName: "arrow.down.right.and.arrow.up.left")
+                            .padding()
+                            .background(Circle().fill(.red))
+                    }
+                    .buttonStyle(.plain)
+                    .padding()
+                })
+        }
         
         
         
@@ -361,7 +452,8 @@ extension ControlView {
         var leftPower = 100
         var rightPower = 100
         var popup = false
-        var angleTarget = 0
+        var angleTarget : Float = 0.0
+        var webShow = false
         
     }
     

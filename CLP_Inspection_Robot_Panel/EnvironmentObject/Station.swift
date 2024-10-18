@@ -8,6 +8,7 @@ class Station : ObservableObject{
         var launch_platform_status = LaunchPlatform_Status()
         var auto_status = Automation_Status()
         var audio_status = Audio_Status()
+        var el_cid_status = El_cid_status()
     }
     class Robot_Status : Codable, ObservableObject{
         var servo : [Int] = [1500,1500,1500,1500]
@@ -22,9 +23,10 @@ class Station : ObservableObject{
         var connected : Bool = false
     }
     class LaunchPlatform_Status : Codable, ObservableObject{
-        var angle : Int = 6
+        var angle : Float = 200.5
+        var relay : String = "00000000"
         var connected : Bool = false
-        var setpoint : Int = 0
+        var setpoint : Float = 0
     }
     class Automation_Status : Codable, ObservableObject{
         var sequence_name : String = ""
@@ -46,6 +48,11 @@ class Station : ObservableObject{
         var FFT_freq : [Float] = []
         var Audio : [Float] = []
     }
+    class El_cid_status : Codable, ObservableObject{
+        var distance_per_click = 100
+        var relay_state = 0
+        var connected = false
+    }
 
     enum IP : String, CaseIterable{
         case hp = "kamholeung-HP-ENVY-x360-15-Convertible-PC.local"
@@ -54,11 +61,11 @@ class Station : ObservableObject{
     }
     @Published var status = Station_Status()
     @Published var server_connected = false
-    @AppStorage("ip_selection") var ip : String = ""
+    @AppStorage("ip_selection") var ip : String = IP.station.rawValue
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
-    @Published var camera_frames : UIImage = .watermark
+
     var audio_log : [Audio_Status] = []
-    
+     
     var camera_status = Camera_Status()
     var image : UIImage? = UIImage()
     var getImage = false
@@ -69,7 +76,7 @@ class Station : ObservableObject{
     var connected = false
 
     var port = Constants.PORT
-    var timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
+    var timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
     let pressure_max = Constants.PRESSURE_MAX
     var free = true
     var free2 = true
@@ -93,15 +100,15 @@ class Station : ObservableObject{
             RunLoop.current.run()
         }
         thread.start()
+        print("Station Init")
     }
-    
+    func dataUpdateRate(_ FPS : Double){
+        self.timer = Timer.publish(every: 1 / FPS, on: .main, in: .common).autoconnect()
+    }
     func create_url(_ route : String) -> URL{
-        return URL(string: "http://\(self.ip):\(self.port)\(route)")!
+        return URL(string: "http://\(self.ip):\(self.port)\(route)") ?? URL(string:"http://127.0.0.1")!
     }
     func updateData(_: Date){
-        if let image = self.image{
-            self.camera_frames = image
-        }
         withAnimation(.easeOut(duration: 0.1)){
             let temp = self.data
             self.status = temp
@@ -112,24 +119,7 @@ class Station : ObservableObject{
         }
         
     }
-    func get_frame(){
-        DispatchQueue.global(qos: .userInitiated).async{
-            let url = self.create_url("/frame")
-            let request = URLRequest(url: url, timeoutInterval: TimeInterval(1))
-            self.free2 = false
-            let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
-                defer{ self.free2 = true }
-                guard let data = data else { return }
-                do{
-                    self.camera_status = try JSONDecoder().decode(Camera_Status.self, from: data)
-                    self.image = UIImage(data: self.camera_status.data)
-                }catch{
-                    print(error)
-                }
-            }
-            task.resume()
-        }
-    }
+
     func get_request(_ route : String = "/"){
         DispatchQueue.global(qos: .userInitiated).async{
             let url = self.create_url(route)
@@ -144,6 +134,7 @@ class Station : ObservableObject{
                         self.status.robot_status.connected = false
                         self.status.digital_valve_status.connected = false
                         self.status.launch_platform_status.connected = false
+                        self.status.el_cid_status.connected = false
                     }
                 }
                 guard let data = data else { return }
@@ -186,10 +177,8 @@ class Station : ObservableObject{
                         self.audio_log.append(log)
                         //save to UserDefaults
                         self.save_audio_to_user_defaults()
-                        print(self.audio_log.count)
                     }
                 }
-                print(self.audio_log.count)
             }
         }
         
@@ -198,7 +187,7 @@ class Station : ObservableObject{
     
     func RotatePlatform(Angle : Angle = .degrees(0)){
         print(Angle.degrees)
-        post_request("/launch_platform",value: [Int(Angle.degrees)])
+        post_request("/launch_platform",value: [Float(Angle.degrees)])
     }
     func post_request(_ route : String = "/", value : [Int]){
         DispatchQueue.global(qos: .userInitiated).async{

@@ -19,9 +19,10 @@ struct InspectionProgressView: View {
         VStack{
             Label("Progress", systemImage: "chart.bar.yaxis")
                 .padding()
+                .padding(.vertical)
                 .frame(maxWidth: .infinity)
                 .foregroundStyle(Constants.notBlack)
-                .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                .background(RoundedRectangle(cornerRadius: 33.0).fill(Constants.offWhite))
                 
             ScrollViewReader{ proxy in
                 ScrollView(showsIndicators: false) {
@@ -73,7 +74,7 @@ struct InspectionProgressView: View {
                             .padding()
                             .font(.title)
                             .contentTransition(.numericText(countsDown: true))
-                            .background(RoundedRectangle(cornerRadius: 25.0).stroke( current_slot ? .white : .clear, lineWidth: 5).fill(.ultraThickMaterial))
+                            .background(RoundedRectangle(cornerRadius: 33.0).stroke( current_slot ? .white : .clear, lineWidth: 5).fill(.ultraThickMaterial))
                             .padding()
                         }
                     }.onAppear(perform: {
@@ -90,7 +91,7 @@ struct InspectionProgressView: View {
                 }
             }
         }.padding()
-            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial).stroke(.white))
+            .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
     }
 }
 

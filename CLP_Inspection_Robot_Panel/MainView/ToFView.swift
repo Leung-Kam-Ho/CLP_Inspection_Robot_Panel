@@ -18,10 +18,11 @@ struct ToFView: View {
         VStack{
             Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
                 .padding()
+                .padding(.vertical)
                 .font(.title)
                 .contentTransition(.numericText(countsDown: true))
                 .frame(maxWidth: .infinity,alignment: .center)
-                .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
+                .background(RoundedRectangle(cornerRadius: 33.0).fill(.red))
                 
             ScrollView(showsIndicators: false) {
                 
@@ -31,12 +32,12 @@ struct ToFView: View {
                             .padding()
                             .font(.title)
                             .contentTransition(.numericText(countsDown: true))
-                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
                     }
                 }
             }
         }.padding()
-            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial).stroke(.white))
+            .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
     }
 }
 

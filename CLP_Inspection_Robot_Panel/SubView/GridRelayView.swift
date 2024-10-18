@@ -54,8 +54,9 @@ struct GridRelayView : View{
     let notBlack = Color(red: 24/255, green: 24/255, blue: 24/255)
     var body: some View{
         VStack{
-            ZStack{
-                Robot_Image()
+            VStack{
+//                Robot_Image()
+                
                 VStack(spacing : 20){
                     HStack{
                         ForEach(1...4, id:\.self){ idx in
@@ -70,7 +71,8 @@ struct GridRelayView : View{
                             }
                         }
                     }
-                    Spacer()
+                    PressureView(enabled : false)
+                        .disabled(true)
                     HStack{
                         Section{
                             let idx = 8

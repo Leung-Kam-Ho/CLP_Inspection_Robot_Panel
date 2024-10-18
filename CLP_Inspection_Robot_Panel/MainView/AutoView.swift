@@ -4,25 +4,66 @@ struct AutoView : View{
     @EnvironmentObject var station : Station
     @State var viewModel = ViewModel()
     var body: some View{
+        let autoMenu =
+        Menu(content: {
+            let inProgress = (self.station.status.auto_status.mode != "Manual")
+                Section{
+                    ForEach(AutoMode.allCases, id: \.self){ mode in
+                        let name = mode.rawValue
+                        Button(action: {
+                            self.station.post_request("/auto", value: name)
+                        }, label: {
+                            Text(name)
+                                .font(.title)
+                                .padding()
+                                
+                            
+                        })
+                    }
+                }
+            if inProgress{
+                Button(role: .destructive, action: {
+                    self.station.post_request("/auto", value: "Manual")
+                }, label: {
+                    Text("Stop Inspection")
+                        .font(.title)
+                        .padding()
+                }).keyboardShortcut("s",modifiers: .command)
+            }else{
+                Button(action: {
+                    self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
+                }, label: {
+                    Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
+//                                        .font(.title)
+                        .bold()
+                        .foregroundStyle(.green)
+                        .padding()
+                        
+                    
+                }).foregroundStyle(.green)
+            }
+        }, label: {
+            let inProgress = (self.station.status.auto_status.mode != "Manual")
+                Image(systemName: inProgress ? "stop.fill" : "play.fill" )
+                .padding()
+                .padding(.horizontal)
+                .tint(.primary)
+                .background(RoundedRectangle(cornerRadius: 33.0)
+                    .fill( inProgress ? .red : .green))
+        })
+
         VStack{
             ZStack{
                 Color.clear
                 VStack{
                     let connected = self.station.server_connected
                     Menu(content: {
-                        HStack{
-                            Picker("IP", selection: self.$station.ip, content: {
-                                ForEach(Station.IP.allCases, id:\.self){ ip in
-                                    Text(String(describing: ip))
-                                        .padding()
-                                        .tag(ip.rawValue)
-                                }.pickerStyle(.automatic)
-                            }).font(.title)
-//                                .onChange(of: self.station.ip, { old, new in
-//                                    let defaults = UserDefaults.standard
-//                                    defaults.setValue(new, forKey: "IP")
-//                                })
-                        }
+                        Button("custom"){
+                            viewModel.showAlert.toggle()
+                        }.tag(viewModel.custom_ip)
+                        Text("IP : \(station.ip)")
+                       
+                        
                     }, label: {
                         VStack{
                             let mt = self.station.status.auto_status.action_update == ""
@@ -34,10 +75,10 @@ struct AutoView : View{
                                 .padding()
                                 .contentTransition(.numericText(countsDown: true))
                                 .frame(maxWidth: .infinity)
-                                .background(RoundedRectangle(cornerRadius: 17.0).fill(.ultraThinMaterial))
+                                .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
                                 .padding()
                         }
-                        .background(RoundedRectangle(cornerRadius: 25.0)
+                        .background(RoundedRectangle(cornerRadius: 33.0)
                             .fill(connected ? .green : .red))
                     }).buttonStyle(.plain)
                    
@@ -59,65 +100,29 @@ struct AutoView : View{
                                             }
                                         }
                                     }.padding()
-                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
                                 }
                             }.frame(maxWidth: .infinity, alignment : .leading)
                             
                         }
                         .padding()
                     }
-                    HStack{
-                        Menu(content: {
-                            let inProgress = (self.station.status.auto_status.mode != "Manual")
-                                Section{
-                                    ForEach(AutoMode.allCases, id: \.self){ mode in
-                                        let name = mode.rawValue
-                                        Button(action: {
-                                            self.station.post_request("/auto", value: name)
-                                        }, label: {
-                                            Text(name)
-                                                .font(.title)
-                                                .padding()
-                                                
-                                            
-                                        })
-                                    }
-                                }
-                            if inProgress{
-                                Button(role: .destructive, action: {
-                                    self.station.post_request("/auto", value: "Manual")
-                                }, label: {
-                                    Text("Stop Inspection")
-                                        .font(.title)
-                                        .padding()
-                                }).keyboardShortcut("s",modifiers: .command)
-                            }else{
-                                Button(action: {
-                                    self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
-                                }, label: {
-                                    Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
-//                                        .font(.title)
-                                        .bold()
-                                        .foregroundStyle(.green)
-                                        .padding()
-                                        
-                                    
-                                }).foregroundStyle(.green)
-                            }
-                        }, label: {
-                            let inProgress = (self.station.status.auto_status.mode != "Manual")
-                                Image(systemName: inProgress ? "stop.fill" : "play.fill" )
-                                .padding()
-                                .padding(.horizontal)
-                                .tint(.primary)
-                                .background(RoundedRectangle(cornerRadius: 25.0)
-                                    .fill( inProgress ? .red : .green))
+                    .alert("Enter custom IP", isPresented:$viewModel.showAlert) {
+                        TextField("Enter custom IP", text: $viewModel.custom_ip)
+                            .font(.caption)
+                        Button("OK", action: {
+                            station.ip = viewModel.custom_ip
                         })
+                    } message: {
+                        Text("Xcode will print whatever you type.")
+                    }
+                    HStack{
+                        autoMenu
                         Spacer()
                         Text(station.status.auto_status.mode)
                             .lineLimit(1)
                             .padding()
-                            .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThickMaterial))
+                            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
                             .padding()
                     }
                 }
@@ -142,6 +147,8 @@ extension AutoView{
     @Observable
     class ViewModel{
         var pop = false
+        var showAlert = false
+        var custom_ip = ""
     }
     func splitAndFilterLines(text: String, targetStrings: [String]) -> [String] {
       return text.split(separator: "\n")

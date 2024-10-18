@@ -31,9 +31,10 @@ struct AudioSystemView: View {
                 }){
                     Label("Audio System", systemImage: "waveform")
                         .padding()
+                        .padding(.vertical)
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(Constants.notBlack)
-                        .background(RoundedRectangle(cornerRadius: 25.0).fill(.white))
+                        .background(RoundedRectangle(cornerRadius: 33.0).fill(.white))
                 }
                 GroupBox("Pulse in Audio"){
                     Chart{
@@ -51,7 +52,7 @@ struct AudioSystemView: View {
                         Text("No Audio Record")
                     }
                 })
-                .clipShape(.rect(cornerRadius: 25.0))
+                .clipShape(.rect(cornerRadius: 33.0))
                 GroupBox("Fourier Transform of the Pulse"){
                     Chart(Array(y_data.enumerated()), id:\.0){ nr,value in
                         LineMark(
@@ -64,7 +65,7 @@ struct AudioSystemView: View {
                     .chartXAxisLabel("Frequency(Hz)")
                     .chartYAxisLabel("Amplitude")
                 }
-                .clipShape(.rect(cornerRadius: 25.0))
+                .clipShape(.rect(cornerRadius: 33.0))
                 if bigEnough{
                     HStack{
                         HStack{
@@ -233,6 +234,22 @@ struct AudioSystemView: View {
     }
 }
 
+
+struct EL_CID_TriggerButton: View {
+    @EnvironmentObject var station: Station
+    var body: some View {
+        Button(action:{
+            withAnimation{
+                station.post_request("/EL_CID",value: station.status.el_cid_status.relay_state == 0)
+            }
+        }){
+            Label("EL-CID", image: "phone.down.fill")
+                .padding().background(Capsule().fill(station.status.el_cid_status.connected ? .green : .red))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 struct RecordingButton: View {
     @EnvironmentObject var station: Station
     var body: some View {
@@ -266,7 +283,7 @@ extension AudioSystemView{
         var distance_selection : Int? = nil as Int?
         var file_num_selection : Int? = nil as Int?
         var date_selection : String? = nil as String?
-        let timer_chart = Timer.publish(every: Constants.CHART_RATE, on: .main, in: .default).autoconnect()
+        let timer_chart = Timer.publish(every: Constants.MEDIUM_RATE, on: .main, in: .default).autoconnect()
     }
     
     func get_log() -> ([Float],[Float],[Float]){

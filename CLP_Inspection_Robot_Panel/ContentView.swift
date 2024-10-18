@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var station = Station()
+    @EnvironmentObject var station : Station
     @State var viewModel = ViewModel()
     var body: some View {
         GeometryReader{ screen in
@@ -17,7 +17,7 @@ struct ContentView: View {
                     HStack{
                         AutoView()
                             .padding()
-                            .background(RoundedRectangle(cornerRadius: 33.0)
+                            .background(RoundedRectangle(cornerRadius: 49.0)
                                 .fill(.ultraThinMaterial)
                                 .stroke(.white)
                             )
@@ -31,7 +31,7 @@ struct ContentView: View {
                 Tab("Robot", systemImage:"macstudio.fill",value: .Robot){
                     ControlView(compact: !bigEnough)
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial).stroke(.white))
+                        .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
                         .padding()
                         .background(Image("Watermark"))
                 }
@@ -39,25 +39,26 @@ struct ContentView: View {
                         
                         LaunchPlatformView(compact: !bigEnough)
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 33.0)
+                        .background(RoundedRectangle(cornerRadius: 49.0)
                             .fill(.ultraThinMaterial)
                             .stroke(.white)
                         )
                         .padding()
                         .background(Image("Watermark"))
                 }
-                Tab("Pressure", systemImage:"gauge.with.dots.needle.33percent", value: .Pressure){
+                Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: .Pressure){
                     VStack{
                         Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
                             .padding()
+                            .padding(.vertical)
                             .frame(maxWidth: .infinity)
-                            .background(RoundedRectangle(cornerRadius: 25.0).fill(station.status.digital_valve_status.connected ? .green : .red))
+                            .background(RoundedRectangle(cornerRadius: 33.0).fill(station.status.digital_valve_status.connected ? .green : .red))
                             
                         PressureView(enabled : true)
                             .padding()
                     }
                     .padding()
-                    .background(RoundedRectangle(cornerRadius: 33.0)
+                    .background(RoundedRectangle(cornerRadius: 49.0)
                         .fill(.ultraThinMaterial)
                         .stroke(.white)
                     )
@@ -78,7 +79,7 @@ struct ContentView: View {
                 Tab("Audio", systemImage:"waveform", value: .Audio){
                     AudioSystemView(current_tab:$viewModel.selectedTab)
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 33.0)
+                        .background(RoundedRectangle(cornerRadius: 49.0)
                             .fill(.ultraThinMaterial)
                             .stroke(.white)
                         )
@@ -87,22 +88,21 @@ struct ContentView: View {
                 }
                 
             }
-            .tabViewStyle(.sidebarAdaptable)
+//            .tabViewStyle(.sidebarAdaptable)
             .font(.system(size: bigEnough ? screen.size.width / 50 : screen.size.width/15, weight: .bold, design: .rounded))
         }
         // Change the data update rate, since all chart and ui are update in the main the main thread, and the cpu usage of chart is higher
         .onChange(of: viewModel.selectedTab, { old, new in
             if new == .Audio{
-                station.timer = Timer.publish(every: Constants.CHART_RATE, on: .main, in: .common).autoconnect()
+                station.dataUpdateRate(Constants.MEDIUM_RATE)
             }else if new == .Robot || new == .ToF{
-                station.timer = Timer.publish(every: Constants.INTENSE_UI_RATE, on: .main, in: .common).autoconnect()
+                station.dataUpdateRate(Constants.INTENSE_RATE)
             }else{
-                station.timer = Timer.publish(every: Constants.UI_RATE, on: .main, in: .common).autoconnect()
+                station.dataUpdateRate(Constants.SLOW_RATE)
             }
         })
         .scrollContentBackground(.hidden)
         .bold()
-        .environmentObject(station)
         .background(Constants.notBlack)
         .preferredColorScheme(.dark)
         .onReceive(station.timer, perform: station.updateData)
