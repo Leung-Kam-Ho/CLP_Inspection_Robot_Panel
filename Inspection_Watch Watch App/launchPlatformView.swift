@@ -112,7 +112,6 @@ struct launchPlatformView: View {
     func setAngle(){
         let setpoint = Double(round(10 * viewModel.setpoint) / 10)
         station.RotatePlatform(Angle: .degrees(setpoint))
-        print("set")
     }
 }
 
@@ -134,30 +133,33 @@ extension launchPlatformView{
         let motion = CoreMotion.CMMotionManager()
         let imu = IMU()
         var timer : Timer?
-        var queue = OperationQueue()
+
+        init() {
+            // Configure a timer to fetch the motion data.
+            self.timer = Timer(fire: Date(), interval: (1.0 / 50.0), repeats: true,
+                               block: { (timer) in
+                if let data = self.motion.deviceMotion {
+                    // Get the attitude relative to the magnetic north reference frame.
+                    self.imu.pitch = data.attitude.pitch
+                    self.imu.roll = data.attitude.roll
+                    self.imu.yaw = data.attitude.yaw
+                    self.setpoint = Angle(radians: self.imu.roll).degrees
+                }
+            })
+            // Add the timer to the current run loop.
+            RunLoop.current.add(self.timer!, forMode: RunLoop.Mode.default)
+        }
         
 
         func startDeviceMotion() {
             if motion.isDeviceMotionAvailable {
-                self.motion.deviceMotionUpdateInterval = 1.0 / 5.0
+                self.motion.deviceMotionUpdateInterval = 1.0 / 50.0
                 self.motion.showsDeviceMovementDisplay = true
-                self.motion.startDeviceMotionUpdates(using: .xArbitraryZVertical)
+                self.motion.startDeviceMotionUpdates(using: .xMagneticNorthZVertical)
                 
-                // Configure a timer to fetch the motion data.
-                self.timer = Timer(fire: Date(), interval: (1.0 / 5.0), repeats: true,
-                                   block: { (timer) in
-                                    if let data = self.motion.deviceMotion {
-                                        // Get the attitude relative to the magnetic north reference frame.
-                                        self.imu.pitch = data.attitude.pitch
-                                        self.imu.roll = data.attitude.roll
-                                        self.imu.yaw = data.attitude.yaw
-                                        print(self.imu)
-                                        self.setpoint = Angle(radians: self.imu.roll).degrees
-                                    }
-                })
                 
-                // Add the timer to the current run loop.
-                RunLoop.current.add(self.timer!, forMode: RunLoop.Mode.default)
+                
+                
             }else{
                 print("Motion Not Avaliable")
             }
