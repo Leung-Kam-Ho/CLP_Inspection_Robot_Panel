@@ -1,4 +1,5 @@
 import SwiftUI
+import os
 
 
 class Station : ObservableObject{
@@ -186,8 +187,15 @@ class Station : ObservableObject{
     }
     
     func RotatePlatform(Angle : Angle = .degrees(0)){
-        print(Angle.degrees)
-        post_request("/launch_platform",value: [Float(Angle.degrees)])
+        let angle : Double
+        if Angle.degrees < 0{
+            angle = 360 + Angle.degrees
+        }else{
+            angle = Angle.degrees
+        }
+        
+        Logger().info("set \(angle)")
+        post_request("/launch_platform",value: [Float(angle)])
     }
     func post_request(_ route : String = "/", value : [Int]){
         DispatchQueue.global(qos: .userInitiated).async{

@@ -24,20 +24,58 @@ struct launchPlatformView: View {
                     .frame(maxWidth: .infinity,maxHeight: .infinity)
                     .overlay(content: {
                         Button(action:{
-                            setAngle()
-                        }){
-                            VStack{
-                                let ang = self.station.status.launch_platform_status.angle
-                                Text(String(format: "curPos:", ang))
-                                Text(String(format: "%05.1f°", ang))
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .bold()
-                                    .font(.title2)
-                                    .padding([.horizontal])
-                                
+                            if viewModel.outputMode == .Motion{
+                                if !viewModel.motion.isDeviceMotionActive{
+                                    viewModel.startDeviceMotion()
+                                }else{
+                                    viewModel.stopDeviceMotion()
+                                }
+                            }else{
+                                setAngle()
                             }
-                            .padding()
-                            .background(RoundedRectangle(cornerRadius:25).fill(.ultraThinMaterial))
+                            
+                        }){
+                            switch viewModel.outputMode {
+                            case .Continuous:
+                                VStack{
+                                    let ang = self.station.status.launch_platform_status.angle
+                                    Text(String(format: "curPos:", ang))
+                                    Text(String(format: "%05.1f°", ang))
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .bold()
+                                        .font(.title2)
+                                        .padding([.horizontal])
+                                    
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius:25)
+                                        .fill(.ultraThinMaterial)
+                                )
+                            case .SetAndPress:
+                                VStack{
+                                    let ang = self.station.status.launch_platform_status.angle
+                                    Text(String(format: "curPos:", ang))
+                                    Text(String(format: "%05.1f°", ang))
+                                        .foregroundStyle(.blue)
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .bold()
+                                        .font(.title2)
+                                        .padding([.horizontal])
+                                    
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius:25)
+                                        .fill(.ultraThinMaterial)
+                                )
+                            case .Motion:
+                                Image(systemName: viewModel.motion.isDeviceMotionActive ? "stop.fill" : "play.fill")
+                                    .padding()
+                                    .background(Circle().fill(viewModel.motion.isDeviceMotionActive ? .red : .green))
+                                    .font(.title)
+                            }
+                            
                         }.buttonStyle(.plain)
                         
                         
@@ -54,18 +92,11 @@ struct launchPlatformView: View {
             .onAppear(perform: {
                 viewModel.setpoint = Double(station.status.launch_platform_status.angle)
             })
-            
             .digitalCrownRotation($viewModel.setpoint, from: 0, through: 359, by: 0.1, sensitivity: .low, isContinuous: true, isHapticFeedbackEnabled: true)
             .onChange(of: viewModel.setpoint, { oldValue, newValue in
-                if viewModel.outputMode != .SetAndPress{
+                let same = round(10 * oldValue) == round(10 * newValue)
+                if viewModel.outputMode != .SetAndPress && !same{
                     setAngle()
-                }
-            })
-            .onChange(of: viewModel.outputMode, { oldValue, newValue in
-                if newValue == .Motion{
-                    viewModel.startDeviceMotion()
-                }else{
-                    viewModel.stopDeviceMotion()
                 }
             })
             .ignoresSafeArea(.all,edges:[.bottom,.top])
@@ -79,7 +110,8 @@ struct launchPlatformView: View {
         }
     }
     func setAngle(){
-        station.RotatePlatform(Angle: .degrees(viewModel.setpoint))
+        let setpoint = Double(round(10 * viewModel.setpoint) / 10)
+        station.RotatePlatform(Angle: .degrees(setpoint))
         print("set")
     }
 }
@@ -109,7 +141,7 @@ extension launchPlatformView{
             if motion.isDeviceMotionAvailable {
                 self.motion.deviceMotionUpdateInterval = 1.0 / 5.0
                 self.motion.showsDeviceMovementDisplay = true
-                self.motion.startDeviceMotionUpdates(using: .xMagneticNorthZVertical)
+                self.motion.startDeviceMotionUpdates(using: .xArbitraryZVertical)
                 
                 // Configure a timer to fetch the motion data.
                 self.timer = Timer(fire: Date(), interval: (1.0 / 5.0), repeats: true,
@@ -120,7 +152,7 @@ extension launchPlatformView{
                                         self.imu.roll = data.attitude.roll
                                         self.imu.yaw = data.attitude.yaw
                                         print(self.imu)
-                                        self.setpoint = self.imu.pitch
+                                        self.setpoint = Angle(radians: self.imu.roll).degrees
                                     }
                 })
                 
