@@ -16,7 +16,7 @@ struct PressureView : View{
                         VerticalSlider(value: enabled ? self.$viewModel.pressure[channel - 1] : .constant(0), referenceValue: r, onEnd: {
                             if enabled{
                                 let value = Float(self.viewModel.pressure[channel - 1] * self.viewModel.pressure_max)
-                                self.station.post_request("/pressure", value: [Float(channel - 1), value])
+                                _ = self.station.post_request("/pressure", value: [Float(channel - 1), value])
                             }
                         },icon: { _ in
                             return Image(systemName: "\(channel).circle.fill")
@@ -25,7 +25,7 @@ struct PressureView : View{
                             let baseValue = (enabled ? self.viewModel.pressure[channel - 1] : r)
                             let value = baseValue * self.viewModel.pressure_max
                             return Text((String(format : "%.1f", value)))
-                                .font(.largeTitle)
+//                                .font(.tit)
                         }).multilineTextAlignment(.center)
                     }
                 }

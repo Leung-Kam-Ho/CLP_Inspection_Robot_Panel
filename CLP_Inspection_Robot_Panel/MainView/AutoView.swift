@@ -1,29 +1,31 @@
 import SwiftUI
 
-struct AutoView : View{
+struct AutoMenu<Content : View>: View{
     @EnvironmentObject var station : Station
-    @State var viewModel = ViewModel()
+    let content : Content
+    init(@ViewBuilder content: @escaping () -> Content){
+        self.content = content()
+    }
     var body: some View{
-        let autoMenu =
         Menu(content: {
             let inProgress = (self.station.status.auto_status.mode != "Manual")
-                Section{
-                    ForEach(AutoMode.allCases, id: \.self){ mode in
-                        let name = mode.rawValue
-                        Button(action: {
-                            self.station.post_request("/auto", value: name)
-                        }, label: {
-                            Text(name)
-                                .font(.title)
-                                .padding()
-                                
-                            
-                        })
-                    }
+            Section{
+                ForEach(AutoMode.allCases, id: \.self){ mode in
+                    let name = mode.rawValue
+                    Button(action: {
+                        _  = self.station.post_request("/auto", value: name)
+                    }, label: {
+                        Text(name)
+                            .font(.title)
+                            .padding()
+                        
+                        
+                    })
                 }
+            }
             if inProgress{
                 Button(role: .destructive, action: {
-                    self.station.post_request("/auto", value: "Manual")
+                    _ = self.station.post_request("/auto", value: "Manual")
                 }, label: {
                     Text("Stop Inspection")
                         .font(.title)
@@ -31,20 +33,32 @@ struct AutoView : View{
                 }).keyboardShortcut("s",modifiers: .command)
             }else{
                 Button(action: {
-                    self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
+                    _ = self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
                 }, label: {
                     Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
-//                                        .font(.title)
+                    //                                        .font(.title)
                         .bold()
                         .foregroundStyle(.green)
                         .padding()
-                        
+                    
                     
                 }).foregroundStyle(.green)
             }
         }, label: {
+            self.content
+        })
+    }
+    
+}
+
+struct AutoView : View{
+    @EnvironmentObject var station : Station
+    @State var viewModel = ViewModel()
+    var body: some View{
+        let autoMenu =
+        AutoMenu(content: {
             let inProgress = (self.station.status.auto_status.mode != "Manual")
-                Image(systemName: inProgress ? "stop.fill" : "play.fill" )
+            Image(systemName: inProgress ? "stop.fill" : "play.fill" )
                 .padding()
                 .padding(.horizontal)
                 .tint(.primary)
@@ -62,7 +76,10 @@ struct AutoView : View{
                             viewModel.showAlert.toggle()
                         }.tag(viewModel.custom_ip)
                         Text("IP : \(station.ip)")
-                       
+                        Button("custom camera ip"){
+                            viewModel.showAlert_camera.toggle()
+                        }.tag(viewModel.custom_cam_ip)
+                        Text("Camera IP : \(station.cam_ip)")
                         
                     }, label: {
                         VStack{
@@ -107,11 +124,26 @@ struct AutoView : View{
                         }
                         .padding()
                     }
+                    .onAppear(perform: {
+                        viewModel.custom_ip = station.ip
+                        viewModel.custom_cam_ip = station.cam_ip
+                    })
                     .alert("Enter custom IP", isPresented:$viewModel.showAlert) {
                         TextField("Enter custom IP", text: $viewModel.custom_ip)
                             .font(.caption)
+                        Button("Cancel", role: .cancel, action: {})
                         Button("OK", action: {
                             station.ip = viewModel.custom_ip
+                        })
+                    } message: {
+                        Text("Xcode will print whatever you type.")
+                    }
+                    .alert("Enter custom camera IP", isPresented:$viewModel.showAlert_camera) {
+                        TextField("Enter custom camera IP", text: $viewModel.custom_cam_ip)
+                            .font(.caption)
+                        Button("Cancel", role: .cancel, action: {})
+                        Button("OK", action: {
+                            station.cam_ip = viewModel.custom_cam_ip
                         })
                     } message: {
                         Text("Xcode will print whatever you type.")
@@ -133,22 +165,26 @@ struct AutoView : View{
     }
 }
 
+enum AutoMode : String , CaseIterable{
+    case Manual
+    case Enter
+    case Exit
+    case Elevate
+    case Drop
+    case Enter_Generator
+    case Exit_Generator
+    case Testing
+}
+
 extension AutoView{
-    enum AutoMode : String , CaseIterable{
-        case Manual
-        case Enter
-        case Exit
-        case Elevate
-        case Drop
-        case Enter_Generator
-        case Exit_Generator
-        case Testing
-    }
+    
     @Observable
     class ViewModel{
         var pop = false
         var showAlert = false
+        var showAlert_camera = false
         var custom_ip = ""
+        var custom_cam_ip = ""
     }
     func splitAndFilterLines(text: String, targetStrings: [String]) -> [String] {
       return text.split(separator: "\n")

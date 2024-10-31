@@ -55,7 +55,7 @@ struct ContentView: View {
                         Text("Tapper")
                         Spacer()
                         Image(systemName: station.connected ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .foregroundStyle(station.status.audio_status.recording ?.green : .red)
+                            .foregroundStyle(station.status.audio_status.connected ?.green : .red)
                     }
                     TextField("Enter custom IP", text: $viewModel.custom_ip)
                         .onSubmit {

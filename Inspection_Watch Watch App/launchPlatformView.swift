@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+import os
 import CoreMotion
+import UIKit
 
 struct launchPlatformView: View {
     @EnvironmentObject var station : Station
@@ -92,7 +94,7 @@ struct launchPlatformView: View {
             .onAppear(perform: {
                 viewModel.setpoint = Double(station.status.launch_platform_status.angle)
             })
-            .digitalCrownRotation($viewModel.setpoint, from: 0, through: 359, by: 0.1, sensitivity: .low, isContinuous: true, isHapticFeedbackEnabled: true)
+            .digitalCrownRotation($viewModel.setpoint, from: 0, through: 359, by: 0.1, sensitivity: .high, isContinuous: true, isHapticFeedbackEnabled: true)
             .onChange(of: viewModel.setpoint, { oldValue, newValue in
                 let same = round(10 * oldValue) == round(10 * newValue)
                 if viewModel.outputMode != .SetAndPress && !same{
@@ -102,16 +104,19 @@ struct launchPlatformView: View {
             .ignoresSafeArea(.all,edges:[.bottom,.top])
             .toolbarRole(.navigationStack)
             .frame(maxWidth: .infinity,maxHeight: .infinity)
+            .sensoryFeedback(.impact(weight:.heavy), trigger: viewModel.success, condition: { old, new in
+                if new{
+                    viewModel.success = false
+                    return true
+                }
+                return false
+            })
             Picker("Output Mode", selection: $viewModel.outputMode, content: {
                 ForEach(OutputMode.allCases, id:\.self){ mode in
                     Text(mode.rawValue)
                 }
             })
         }
-    }
-    func setAngle(){
-        let setpoint = Double(round(10 * viewModel.setpoint) / 10)
-        station.RotatePlatform(Angle: .degrees(setpoint))
     }
 }
 
@@ -126,6 +131,12 @@ extension launchPlatformView{
         var pitch : Double = 0
         var yaw : Double = 0
     }
+    func setAngle(){
+        let setpoint = Double(round(10 * viewModel.setpoint) / 10)
+        let sent = station.RotatePlatform(Angle: .degrees(setpoint))
+        viewModel.success = sent
+        Logger().info("\(sent)")
+    }
     @Observable
     class ViewModel{
         var setpoint : Double = 0.0
@@ -133,6 +144,7 @@ extension launchPlatformView{
         let motion = CoreMotion.CMMotionManager()
         let imu = IMU()
         var timer : Timer?
+        var success = false
 
         init() {
             // Configure a timer to fetch the motion data.
@@ -143,6 +155,7 @@ extension launchPlatformView{
                     self.imu.pitch = data.attitude.pitch
                     self.imu.roll = data.attitude.roll
                     self.imu.yaw = data.attitude.yaw
+                    Logger().info("\(Angle(radians:self.imu.roll).degrees) \(Angle(radians:self.imu.pitch).degrees) \(Angle(radians:self.imu.yaw).degrees)")
                     self.setpoint = Angle(radians: self.imu.roll).degrees
                 }
             })
@@ -155,10 +168,7 @@ extension launchPlatformView{
             if motion.isDeviceMotionAvailable {
                 self.motion.deviceMotionUpdateInterval = 1.0 / 50.0
                 self.motion.showsDeviceMovementDisplay = true
-                self.motion.startDeviceMotionUpdates(using: .xMagneticNorthZVertical)
-                
-                
-                
+                self.motion.startDeviceMotionUpdates(using: .xArbitraryCorrectedZVertical)
                 
             }else{
                 print("Motion Not Avaliable")

@@ -32,7 +32,6 @@ struct InspectionProgressView: View {
                             VStack{
                                 HStack{
                                     Image(systemName: "\(slot.slot_id).circle.fill")
-                                        
                                     Spacer()
                                     Image(systemName: slot.EL_CID_Progress != 1.0 ? "xmark.circle.fill" : "checkmark.circle.fill")
                                         .foregroundStyle(slot.EL_CID_Progress != 1.0 ? .red : .green)
@@ -53,7 +52,7 @@ struct InspectionProgressView: View {
                                     .lineLimit(1)
                                     .foregroundStyle(.white)
                                     .frame(maxWidth: .infinity)
-                                    .padding()
+                                    .padding(.vertical)
                                     .contentTransition(.numericText(countsDown: true))
                                     .background(RoundedRectangle(cornerRadius: 18.0).stroke(current_slot ? .white : .clear, lineWidth: 5).fill(slot.EL_CID_Progress != 1.0 ? .red : .green))
                                 VStack{
@@ -66,7 +65,8 @@ struct InspectionProgressView: View {
                                             .foregroundStyle(.white)
                                     }
                                 }
-                                .frame(maxWidth: .infinity).padding()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical)
                                 .contentTransition(.numericText(countsDown: true))
                                 .background(RoundedRectangle(cornerRadius: 18.0).stroke(current_slot ? .white : .clear,lineWidth: 5).fill(slot.Knocker_result == nil ? .gray : (slot.Knocker_result! >= 0.6 ? .green : .red )))
                             }

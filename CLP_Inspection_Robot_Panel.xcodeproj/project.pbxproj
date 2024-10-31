@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		235158762CC11A5900C4EBBA /* Inspection_Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		235158762CC11A5900C4EBBA /* Inspection_Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +37,7 @@
 /* Begin PBXFileReference section */
 		23405EA12C42FC9B00A7281D /* CLP_Inspection_Robot_Panel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CLP_Inspection_Robot_Panel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Inspection_Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		23DC2C992CCF42B700EB2CFF /* InspectionRobotMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InspectionRobotMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -49,11 +50,35 @@
 			);
 			target = 235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */;
 		};
+		23DC2CB52CCF42E400EB2CFF /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				" Constants.swift",
+				Assets.xcassets,
+				ContentView.swift,
+				EnvironmentObject/Station.swift,
+				MainView/AudioSystemView.swift,
+				MainView/AutoView.swift,
+				MainView/ConceptView.swift,
+				MainView/ControlView.swift,
+				MainView/InspectionProgressView.swift,
+				MainView/LaunchPlatformView.swift,
+				MainView/PressureView.swift,
+				MainView/ToFView.swift,
+				SaveFile.swift,
+				SubView/GridRelayView.swift,
+				SubView/SensorBarView.swift,
+				SubView/VerticalSlider.swift,
+				SubView/WebView.swift,
+			);
+			target = 23DC2C982CCF42B700EB2CFF /* InspectionRobotMac */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2351587D2CC11BB000C4EBBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CLP_Inspection_Robot_Panel; sourceTree = "<group>"; };
+		23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2351587D2CC11BB000C4EBBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 23DC2CB52CCF42E400EB2CFF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CLP_Inspection_Robot_Panel; sourceTree = "<group>"; };
 		2351586A2CC11A5800C4EBBA /* Inspection_Watch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Inspection_Watch Watch App"; sourceTree = "<group>"; };
+		23DC2C9A2CCF42B700EB2CFF /* InspectionRobotMac */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = InspectionRobotMac; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +96,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		23DC2C962CCF42B700EB2CFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -79,6 +111,7 @@
 			children = (
 				23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */,
 				2351586A2CC11A5800C4EBBA /* Inspection_Watch Watch App */,
+				23DC2C9A2CCF42B700EB2CFF /* InspectionRobotMac */,
 				23405EA22C42FC9B00A7281D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +121,7 @@
 			children = (
 				23405EA12C42FC9B00A7281D /* CLP_Inspection_Robot_Panel.app */,
 				235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */,
+				23DC2C992CCF42B700EB2CFF /* InspectionRobotMac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,6 +175,28 @@
 			productReference = 235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
+		23DC2C982CCF42B700EB2CFF /* InspectionRobotMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23DC2CA52CCF42B900EB2CFF /* Build configuration list for PBXNativeTarget "InspectionRobotMac" */;
+			buildPhases = (
+				23DC2C952CCF42B700EB2CFF /* Sources */,
+				23DC2C962CCF42B700EB2CFF /* Frameworks */,
+				23DC2C972CCF42B700EB2CFF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				23DC2C9A2CCF42B700EB2CFF /* InspectionRobotMac */,
+			);
+			name = InspectionRobotMac;
+			packageProductDependencies = (
+			);
+			productName = InspectionRobotMac;
+			productReference = 23DC2C992CCF42B700EB2CFF /* InspectionRobotMac.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -155,6 +211,9 @@
 						CreatedOnToolsVersion = 16.0;
 					};
 					235158682CC11A5800C4EBBA = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					23DC2C982CCF42B700EB2CFF = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -174,6 +233,7 @@
 			targets = (
 				23405EA02C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */,
 				235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */,
+				23DC2C982CCF42B700EB2CFF /* InspectionRobotMac */,
 			);
 		};
 /* End PBXProject section */
@@ -187,6 +247,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		235158672CC11A5800C4EBBA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23DC2C972CCF42B700EB2CFF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -210,11 +277,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		23DC2C952CCF42B700EB2CFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		235158752CC11A5900C4EBBA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */;
 			targetProxy = 235158742CC11A5900C4EBBA /* PBXContainerItemProxy */;
 		};
@@ -361,15 +436,19 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.CLP-Inspection.app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -397,15 +476,19 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.CLP-Inspection.app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -474,6 +557,76 @@
 			};
 			name = Release;
 		};
+		23DC2CA62CCF42B900EB2CFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = InspectionRobotMac/InspectionRobotMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "\"InspectionRobotMac/Preview Content\"";
+				DEVELOPMENT_TEAM = TGBMMRU7P7;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 5.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kamho.InspectionRobotMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		23DC2CA72CCF42B900EB2CFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = InspectionRobotMac/InspectionRobotMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "\"InspectionRobotMac/Preview Content\"";
+				DEVELOPMENT_TEAM = TGBMMRU7P7;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 5.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kamho.InspectionRobotMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -500,6 +653,15 @@
 			buildConfigurations = (
 				235158782CC11A5900C4EBBA /* Debug */,
 				235158792CC11A5900C4EBBA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		23DC2CA52CCF42B900EB2CFF /* Build configuration list for PBXNativeTarget "InspectionRobotMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23DC2CA62CCF42B900EB2CFF /* Debug */,
+				23DC2CA72CCF42B900EB2CFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

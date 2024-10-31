@@ -40,7 +40,7 @@ struct ControlView: View {
         Button(action:{
             let left = 1500 - (400 * self.viewModel.leftPower / 100)
             let right = 1500 - (400 * self.viewModel.rightPower / 100)
-            self.station.post_request("/servo", value: [left,right,
+            _ = self.station.post_request("/servo", value: [left,right,
                                                         left,right])
         }){
             Image(systemName: "arrowtriangle.up.fill")
@@ -52,7 +52,7 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_S =
         Button(action:{
-            self.station.post_request("/servo", value: [1500,1500,1500,1500])
+            _ = self.station.post_request("/servo", value: [1500,1500,1500,1500])
         }){
             Image(systemName: "stop.fill")
                 .padding()
@@ -65,7 +65,7 @@ struct ControlView: View {
         Button(action:{
             let left = 1500 + (400 * self.viewModel.leftPower / 100)
             let right = 1500 + (400 * self.viewModel.rightPower / 100)
-            self.station.post_request("/servo", value: [left,right,
+            _ = self.station.post_request("/servo", value: [left,right,
                                                         left,right])
         }){
             Image(systemName: "arrowtriangle.down.fill")
@@ -117,7 +117,7 @@ struct ControlView: View {
         let SensorRelay =
         ForEach(7...8, id:\.self){ idx in
             Button(action:{
-                self.station.post_request("/relay", value: [idx-1])
+                _ = self.station.post_request("/relay", value: [idx-1])
             }){
                 let s = self.station.status.robot_status.relay
                 let index = s.index(s.startIndex, offsetBy: idx-1)
@@ -134,7 +134,7 @@ struct ControlView: View {
         let Relay_1_3 =
         ForEach(1...3, id:\.self){ idx in
             Button(action:{
-                self.station.post_request("/relay", value: [idx-1])
+                _ = self.station.post_request("/relay", value: [idx-1])
             }){
                 let s = self.station.status.robot_status.relay
                 let index = s.index(s.startIndex, offsetBy: idx-1)
@@ -151,7 +151,7 @@ struct ControlView: View {
         let Relay_4_6 =
         ForEach(4...6, id:\.self){ idx in
             Button(action:{
-                self.station.post_request("/relay", value: [idx-1])
+                _ = self.station.post_request("/relay", value: [idx-1])
             }){
                 let s = self.station.status.robot_status.relay
                 let index = s.index(s.startIndex, offsetBy: idx-1)
@@ -171,7 +171,7 @@ struct ControlView: View {
                     viewModel.webShow.toggle()
                 }
             }){
-                Label("Robot Control", systemImage: "macstudio.fill")
+                Label("Control", systemImage: "macstudio.fill")
                     .padding()
                     .padding(.vertical)
                     .lineLimit(1)
@@ -182,44 +182,16 @@ struct ControlView: View {
                 //Button Here
                 VStack{
                     if !compact{
-                        VStack{
-                            Text("CurPos")
-                            connectIcon
-                            
-                        }.padding()
-                        
                         Spacer()
                             .frame(maxHeight : .infinity)
                     }
                     if compact{
-                        
                         VStack{
-//                            HStack{
-//                                VStack{
-//                                    Spacer()
-//                                    SensorRelay
-//                                }.padding()
-//                                    .background(Capsule()
-//                                        .fill(.ultraThinMaterial))
-//                                Spacer()
-//                                VStack{
-//                                    Relay_1_3
-//                                    
-//                                }.padding()
-//                                    .background(Capsule()
-//                                        .fill(.ultraThinMaterial))
-//                                Spacer()
-//                                VStack{
-//                                    Relay_4_6
-//                                }.padding()
-//                                    .background(Capsule()
-//                                        .fill(.ultraThinMaterial))
-//                            }.frame(maxWidth: .infinity,maxHeight: .infinity)
                             VStack{
                                 HStack{
                                     ForEach(1...4, id:\.self){ idx in
                                         Button(action:{
-                                            self.station.post_request("/relay", value: [idx-1])
+                                            _ = self.station.post_request("/relay", value: [idx-1])
                                         }){
                                             let s = self.station.status.robot_status.relay
                                             let index = s.index(s.startIndex, offsetBy: idx-1)
@@ -237,7 +209,7 @@ struct ControlView: View {
                                 HStack{
                                     ForEach(5...8, id:\.self){ idx in
                                         Button(action:{
-                                            self.station.post_request("/relay", value: [idx-1])
+                                            _ = self.station.post_request("/relay", value: [idx-1])
                                         }){
                                             let s = self.station.status.robot_status.relay
                                             let index = s.index(s.startIndex, offsetBy: idx-1)
@@ -303,93 +275,61 @@ struct ControlView: View {
                         .padding()
                     
                     VStack{
+                        
+                        HStack{
+                            TabView{
+                                HStack{
+                                    VStack{
+                                        AutoMenu(content: {
+                                            Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                                .padding()
+                                                .frame(maxWidth: .infinity)
+                                                .contentTransition(.numericText(countsDown: true))
+                                                .foregroundStyle(Constants.notBlack)
+                                                .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                                            //                                                .padding()
+                                        }).buttonStyle(.plain)
+                                        PressureView(enabled : true)
+                                            .padding()
+                                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                                       
+                                    }.padding([.horizontal,.top])
+                                    HStack{
+                                        L_Adj
+                                        Spacer()
+                                        R_Adj
+                                        
+                                    }.padding()
+                                }
+//                                        AudioCurveView(title:false)
+//                                            .padding()
+                                
+                            }.tabViewStyle(.page)
+                        }
                         HStack{
                             VStack{
-                                Menu(content: {
-                                    let inProgress = (self.station.status.auto_status.mode != "Manual")
-                                        Section{
-                                            ForEach(AutoView.AutoMode.allCases, id: \.self){ mode in
-                                                let name = mode.rawValue
-                                                Button(action: {
-                                                    self.station.post_request("/auto", value: name)
-                                                }, label: {
-                                                    Text(name)
-                                                        .font(.title)
-                                                        .padding()
-                                                        
-                                                    
-                                                })
-                                            }
-                                        }
-                                    if inProgress{
-                                        Button(role: .destructive, action: {
-                                            self.station.post_request("/auto", value: "Manual")
-                                        }, label: {
-                                            Text("Stop Inspection")
-                                                .font(.title)
-                                                .padding()
-                                        }).keyboardShortcut("s",modifiers: .command)
-                                    }else{
-                                        Button(action: {
-                                            self.station.post_request("/auto", value: AutoView.AutoMode.Manual.rawValue)
-                                        }, label: {
-                                            Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
-                        //                                        .font(.title)
-                                                .bold()
-                                                .foregroundStyle(.green)
-                                                .padding()
-                                                
-                                            
-                                        }).foregroundStyle(.green)
-                                    }
-                                }, label: {
-                                    Label(String(format : "%04d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
-                                        .padding()
-                                        .contentTransition(.numericText(countsDown: true))
-                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(.red))
-                                        .padding()
-                                }).buttonStyle(.plain)
-                                
-                                //                                        .frame(maxHeight: .infinity,alignment : .top)
                                 VStack{
                                     Image("Robot_top")
                                         .resizable()
                                         .scaledToFit()
-                                    //                                            .frame(maxHeight: .infinity)
-//                                    roll_Section_Round
                                     HStack{
                                         EL_CID_TriggerButton()
                                         RecordingButton()
                                     }.padding().background(Capsule().fill(.ultraThinMaterial))
                                 }
                                 
-                            }.frame(maxHeight: .infinity)
-                            
+                            }.frame(maxHeight: .infinity).padding()
+//                                    LaunchPlatformView(compact:true,title:false)
+//                                        .padding()
+                            AudioCurveView(title:false)
                                 .padding()
-                                .background(RoundedRectangle(cornerRadius: 33.0).stroke(.white))
-                                .padding()
-                            VStack{
-                                VStack{
-                                    Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .foregroundStyle(Constants.notBlack)
-                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(Constants.offWhite))
-                                    
-                                    PressureView(enabled : true)
-                                }.padding()
-                                HStack{
-                                    L_Adj
-                                    Spacer()
-                                    R_Adj
-                                    
-                                    
-                                }.padding()
-                            }
                         }
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 33).stroke(.white))
+                        .padding()
+                        
+                        
                     }.frame(maxHeight: .infinity)
-                    
-                    //                    .padding()
                     Divider()
                         .padding()
                     
@@ -424,21 +364,10 @@ struct ControlView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $viewModel.webShow) {
-            WebView()
-                .overlay(alignment: .bottomTrailing, content: {
-                    Button(action:{
-                        viewModel.webShow = false
-                    }){
-                        Image(systemName: "arrow.down.right.and.arrow.up.left")
-                            .padding()
-                            .background(Circle().fill(.red))
-                    }
-                    .buttonStyle(.plain)
-                    .padding()
-                })
-        }
-        
+//        .fullScreenCover(isPresented: $viewModel.webShow) {
+//           
+//        }
+//        
         
         
     }
@@ -458,6 +387,6 @@ extension ControlView {
     }
     
     func sendCommand(){
-        station.RotatePlatform(Angle: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
+        _ = station.RotatePlatform(Angle: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
     }
 }

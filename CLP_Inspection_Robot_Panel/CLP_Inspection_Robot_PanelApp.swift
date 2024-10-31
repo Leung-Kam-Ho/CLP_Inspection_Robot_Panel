@@ -14,6 +14,9 @@ struct CLP_Inspection_Robot_PanelApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(station)
+                .background(Image("Watermark"))
+//                .font(.system(size: bigEnough ? screen.size.width / 50 : screen.size.width/15, weight: .bold, design: .rounded))
+                .font(.title2)
         }
     }
 }
