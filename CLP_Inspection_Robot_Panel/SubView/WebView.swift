@@ -18,40 +18,43 @@ struct Camera_WebView : View {
     var cleanUI = false
     var body: some View {
         WebView(ip: "http://\(station.cam_ip):8088/")
+            .disabled(true)
             .id(refreshView)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .bottomTrailing, content: {
                 if !cleanUI{
-                    Button(action:{
-                        refreshView.toggle()
-                            
-                    }){
-                        Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                            .padding()
-                            .foregroundStyle(.yellow)
-                            .background(Circle().fill(.ultraThinMaterial))
+                    VStack{
+                        Section{
+//                            Button(action:{
+////                                refreshView.toggle()
+//                                    
+//                            }){
+//                                Image(systemName: "arrow.left.arrow.right")
+//                                    .padding()
+//                                    .foregroundStyle(.yellow)
+//                                    .background(Circle().fill(.ultraThinMaterial))
+//                            }
+                            Button(action:{
+                                refreshView.toggle()
+                                    
+                            }){
+                                Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
+                                    .padding()
+                                    .foregroundStyle(.yellow)
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .padding()
                     }
-                    .buttonStyle(.plain)
-    //                                .padding()
-                    .padding()
                 }
             })
-            .clipShape(.rect(cornerRadius: 17))
+            .clipShape(.rect(cornerRadius: 33))
             .padding()
-            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial).stroke(cleanUI ? .clear : .white))
+            .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(cleanUI ? .clear : .white))
             .padding()
             .onChange(of: station.status.camera_status, { oldValue, newValue in
                 refreshView.toggle()
-            })
-            .overlay(content: {
-                if !station.connected{
-                    ProgressView("Please Wait")
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(.ultraThinMaterial)
-                        )
-                }
             })
     }
 }

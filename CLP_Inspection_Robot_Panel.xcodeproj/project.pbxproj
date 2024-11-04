@@ -565,7 +565,7 @@
 				CODE_SIGN_ENTITLEMENTS = InspectionRobotMac/InspectionRobotMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"InspectionRobotMac/Preview Content\"";
 				DEVELOPMENT_TEAM = TGBMMRU7P7;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -580,7 +580,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 5.1;
+				MARKETING_VERSION = 5.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kamho.InspectionRobotMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -600,7 +600,7 @@
 				CODE_SIGN_ENTITLEMENTS = InspectionRobotMac/InspectionRobotMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"InspectionRobotMac/Preview Content\"";
 				DEVELOPMENT_TEAM = TGBMMRU7P7;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -615,7 +615,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 5.1;
+				MARKETING_VERSION = 5.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kamho.InspectionRobotMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

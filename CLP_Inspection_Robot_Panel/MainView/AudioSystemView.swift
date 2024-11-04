@@ -244,8 +244,8 @@ struct EL_CID_TriggerButton: View {
         Button(action:{
             _ = station.post_request("/EL_CID",value: station.status.el_cid_status.relay_state == 0)
         }){
-            Label("EL-CID", image: "phone.down.fill")
-                .foregroundStyle(station.status.el_cid_status.connected ? .green : .red)
+            Text("EL-CID")
+                .foregroundStyle(station.status.el_cid_status.connected ? (station.status.el_cid_status.relay_state == 0 ? .green : .orange ): .red)
                 .padding().background(Capsule().fill(Constants.notBlack))
         }
         .buttonStyle(.plain)

@@ -76,6 +76,7 @@ struct AutoView : View{
                             viewModel.showAlert.toggle()
                         }.tag(viewModel.custom_ip)
                         Text("IP : \(station.ip)")
+                        Divider()
                         Button("custom camera ip"){
                             viewModel.showAlert_camera.toggle()
                         }.tag(viewModel.custom_cam_ip)
@@ -162,6 +163,16 @@ struct AutoView : View{
             }
             
         }
+        .overlay(content: {
+            if !station.connected{
+                ProgressView("Please Wait")
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(.ultraThinMaterial)
+                    )
+            }
+        })
     }
 }
 
