@@ -147,19 +147,19 @@ struct ContentView: View {
             .indexViewStyle(.page(backgroundDisplayMode: .always))
         }
         // Change the data update rate, since all chart and ui are update in the main the main thread, and the cpu usage of chart is higher
-        .onChange(of: viewModel.selectedTab, { old, new in
-            
-            if new == .Audio || new == .Robot{
-                station.dataUpdateRate(Constants.MEDIUM_RATE)
-                Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
-            }else if new == .ToF || new == .LaunchPlatform{
-                station.dataUpdateRate(Constants.INTENSE_RATE)
-                Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
-            }else{
-                station.dataUpdateRate(Constants.SLOW_RATE)
-                Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
-            }
-        })
+//        .onChange(of: viewModel.selectedTab, { old, new in
+//            
+//            if new == .Audio || new == .Robot{
+//                station.dataUpdateRate(Constants.MEDIUM_RATE)
+//                Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
+//            }else if new == .ToF || new == .LaunchPlatform{
+//                station.dataUpdateRate(Constants.INTENSE_RATE)
+//                Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
+//            }else{
+//                station.dataUpdateRate(Constants.SLOW_RATE)
+//                Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
+//            }
+//        })
         
         .scrollContentBackground(.hidden)
         .bold()

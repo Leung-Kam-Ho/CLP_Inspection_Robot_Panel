@@ -100,7 +100,7 @@ class Station : ObservableObject{
     var connected = false
     
     var port = Constants.PORT
-    var timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
+    var timer = Timer.publish(every: Constants.MEDIUM_RATE, on: .main, in: .common).autoconnect()
     let pressure_max = Constants.PRESSURE_MAX
     
     var trafficStatus = TrafficStatus()

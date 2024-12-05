@@ -38,8 +38,8 @@ struct ControlView: View {
             .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial))
         let controlButton_L =
         Button(action:{
-            let left = 1500 - (400 * self.viewModel.leftPower / 100)
-            let right = 1500 - (400 * self.viewModel.rightPower / 100)
+            let left = self.viewModel.leftPower
+            let right = self.viewModel.rightPower
             _ = self.station.post_request("/servo", value: [left,right,
                                                         left,right])
         }){
@@ -52,7 +52,7 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_S =
         Button(action:{
-            _ = self.station.post_request("/servo", value: [1500,1500,1500,1500])
+            _ = self.station.post_request("/servo", value: [0,0,0,0])
         }){
             Image(systemName: "stop.fill")
                 .padding()
@@ -63,8 +63,8 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_R =
         Button(action:{
-            let left = 1500 + (400 * self.viewModel.leftPower / 100)
-            let right = 1500 + (400 * self.viewModel.rightPower / 100)
+            let left = -self.viewModel.leftPower
+            let right = -self.viewModel.rightPower
             _ = self.station.post_request("/servo", value: [left,right,
                                                         left,right])
         }){

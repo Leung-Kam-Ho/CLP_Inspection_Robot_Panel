@@ -1,4 +1,5 @@
 import SwiftUI
+import os
 
 struct AutoMenu<Content : View>: View{
     @EnvironmentObject var station : Station
@@ -81,6 +82,10 @@ struct AutoView : View{
                             viewModel.showAlert_camera.toggle()
                         }.tag(viewModel.custom_cam_ip)
                         Text("Camera IP : \(station.cam_ip)")
+                        Divider()
+                        Button("Change Fetch Rate"){
+                            viewModel.showAlert_fetch.toggle()
+                        }
                         
                     }, label: {
                         VStack{
@@ -129,6 +134,21 @@ struct AutoView : View{
                         viewModel.custom_ip = station.ip
                         viewModel.custom_cam_ip = station.cam_ip
                     })
+                    .alert("Slect Fetch Rate", isPresented:$viewModel.showAlert_fetch){
+                        Button("Slow"){
+                            station.dataUpdateRate(Constants.SLOW_RATE)
+                            Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
+                        }
+                        Button("Medium"){
+                            station.dataUpdateRate(Constants.MEDIUM_RATE)
+                            Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
+                        }
+                        Button("Intense"){
+                            station.dataUpdateRate(Constants.INTENSE_RATE)
+                            Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
+                        }
+                        
+                    }
                     .alert("Enter custom IP", isPresented:$viewModel.showAlert) {
                         TextField("Enter custom IP", text: $viewModel.custom_ip)
                             .font(.caption)
@@ -194,6 +214,7 @@ extension AutoView{
         var pop = false
         var showAlert = false
         var showAlert_camera = false
+        var showAlert_fetch = false
         var custom_ip = ""
         var custom_cam_ip = ""
     }
