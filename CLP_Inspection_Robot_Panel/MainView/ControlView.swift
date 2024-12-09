@@ -75,44 +75,55 @@ struct ControlView: View {
                     .fill(notBlack))
             
         }.keyboardShortcut(.downArrow, modifiers: [])
-        
+        let SetpointMeter =
+        HStack{
+            Text(String(format:"%05.1f",station.status.launch_platform_status.setpoint))
+                .padding()
+//                .background(Capsule().fill(.ultraThickMaterial))
+        }
         let connectIcon =
         Button(action:{
             withAnimation{
                 viewModel.popup.toggle()
             }
         }){
-            Text(String(format:"%03d",Int(station.status.launch_platform_status.angle)))
+            Text(String(format:"%05.1f",station.status.launch_platform_status.angle))
                 .padding()
                 .foregroundStyle( station.status.launch_platform_status.connected ? .green : .red)
-                .background(Circle().fill(.ultraThinMaterial))
+                .background(Capsule().fill(.ultraThinMaterial))
         }.popover(isPresented: $viewModel.popup, content: {
-            HStack{
-                Button(action:{
-                    viewModel.angleTarget -= 0.1
-                }){
-                    Image(systemName: "minus.circle.fill")
-                        .padding()
-                    
+            VStack{
+                HStack{
+                    Text("setpoint:")
+                    SetpointMeter
                 }
-                Text(String(format:"%05.1f",viewModel.angleTarget))
-                    .padding()
-                    .foregroundStyle(.green)
-                    .onAppear{
-                        viewModel.angleTarget = station.status.launch_platform_status.angle
+                HStack{
+                    Button(action:{
+                        viewModel.angleTarget -= 0.1
+                    }){
+                        Image(systemName: "minus.circle.fill")
+                            .padding()
+                        
                     }
-                    .onDisappear{
-                        // send command on disapper
+                    Button(action:{
                         sendCommand()
+                    }){
+                        Text(String(format:"%05.1f",viewModel.angleTarget))
+                            .padding()
+                            .foregroundStyle(.green)
+                            .onAppear{
+                                viewModel.angleTarget = station.status.launch_platform_status.angle
+                            }
                     }
-                Button(action:{
-                    viewModel.angleTarget += 0.1
-                }){
-                    Image(systemName: "plus.circle.fill")
-                        .padding()
-                }
-                
-            }.buttonStyle(.plain).presentationCompactAdaptation(.popover)
+                    Button(action:{
+                        viewModel.angleTarget += 0.1
+                    }){
+                        Image(systemName: "plus.circle.fill")
+                            .padding()
+                    }
+                    
+                }.buttonStyle(.plain).presentationCompactAdaptation(.popover)
+            }
         })
         let SensorRelay =
         ForEach(7...8, id:\.self){ idx in
@@ -165,6 +176,8 @@ struct ControlView: View {
                         .fill(state == "1" ? .green : notBlack))
             }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
         }
+        
+
         VStack {
             Button(action:{
                 withAnimation{
@@ -233,6 +246,7 @@ struct ControlView: View {
                             
                             
                             HStack{
+//                                SetpointMeter
                                 connectIcon
                                 EL_CID_TriggerButton()
                                 RecordingButton()
@@ -278,28 +292,45 @@ struct ControlView: View {
                         
                         HStack{
                             TabView{
-                                HStack{
-                                    VStack{
-                                        AutoMenu(content: {
-                                            Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
-                                                .padding()
-                                                .frame(maxWidth: .infinity)
-                                                .contentTransition(.numericText(countsDown: true))
-                                                .foregroundStyle(Constants.notBlack)
-                                                .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
-                                            //                                                .padding()
-                                        }).buttonStyle(.plain)
-                                        PressureView(enabled : true)
-                                            .padding()
-                                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                                       
-                                    }.padding([.horizontal,.top])
-                                    HStack{
-                                        L_Adj
-                                        Spacer()
-                                        R_Adj
-                                        
-                                    }.padding()
+                                VStack{
+                                    Group{
+                                        HStack{
+                                            VStack{
+                                                AutoMenu(content: {
+                                                    Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                                        .padding()
+                                                        .frame(maxWidth: .infinity)
+                                                        .contentTransition(.numericText(countsDown: true))
+                                                        .foregroundStyle(Constants.notBlack)
+                                                        .background(RoundedRectangle(cornerRadius: 25.0).fill(Constants.offWhite))
+                                                    //                                                .padding()
+                                                }).buttonStyle(.plain)
+                                                PressureView(enabled : true)
+                                                    .padding()
+                                                    .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                                               
+                                            }.padding([.horizontal,.top])
+                                            VStack{
+                                                HStack{
+                                                    L_Adj
+                                                    Spacer()
+                                                    R_Adj
+                                                    
+                                                }.padding()
+                                                
+                                            }
+                                        }
+                                    }
+                                    Group{
+                                        HStack{
+                                            SetpointMeter
+                                            connectIcon
+                                            EL_CID_TriggerButton()
+                                            RecordingButton()
+                                        }
+                                        .padding()
+                                        .background(Capsule().fill(.ultraThinMaterial))
+                                    }
                                 }
 //                                        AudioCurveView(title:false)
 //                                            .padding()
@@ -312,10 +343,7 @@ struct ControlView: View {
                                     Image("Robot_top")
                                         .resizable()
                                         .scaledToFit()
-                                    HStack{
-                                        EL_CID_TriggerButton()
-                                        RecordingButton()
-                                    }.padding().background(Capsule().fill(.ultraThinMaterial))
+
                                 }
                                 
                             }.frame(maxHeight: .infinity).padding()
@@ -390,3 +418,12 @@ extension ControlView {
         _ = station.RotatePlatform(Angle: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
     }
 }
+
+
+
+#Preview {
+    @Previewable var station = Station()
+    ControlView(compact: true)
+        .environmentObject(station)
+}
+

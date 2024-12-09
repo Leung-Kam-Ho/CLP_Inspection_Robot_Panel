@@ -90,6 +90,7 @@ class Station : ObservableObject{
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
     
     var audio_log : [Audio_Status] = []
+    var latest_audio : Audio_Status = Audio_Status()
     
     var image : UIImage? = UIImage()
     var getImage = false
@@ -100,7 +101,8 @@ class Station : ObservableObject{
     var connected = false
     
     var port = Constants.PORT
-    var timer = Timer.publish(every: Constants.MEDIUM_RATE, on: .main, in: .common).autoconnect()
+    var timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
+    
     let pressure_max = Constants.PRESSURE_MAX
     
     var trafficStatus = TrafficStatus()
@@ -132,11 +134,14 @@ class Station : ObservableObject{
         return URL(string: "http://\(self.ip):\(self.port)\(route)") ?? URL(string:"http://127.0.0.1")!
     }
     func updateData(_: Date){
-        withAnimation(.easeOut(duration: 0.1)){
-            self.status = self.data
-            self.tree = self.status.auto_status.tree_ascii
-            self.server_connected = self.connected
-            self.save_audio(self.status.audio_status)
+        DispatchQueue.main.async{
+            withAnimation(.easeOut(duration: 0.1)){
+                self.status = self.data
+                self.tree = self.status.auto_status.tree_ascii
+                self.server_connected = self.connected
+                
+                self.latest_audio = self.status.audio_status
+            }
         }
         
     }
@@ -169,6 +174,7 @@ class Station : ObservableObject{
                 do{
                     self.data = try JSONDecoder().decode(Station_Status.self, from: data)
                     Logger().notice("Data Update Success")
+                    self.save_audio(self.data.audio_status)
                     self.connected = true
                 }catch{
                     print(error)

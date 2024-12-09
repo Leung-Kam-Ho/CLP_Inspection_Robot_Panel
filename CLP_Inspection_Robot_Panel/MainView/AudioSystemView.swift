@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Charts
+import os
 
 struct DataPoint: Identifiable {
     var id: Double { Double(xValue) }
@@ -184,7 +185,6 @@ struct AudioSystemView: View {
                     }
             }
         }
-        .onReceive(viewModel.timer_chart, perform: refresh_Log)
         .animation(.easeInOut(duration:0.1), value: viewModel.file_num_selection)
         .animation(.easeInOut(duration:0.1), value: viewModel.slot_selection)
         .animation(.easeInOut(duration:0.1), value: viewModel.date_selection)
@@ -242,46 +242,57 @@ struct EL_CID_TriggerButton: View {
     @EnvironmentObject var station: Station
     var body: some View {
         Button(action:{
-            _ = station.post_request("/EL_CID",value: station.status.el_cid_status.relay_state == 0)
+            _ = station.post_request("/EL_CID",value: true)
         }){
             Text("EL-CID")
                 .foregroundStyle(station.status.el_cid_status.connected ? (station.status.el_cid_status.relay_state == 0 ? .green : .orange ): .red)
                 .padding().background(Capsule().fill(Constants.notBlack))
+                .onLongPressGesture(minimumDuration: 1,perform: {
+                    _ = station.post_request("/EL_CID",value: false)
+                    Logger().info("Reset EL-CID")
+                })
         }
         .buttonStyle(.plain)
+    }
+}
+
+struct AudioCurve : View{
+    let dataPoints: [DataPoint]
+    let y_domain: [Float]
+    let x_domain: [Float]
+    var body: some View {
+        Chart{
+            LinePlot(dataPoints,
+                     x: .value("Time(s)", \.xValue),
+                     y: .value("Amplitude", \.yValue)
+            )
+        }
+        .chartYScale(domain: y_domain)
+        .chartXScale(domain: x_domain)
+        .chartXAxisLabel("Time(s)")
+        .chartYAxisLabel("Amplitude")
     }
 }
 
 struct AudioCurveView : View {
     @EnvironmentObject var station : Station
     var title = true
+    
     var body: some View {
         ZStack{
             VStack{
-                let data = station.status.audio_status.Audio
+                let data = self.station.latest_audio.Audio
                 let dataPoints = (0..<data.count).map{DataPoint(xValue: $0, yValue: Double(data[$0]))}
                 let y_domain = [(data.min() ?? 0.0) * 1.3, (data.max() ?? 100.0 ) * 1.3]
-                let x_domain = [0,data.count]
+                let x_domain = [0.0,Float(data.count)]
                 GroupBox("Audio"){
-                    Chart{
-                        LinePlot(dataPoints,
-                                 x: .value("Time(s)", \.xValue),
-                                 y: .value("Amplitude", \.yValue)
-                        )
-                    }
-                    .chartYScale(domain: y_domain)
-                    .chartXScale(domain: x_domain)
-                    .chartXAxisLabel("Time(s)")
-                    .chartYAxisLabel("Amplitude")
+                    AudioCurve(dataPoints: dataPoints, y_domain: y_domain, x_domain: x_domain)
                 }.overlay(content: {
                     if data.isEmpty{
                         Text("No Audio Record")
                     }
                 })
                 .clipShape(.rect(cornerRadius: 33.0))
-                
-                
-                
             }
             .padding()
             .background(RoundedRectangle(cornerRadius: 49.0)
@@ -289,6 +300,7 @@ struct AudioCurveView : View {
             RoundedRectangle(cornerRadius: 49.0)
                 .fill(.black.opacity(0.1))
         }
+        
     }
 }
 
@@ -322,7 +334,6 @@ extension AudioSystemView{
         var distance_selection : Int? = nil as Int?
         var file_num_selection : Int? = nil as Int?
         var date_selection : String? = nil as String?
-        let timer_chart = Timer.publish(every: Constants.MEDIUM_RATE, on: .main, in: .default).autoconnect()
     }
     
     func get_log() -> ([Float],[Float],[Float]){

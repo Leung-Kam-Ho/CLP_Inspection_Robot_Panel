@@ -7,6 +7,7 @@ struct LaunchPlatformView : View{
     @State var viewModel = ViewModel()
     var enabled = true
     var compact = false
+    @State var show_slot = true
     var title = true
     var body: some View{
         let img_list = ["arrow.left.arrow.right.circle.fill","lock.circle.fill","popcorn.circle.fill","lifepreserver.fill"]
@@ -22,16 +23,39 @@ struct LaunchPlatformView : View{
                     Image(systemName: "circle.fill")
                         .font(.system(size: enabled && !compact ? 400 : 150))
                         .foregroundStyle(.ultraThickMaterial)
-                    VStack{
-                        let preview_slot =  Int(self.viewModel.previewLP_angle / Constants.SLOT_DISTANCE_DEGREE) + 1
-                        let slot = Int(self.station.status.launch_platform_status.angle / Float(Constants.SLOT_DISTANCE_DEGREE)) + 1
-                        Text("Slot")
-                            .foregroundStyle(Constants.offWhite)
-                            .font(enabled && !compact ? .title : .caption)
-                        Text(enabled ? String(format : "%02d",Int(preview_slot)) : String(format : "%02d",Int(slot)))
-                            .tint(.primary)
-                            .contentTransition(.numericText(countsDown: true))
-                            .font(.system(size: enabled && !compact ? 200 : 70))
+                    Button(action:{
+                        show_slot.toggle()
+                    }){
+                        VStack(alignment:.center){
+                            let fractionalPart : Double = enabled ? Double(self.viewModel.previewLP_angle - Double(Int(self.viewModel.previewLP_angle))) : Double(self.station.status.launch_platform_status.angle - Float(Int(self.station.status.launch_platform_status.angle)))
+                            let slot : Int = enabled ? Int(self.viewModel.previewLP_angle / Constants.SLOT_DISTANCE_DEGREE) + 1 : Int(self.station.status.launch_platform_status.angle / Float(Constants.SLOT_DISTANCE_DEGREE)) + 1
+                            
+                            
+
+                            if show_slot{
+                                Text("Slot")
+                                    .foregroundStyle(Constants.offWhite)
+                                    .font(enabled && !compact ? .title : .caption)
+                                Text(String(format : "%02d",Int(slot)))
+                                    .tint(.primary)
+                                    .contentTransition(.numericText(countsDown: true))
+                                    .font(.system(size: enabled && !compact ? 200 : 70))
+                            }else{
+                                Text("Angle")
+                                    .foregroundStyle(Constants.offWhite)
+                                    .font(enabled && !compact ? .title : .caption)
+                                Text(enabled ? String(format : "%03d",Int(self.viewModel.previewLP_angle)) : String(format : "%03d",Int(station.status.launch_platform_status.angle)))
+                                    .tint(.primary)
+                                    .contentTransition(.numericText(countsDown: true))
+                                    .font(.system(size: enabled && !compact ? 180 : 50))
+                                
+                                Text(String(format : "%02d",Int(fractionalPart*100)))
+                                    .foregroundStyle(Constants.offWhite)
+                                    .font(enabled && !compact ? .title : .caption)
+                            }
+                            
+                            
+                        }
                     }
                     
                 }
@@ -256,8 +280,7 @@ extension LaunchPlatformView{
         var previewLP_angle_lastAngle = 0.0
         var previewLP_angle = 0.0
         let offset = 6.0
-        var show_slot = true
-        var locked = true
+        var locked = false
         var show_Relay = true
         var success = false
         
@@ -265,6 +288,7 @@ extension LaunchPlatformView{
             let remainder = number % Int(Constants.SLOT_DISTANCE_DEGREE)
             return number - remainder + (remainder > 6 ? Int(Constants.SLOT_DISTANCE_DEGREE) : 0)
         }
+
         
     }
     

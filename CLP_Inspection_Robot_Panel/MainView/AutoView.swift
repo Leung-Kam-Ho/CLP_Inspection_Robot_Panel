@@ -234,3 +234,11 @@ extension AutoView{
         return filtered
     }
 }
+
+
+#Preview {
+    @Previewable var station = Station()
+    AutoView()
+        .environmentObject(station)
+}
+
