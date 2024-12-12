@@ -316,20 +316,31 @@ struct ControlView: View {
                                                     Spacer()
                                                     R_Adj
                                                     
-                                                }.padding()
+                                                }.padding([.horizontal,.top])
                                                 
                                             }
                                         }
                                     }
                                     Group{
                                         HStack{
-                                            SetpointMeter
-                                            connectIcon
-                                            EL_CID_TriggerButton()
-                                            RecordingButton()
+                                            Button(action:{
+                                                withAnimation{
+                                                    viewModel.showHints.toggle()
+                                                }
+                                            }){
+                                                Image(systemName:"lightbulb.fill")
+                                                    .padding()
+                                                    .background(Circle().fill(viewModel.showHints ? .yellow : Constants.notBlack))
+                                            }.buttonStyle(.plain)
+                                            HStack{
+                                                SetpointMeter
+                                                connectIcon
+                                                EL_CID_TriggerButton()
+                                                RecordingButton()
+                                            }
+                                            .padding()
+                                            .background(Capsule().fill(.ultraThinMaterial))
                                         }
-                                        .padding()
-                                        .background(Capsule().fill(.ultraThinMaterial))
                                     }
                                 }
 //                                        AudioCurveView(title:false)
@@ -338,15 +349,17 @@ struct ControlView: View {
                             }.tabViewStyle(.page)
                         }
                         HStack{
-                            VStack{
+                            if viewModel.showHints{
                                 VStack{
-                                    Image("Robot_top")
-                                        .resizable()
-                                        .scaledToFit()
+                                    VStack{
+                                        Image("Robot_top")
+                                            .resizable()
+                                            .scaledToFit()
 
-                                }
-                                
-                            }.frame(maxHeight: .infinity).padding()
+                                    }
+                                    
+                                }.frame(maxHeight: .infinity).padding()
+                            }
 //                                    LaunchPlatformView(compact:true,title:false)
 //                                        .padding()
                             AudioCurveView(title:false)
@@ -368,7 +381,7 @@ struct ControlView: View {
                         ScrollView(showsIndicators: false){
                             VStack(spacing : 20){
                                 
-                                ForEach(Array(data[0...10].enumerated()), id: \.0) { idx, value in
+                                ForEach(Array(data[0...13].enumerated()), id: \.0) { idx, value in
                                     Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
                                         .padding()
                                         .font(.title)
@@ -411,6 +424,7 @@ extension ControlView {
         var popup = false
         var angleTarget : Float = 0.0
         var webShow = false
+        var showHints = false
         
     }
     

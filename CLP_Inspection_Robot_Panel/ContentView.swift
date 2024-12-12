@@ -8,6 +8,7 @@ struct ContentView: View {
         GeometryReader{ screen in
             let bigEnough = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
             let contentMinSize = CGSize(width: 1100, height: 1000)
+            let fullscreen = screen.size.width > contentMinSize.width * 2
             //Views
             let camera =
             Camera_WebView()
@@ -116,11 +117,52 @@ struct ContentView: View {
                     
                     
                 }
-                if viewModel.cameraMode == .half{
-                    
-                    if screen.size.width > contentMinSize.width * 2{
-                        camera
-                    }
+                if (viewModel.cameraMode == .half) && fullscreen{
+                    TabView(content: {
+                        if bigEnough{
+                            Tab("Camera", systemImage: "camera.fill"){
+                                camera
+                            }
+                            
+                            Tab("All", systemImage: "widget.small"){
+                                conceptView
+                                    
+                            }
+                        }
+                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath"){
+                            autoView
+                            
+                        }
+                        
+                        Tab("Progress", systemImage:"switch.programmable"){
+                            progressView
+                                
+                        }
+                        Tab("Robot", systemImage:"macstudio.fill"){
+                            controlView
+                                
+                        }
+                        Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered"){
+                            launchPlatformView
+                                
+                        }
+                        Tab("Audio", systemImage:"waveform"){
+                            audioView
+                        }
+                        
+                        Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent"){
+                            pressureView
+                        }
+                        
+                        
+                        Tab("Sensor", systemImage:"ruler.fill"){
+                            tofView
+                                
+                        }
+                    }).tabViewStyle(.tabBarOnly)
+//                    if screen.size.width > contentMinSize.width * 2{
+//                        camera
+//                    }
                     
                     
                 }
@@ -129,7 +171,7 @@ struct ContentView: View {
             .tabViewStyle(.sidebarAdaptable)
             
             .tabViewSidebarHeader(content: {
-                if screen.size.width > contentMinSize.width * 2{
+                if fullscreen{
                     VStack{
                         Picker("Mode", selection: $viewModel.cameraMode, content: {
                             ForEach(CameraMode.allCases, id: \.self) { mode in
