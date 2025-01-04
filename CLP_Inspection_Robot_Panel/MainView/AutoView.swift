@@ -11,10 +11,20 @@ struct AutoMenu<Content : View>: View{
         Menu(content: {
             let inProgress = (self.station.status.auto_status.mode != "Manual")
             Section{
-                ForEach(AutoMode.allCases, id: \.self){ mode in
+                ForEach(AutoMode_segment.allCases, id: \.self){ mode in
                     let name = mode.rawValue
                     Button(action: {
-                        _  = self.station.post_request("/auto", value: name)
+//                        _  = self.station.post_request("/auto", value: name)
+                        switch mode{
+                        case .Manual:
+                            _  = self.station.post_request("/auto", value: name)
+                        case .Testing:
+                            _  = self.station.post_request("/auto", value: name)
+                        default:
+                            self.station.autoMode = mode
+                        }
+                        self.station.autoMode = mode
+                        
                     }, label: {
                         Text(name)
                             .font(.title)
@@ -90,7 +100,7 @@ struct AutoView : View{
                     }, label: {
                         VStack{
                             let mt = self.station.status.auto_status.action_update == ""
-                            Text(connected ? (mt ? "Server online" : "Current Action") : "Server offline")
+                            Text(connected ? (mt ? self.station.autoMode.rawValue : "Current Action") : "Server offline")
                                 
                                 .padding()
                                 .contentTransition(.numericText(countsDown: true))
@@ -207,10 +217,12 @@ enum AutoMode : String , CaseIterable{
     case Testing
 }
 
+
 extension AutoView{
     
     @Observable
     class ViewModel{
+
         var pop = false
         var showAlert = false
         var showAlert_camera = false
@@ -239,6 +251,8 @@ extension AutoView{
 #Preview {
     @Previewable var station = Station()
     AutoView()
+        .padding()
+        .padding()
         .environmentObject(station)
 }
 

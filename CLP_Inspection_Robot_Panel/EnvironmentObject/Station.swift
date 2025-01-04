@@ -1,7 +1,14 @@
 import SwiftUI
 import os
 
-
+enum AutoMode_segment : String , CaseIterable{
+    case Manual
+    case Standing
+    case Lauch
+    case Baffle
+    case Testing
+    
+} 
 class Station : ObservableObject{
     class Station_Status : Codable , ObservableObject{
         var robot_status = Robot_Status()
@@ -95,6 +102,7 @@ class Station : ObservableObject{
     var image : UIImage? = UIImage()
     var getImage = false
     
+    var autoMode : AutoMode_segment = .Manual
     var data = Station_Status()
     var tree = "No Tree"
     var most_recent_FFT = [Float]()

@@ -38,10 +38,22 @@ struct ControlView: View {
             .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial))
         let controlButton_L =
         Button(action:{
-            let left = self.viewModel.leftPower
-            let right = self.viewModel.rightPower
-            _ = self.station.post_request("/servo", value: [left,right,
-                                                        left,right])
+            switch station.autoMode {
+            
+            case .Standing:
+                _  = self.station.post_request("/auto", value: AutoMode.Elevate.rawValue)
+            case .Lauch:
+                _  = self.station.post_request("/auto", value: AutoMode.Enter.rawValue)
+            case .Baffle:
+                _  = self.station.post_request("/auto", value: AutoMode.Enter_Generator.rawValue)
+            default:
+                let left = Int(1500 - 400 * Double(self.viewModel.leftPower / 100))
+                let right = Int(1500 - 400 * Double(self.viewModel.rightPower / 100))
+                _ = self.station.post_request("/servo", value: [left,right,
+                                                                left,right])
+ 
+            }
+            
         }){
             Image(systemName: "arrowtriangle.up.fill")
                 .padding()
@@ -52,7 +64,11 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_S =
         Button(action:{
-            _ = self.station.post_request("/servo", value: [0,0,0,0])
+//            _ = self.station.post_request("/servo", value: [0,0,0,0])
+            if self.station.autoMode == .Manual {
+                _ = self.station.post_request("/servo", value: [1500,1500,1500,1500])
+            }
+            _  = self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
         }){
             Image(systemName: "stop.fill")
                 .padding()
@@ -63,10 +79,22 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_R =
         Button(action:{
-            let left = -self.viewModel.leftPower
-            let right = -self.viewModel.rightPower
-            _ = self.station.post_request("/servo", value: [left,right,
-                                                        left,right])
+            switch station.autoMode {
+            
+            case .Standing:
+                _  = self.station.post_request("/auto", value: AutoMode.Drop.rawValue)
+            case .Lauch:
+                _  = self.station.post_request("/auto", value: AutoMode.Exit.rawValue)
+            case .Baffle:
+                _  = self.station.post_request("/auto", value: AutoMode.Exit_Generator.rawValue)
+            default:
+                let left = Int(1500 + 400 * Double(self.viewModel.leftPower / 100))
+                let right = Int(1500 + 400 * Double(self.viewModel.rightPower / 100))
+                _ = self.station.post_request("/servo", value: [left,right,
+                                                            left,right])
+ 
+            }
+            
         }){
             Image(systemName: "arrowtriangle.down.fill")
                 .padding()
@@ -332,6 +360,14 @@ struct ControlView: View {
                                                     .padding()
                                                     .background(Circle().fill(viewModel.showHints ? .yellow : Constants.notBlack))
                                             }.buttonStyle(.plain)
+                                            AutoMenu(content: {
+                                                Text(station.autoMode.rawValue)
+                                                    .lineLimit(1)
+                                                    .padding()
+                                                    .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
+                                                    .padding()
+                                            }).buttonStyle(.plain)
+                                            
                                             HStack{
                                                 SetpointMeter
                                                 connectIcon
