@@ -13,11 +13,11 @@ import SwiftUI
 
 
 struct Camera_WebView : View {
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var settings : SettingsHandler
     @State var refreshView = false
     var cleanUI = false
     var body: some View {
-        WebView(ip: "http://\(station.cam_ip):8088/")
+        WebView(ip: "http://\(settings.cam_ip)")
             .disabled(true)
             .id(refreshView)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -53,9 +53,9 @@ struct Camera_WebView : View {
             .padding()
             .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(cleanUI ? .clear : .white))
             .padding()
-            .onChange(of: station.status.camera_status, { oldValue, newValue in
-                refreshView.toggle()
-            })
+//            .onChange(of: station.status.camera_status, { oldValue, newValue in
+//                refreshView.toggle()
+//            })
     }
 }
 
@@ -101,4 +101,11 @@ struct WebView: UIViewRepresentable {
         }
     }
     
+}
+
+struct WebView_Previews: PreviewProvider {
+    static var previews: some View {
+        Camera_WebView()
+            .environmentObject(Station())
+    }
 }

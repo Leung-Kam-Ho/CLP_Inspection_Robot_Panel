@@ -64,6 +64,7 @@ struct AutoMenu<Content : View>: View{
 
 struct AutoView : View{
     @EnvironmentObject var station : Station
+    @EnvironmentObject var settings : SettingsHandler
     @State var viewModel = ViewModel()
     var body: some View{
         let autoMenu =
@@ -91,7 +92,7 @@ struct AutoView : View{
                         Button("custom camera ip"){
                             viewModel.showAlert_camera.toggle()
                         }.tag(viewModel.custom_cam_ip)
-                        Text("Camera IP : \(station.cam_ip)")
+                        Text("Camera IP : \(settings.cam_ip)")
                         Divider()
                         Button("Change Fetch Rate"){
                             viewModel.showAlert_fetch.toggle()
@@ -142,7 +143,7 @@ struct AutoView : View{
                     }
                     .onAppear(perform: {
                         viewModel.custom_ip = station.ip
-                        viewModel.custom_cam_ip = station.cam_ip
+                        viewModel.custom_cam_ip = settings.cam_ip
                     })
                     .alert("Slect Fetch Rate", isPresented:$viewModel.showAlert_fetch){
                         Button("Slow"){
@@ -174,7 +175,7 @@ struct AutoView : View{
                             .font(.caption)
                         Button("Cancel", role: .cancel, action: {})
                         Button("OK", action: {
-                            station.cam_ip = viewModel.custom_cam_ip
+                            settings.cam_ip = viewModel.custom_cam_ip
                         })
                     } message: {
                         Text("Xcode will print whatever you type.")

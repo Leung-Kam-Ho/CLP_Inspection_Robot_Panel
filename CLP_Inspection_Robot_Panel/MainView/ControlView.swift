@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import os
 
 struct ControlView: View {
     @State var viewModel = ViewModel()
@@ -41,14 +42,15 @@ struct ControlView: View {
             switch station.autoMode {
             
             case .Standing:
-                _  = self.station.post_request("/auto", value: AutoMode.Elevate.rawValue)
+                _  = self.station.post_request("/auto", value: AutoMode.Drop.rawValue)
             case .Lauch:
                 _  = self.station.post_request("/auto", value: AutoMode.Enter.rawValue)
             case .Baffle:
                 _  = self.station.post_request("/auto", value: AutoMode.Enter_Generator.rawValue)
             default:
-                let left = Int(1500 - 400 * Double(self.viewModel.leftPower / 100))
-                let right = Int(1500 - 400 * Double(self.viewModel.rightPower / 100))
+                let left = Int(1500 - 400 * Double(self.viewModel.leftPower) / 100.0)
+                let right = Int(1500 - 400 * Double(self.viewModel.rightPower) / 100.0)
+                Logger().info("\(left),\(right)")
                 _ = self.station.post_request("/servo", value: [left,right,
                                                                 left,right])
  
@@ -82,14 +84,14 @@ struct ControlView: View {
             switch station.autoMode {
             
             case .Standing:
-                _  = self.station.post_request("/auto", value: AutoMode.Drop.rawValue)
+                _  = self.station.post_request("/auto", value: AutoMode.Elevate.rawValue)
             case .Lauch:
                 _  = self.station.post_request("/auto", value: AutoMode.Exit.rawValue)
             case .Baffle:
                 _  = self.station.post_request("/auto", value: AutoMode.Exit_Generator.rawValue)
             default:
-                let left = Int(1500 + 400 * Double(self.viewModel.leftPower / 100))
-                let right = Int(1500 + 400 * Double(self.viewModel.rightPower / 100))
+                let left = Int(1500 + 400 * Double(self.viewModel.leftPower) / 100.0)
+                let right = Int(1500 + 400 * Double(self.viewModel.rightPower) / 100.0)
                 _ = self.station.post_request("/servo", value: [left,right,
                                                             left,right])
  
@@ -121,6 +123,10 @@ struct ControlView: View {
                 .background(Capsule().fill(.ultraThinMaterial))
         }.popover(isPresented: $viewModel.popup, content: {
             VStack{
+                HStack{
+                    Text(String(format: "robot: %03d",station.status.robot_status.roll_angle))
+                        .padding()
+                }
                 HStack{
                     Text("setpoint:")
                     SetpointMeter
@@ -416,7 +422,11 @@ struct ControlView: View {
                         
                         ScrollView(showsIndicators: false){
                             VStack(spacing : 20){
-                                
+                                Label(String(format: "%03d",station.status.robot_status.roll_angle), systemImage: "arrow.trianglehead.clockwise")
+                                    .padding()
+                                    .font(.title)
+                                    .contentTransition(.numericText(countsDown: true))
+                                    .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
                                 ForEach(Array(data[0...13].enumerated()), id: \.0) { idx, value in
                                     Label(String(format : "%03d",value), systemImage: "\(idx+1).circle.fill")
                                         .padding()
@@ -455,8 +465,8 @@ extension ControlView {
     class ViewModel{
         var l = 1.0
         var r = 1.0
-        var leftPower = 100
-        var rightPower = 100
+        var leftPower = 50
+        var rightPower = 50
         var popup = false
         var angleTarget : Float = 0.0
         var webShow = false

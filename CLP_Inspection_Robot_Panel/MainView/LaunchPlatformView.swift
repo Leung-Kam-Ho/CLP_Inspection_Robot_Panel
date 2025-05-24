@@ -156,6 +156,12 @@ struct LaunchPlatformView : View{
                     LaunchPlatform_Drag_overlay
                         .frame(maxHeight: .infinity, alignment : .top)
                         .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                        .overlay(alignment: .bottom, content: {
+                            Text(String(format:"%05d",station.status.launch_platform_status.lazer))
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 33).fill(.red))
+                                .padding()
+                        })
                     HStack{
                         
                         VStack{
@@ -303,6 +309,6 @@ extension LaunchPlatformView{
 
 #Preview {
     @Previewable var station = Station()
-    LaunchPlatformView(enabled: false)
+    LaunchPlatformView(enabled: true)
         .environmentObject(station)
 }

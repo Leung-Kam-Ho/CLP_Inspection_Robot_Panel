@@ -36,6 +36,7 @@ class Station : ObservableObject{
         var relay : String = "00000000"
         var connected : Bool = false
         var setpoint : Float = 0
+        var lazer : Int = 0
     }
     class Automation_Status : Codable, ObservableObject{
         var sequence_name : String = ""
@@ -93,7 +94,7 @@ class Station : ObservableObject{
     @Published var status = Station_Status()
     @Published var server_connected = false
     @AppStorage("ip_selection") var ip : String = "192.168.10.5"
-    @AppStorage("camera_ip_selection") var cam_ip : String = "localhost"
+//    @AppStorage("camera_ip_selection") var cam_ip : String = "localhost"
     @Published var desired_pressure : [Double] = [0.0,0.0,0.0,0.0]
     
     var audio_log : [Audio_Status] = []
@@ -147,7 +148,6 @@ class Station : ObservableObject{
                 self.status = self.data
                 self.tree = self.status.auto_status.tree_ascii
                 self.server_connected = self.connected
-                
                 self.latest_audio = self.status.audio_status
             }
         }
@@ -167,13 +167,13 @@ class Station : ObservableObject{
     func get_request(_ route : String = "/") -> Bool{
         if self.trafficStatus.get_data_semaphore{
             self.trafficStatus.getStart()
-            Logger().notice("Data Update")
+            Logger().notice("Data Fetch")
             let url = self.create_url(route)
             let request = URLRequest(url: url, timeoutInterval: TimeInterval(1))
             let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
                 defer{
                     self.trafficStatus.getEnd()
-                    Logger().notice("Data Update Ended")
+                    Logger().notice("Data Fetch Ended")
                 }
                 if let _ = error{
                     self.ErrorHandle()
@@ -181,7 +181,7 @@ class Station : ObservableObject{
                 guard let data = data else { return }
                 do{
                     self.data = try JSONDecoder().decode(Station_Status.self, from: data)
-                    Logger().notice("Data Update Success")
+                    Logger().notice("Data Fetch Success")
                     self.save_audio(self.data.audio_status)
                     self.connected = true
                 }catch{

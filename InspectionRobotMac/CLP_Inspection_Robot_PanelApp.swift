@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct CLP_Inspection_Robot_PanelApp: App {
     @StateObject var station = Station()
+    @StateObject var settings = SettingsHandler()
     let contentMinSize = CGSize(width: 1300, height: 1000)
     var body: some Scene {
         WindowGroup {
@@ -23,6 +24,7 @@ struct CLP_Inspection_Robot_PanelApp: App {
                 .font(.title2)
                 
                 .environmentObject(station)
+                .environmentObject(settings)
             
         }
         .defaultSize(contentMinSize)
