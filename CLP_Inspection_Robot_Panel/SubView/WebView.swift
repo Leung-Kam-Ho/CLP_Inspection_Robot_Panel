@@ -20,6 +20,7 @@ struct Camera_WebView : View {
         WebView(ip: "http://\(settings.cam_ip)")
             .disabled(true)
             .id(refreshView)
+            .scaledToFit()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .bottomTrailing, content: {
                 if !cleanUI{
