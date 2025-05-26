@@ -29,22 +29,26 @@ struct CLP_Inspection_Robot_PanelApp: App {
             }
             .background(Image("Watermark"))
             .onReceive(launchPlatformStatus.timer, perform: { _ in
-                withAnimation {
+                Logger().info("launchplatform Fetching Status")
                     
                     launchPlatformStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                }
+                
                 })
             .onReceive(automationStatus.timer, perform: {_ in
                 Logger().info("Auto Fetching Status")
-                withAnimation {
+                
                     automationStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                }
-                Logger().debug("Auto Status: \(automationStatus.status.connected)")
+                
             })
             .onReceive(robotStatus.timer, perform: {_ in
-                withAnimation {
+                Logger().info("robot Fetching Status")
                     robotStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                }
+                
+            })
+            .onReceive(digitalValveStatus.timer, perform: {_ in
+                Logger().info("digital valve Fetching Status")
+                digitalValveStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                
             })
             .font(.title2)
 //            .environmentObject(station)

@@ -124,6 +124,7 @@ struct LaunchPlatformView : View{
                         ForEach(1...4, id:\.self){ idx in
                             Button(action:{
 //                                _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+                                launchPlatformStatus.setRelay(ip : settings.ip, port : settings.port, idx : idx - 1)
                             }){
                                 let s = launchPlatformStatus.status.relay
                                 let index = s.index(s.startIndex, offsetBy: idx-1)

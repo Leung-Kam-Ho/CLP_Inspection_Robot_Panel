@@ -18,7 +18,7 @@ class RobotStatus: Codable, ObservableObject {
 }
 
 class DigitalValve_Status: Codable, ObservableObject {
-    var pressure: [Double] = [0, 0, 0, 0]
+    var pressure: [Double] = [0.0, 0.0, 0.0, 0.0]
     var connected: Bool = false
 }
 

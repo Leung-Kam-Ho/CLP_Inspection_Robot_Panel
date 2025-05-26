@@ -32,7 +32,11 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable {
             switch result {
             case .success(let status):
                 DispatchQueue.main.async {
-                    self.status = status
+                    withAnimation(.easeOut(duration: 0.1)){
+                        
+                        
+                        self.status = status
+                    }
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
@@ -90,8 +94,15 @@ class LaunchPlatformStatusObject: BaseStatusObject<LaunchPlatformStatus> {
     struct setAngleCommand : Encodable {
         var angle : Float
     }
+    struct setRelayCommand: Encodable {
+        var idx : Int
+    }
     init() {
         super.init(initialStatus: LaunchPlatformStatus(), statusRoute: "/launch_platform_status")
+    }
+    func setRelay(ip: String, port: Int, idx: Int) {
+        let command = setRelayCommand(idx: idx)
+        sendCommand(ip: ip, port: port, route: "/relay_launch_platform", data: command)
     }
     func RotatePlatform(ip: String, port: Int, value : Angle = .degrees(0)){
         let angle = value.degrees < 0 ? 360 + value.degrees : value.degrees
@@ -134,7 +145,17 @@ class ElCidStatusObject: BaseStatusObject<ElCidstatus> {
 
 // Digital valve status object
 class DigitalValveStatusObject: BaseStatusObject<DigitalValve_Status> {
+    struct setPressureCommand: Encodable {
+        var channel: Int
+        var pressure: Double
+    }
     init() {
         super.init(initialStatus: DigitalValve_Status(), statusRoute: "/digital_valve_status")
+    }
+    
+    func setPressure(ip: String, port: Int, channel: Int, pressure: Double) {
+        let command = setPressureCommand(channel : channel,pressure: pressure)
+        
+        sendCommand(ip: ip, port: port, route: "/pressure", data: command)
     }
 }

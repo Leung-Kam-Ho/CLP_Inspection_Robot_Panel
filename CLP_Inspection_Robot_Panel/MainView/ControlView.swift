@@ -410,7 +410,7 @@ struct ControlView: View {
 //                            AudioCurveView(title:false)
                             Chart {
                                 ForEach(Array(robotStatus.status.tof.prefix(14).enumerated()), id: \.offset) { index, value in
-                                    LineMark(
+                                    BarMark(
                                         x: .value("Sensor", index + 1),
                                         y: .value("Distance", value)
                                     )
@@ -493,9 +493,12 @@ struct ControlView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $viewModel.webShow) {
-           
-        }
+        .onAppear(perform: {
+            robotStatus.timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
+        })
+        .onDisappear(perform: {
+            robotStatus.timer = Timer.publish(every: 10.0, on: .main, in: .common).autoconnect()
+        })
         
         
         
