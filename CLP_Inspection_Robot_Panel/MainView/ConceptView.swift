@@ -47,13 +47,13 @@ struct ConceptView : View{
                 .fill(.ultraThinMaterial)
                 .stroke(.white)
             )
-        let audio_btn =
-        Button(action:{
-            self.selection = .Audio
-        }){
-            AudioCurveView()
-                .opacity(self.station.status.audio_status.connected ? 1 : 0.5)
-        }.buttonStyle(.plain)
+//        let audio_btn =
+//        Button(action:{
+//            self.selection = .Audio
+//        }){
+//            AudioCurveView()
+//                .opacity(self.station.status.audio_status.connected ? 1 : 0.5)
+//        }.buttonStyle(.plain)
         let sensor_bar =
         SensorBarView()
             .opacity(self.station.status.robot_status.connected ? 1 : 0.5)
@@ -64,7 +64,7 @@ struct ConceptView : View{
             VStack{
                 sensor_bar
                 HStack{
-                    audio_btn
+//                    audio_btn
                     pressure_btn
                 }.frame(maxHeight: .infinity)
                 HStack{

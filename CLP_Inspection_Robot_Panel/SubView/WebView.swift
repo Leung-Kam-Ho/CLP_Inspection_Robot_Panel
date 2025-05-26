@@ -26,15 +26,6 @@ struct Camera_WebView : View {
                 if !cleanUI{
                     VStack{
                         Section{
-//                            Button(action:{
-////                                refreshView.toggle()
-//                                    
-//                            }){
-//                                Image(systemName: "arrow.left.arrow.right")
-//                                    .padding()
-//                                    .foregroundStyle(.yellow)
-//                                    .background(Circle().fill(.ultraThinMaterial))
-//                            }
                             Button(action:{
                                 refreshView.toggle()
                                     

@@ -12,7 +12,8 @@ struct CLP_Inspection_Robot_PanelApp: App {
     @StateObject var station = Station()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Spacer()
+//            ContentView()
                 .environmentObject(station)
                 .background(Image("Watermark"))
 //                .font(.system(size: bigEnough ? screen.size.width / 50 : screen.size.width/15, weight: .bold, design: .rounded))

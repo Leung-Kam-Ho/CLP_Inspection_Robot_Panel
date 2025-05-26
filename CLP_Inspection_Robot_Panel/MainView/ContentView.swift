@@ -41,14 +41,6 @@ struct ContentView: View {
                 .stroke(.white)
             )
             .padding()
-            let audioView =
-            AudioSystemView(current_tab:$viewModel.selectedTab)
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 49.0)
-                    .fill(.ultraThinMaterial)
-                    .stroke(.white)
-                )
-                .padding()
             let pressureView =
             VStack{
                 Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
@@ -101,9 +93,6 @@ struct ContentView: View {
                         launchPlatformView
                             
                     }
-                    Tab("Audio", systemImage:"waveform", value: .Audio){
-                        audioView
-                    }
                     
                     Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: .Pressure){
                         pressureView
@@ -145,9 +134,6 @@ struct ContentView: View {
                         Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered"){
                             launchPlatformView
                                 
-                        }
-                        Tab("Audio", systemImage:"waveform"){
-                            audioView
                         }
                         
                         Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent"){
@@ -216,7 +202,6 @@ extension ContentView{
         case Camera
         case Camera_full
         case Progress
-        case Audio
     }
     enum CameraMode : String , CaseIterable{
         case half = "inset.filled.lefthalf.righthalf.rectangle"

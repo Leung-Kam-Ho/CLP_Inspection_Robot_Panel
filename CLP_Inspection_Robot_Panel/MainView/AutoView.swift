@@ -2,28 +2,29 @@ import SwiftUI
 import os
 
 struct AutoMenu<Content : View>: View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var autoStatus : AutomationStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     let content : Content
     init(@ViewBuilder content: @escaping () -> Content){
         self.content = content()
     }
     var body: some View{
         Menu(content: {
-            let inProgress = (self.station.status.auto_status.mode != "Manual")
+            let inProgress = (self.autoStatus.status.mode != "Manual")
             Section{
-                ForEach(AutoMode_segment.allCases, id: \.self){ mode in
+                ForEach(AutomationStatus.AutoMode_segment.allCases, id: \.self){ mode in
                     let name = mode.rawValue
                     Button(action: {
 //                        _  = self.station.post_request("/auto", value: name)
                         switch mode{
                         case .Manual:
-                            _  = self.station.post_request("/auto", value: name)
+                            autoStatus.setMode(ip: settings.ip, port: settings.port, mode: name)
                         case .Testing:
-                            _  = self.station.post_request("/auto", value: name)
+                            autoStatus.setMode(ip: settings.ip, port: settings.port, mode: name)
                         default:
-                            self.station.autoMode = mode
+                            autoStatus.autoMode = mode
                         }
-                        self.station.autoMode = mode
+                        autoStatus.autoMode = mode
                         
                     }, label: {
                         Text(name)
@@ -36,7 +37,7 @@ struct AutoMenu<Content : View>: View{
             }
             if inProgress{
                 Button(role: .destructive, action: {
-                    _ = self.station.post_request("/auto", value: "Manual")
+                    autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
                 }, label: {
                     Text("Stop Inspection")
                         .font(.title)
@@ -44,7 +45,7 @@ struct AutoMenu<Content : View>: View{
                 }).keyboardShortcut("s",modifiers: .command)
             }else{
                 Button(action: {
-                    _ = self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
+                    autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
                 }, label: {
                     Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
                     //                                        .font(.title)
@@ -63,13 +64,13 @@ struct AutoMenu<Content : View>: View{
 }
 
 struct AutoView : View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var autoStatus : AutomationStatusObject
     @EnvironmentObject var settings : SettingsHandler
     @State var viewModel = ViewModel()
     var body: some View{
         let autoMenu =
         AutoMenu(content: {
-            let inProgress = (self.station.status.auto_status.mode != "Manual")
+            let inProgress = (autoStatus.status.mode != "Manual")
             Image(systemName: inProgress ? "stop.fill" : "play.fill" )
                 .padding()
                 .padding(.horizontal)
@@ -82,12 +83,12 @@ struct AutoView : View{
             ZStack{
                 Color.clear
                 VStack{
-                    let connected = self.station.server_connected
+                    let connected = autoStatus.status.connected
                     Menu(content: {
                         Button("custom"){
                             viewModel.showAlert.toggle()
                         }.tag(viewModel.custom_ip)
-                        Text("IP : \(station.ip)")
+                        Text("IP : \(settings.ip)")
                         Divider()
                         Button("custom camera ip"){
                             viewModel.showAlert_camera.toggle()
@@ -100,12 +101,12 @@ struct AutoView : View{
                         
                     }, label: {
                         VStack{
-                            let mt = self.station.status.auto_status.action_update == ""
-                            Text(connected ? (mt ? self.station.autoMode.rawValue : "Current Action") : "Server offline")
+                            let mt = autoStatus.status.action_update == ""
+                            Text(connected ? (mt ? self.autoStatus.autoMode.rawValue : "Current Action") : "Server offline")
                                 
                                 .padding()
                                 .contentTransition(.numericText(countsDown: true))
-                            Text(self.station.status.auto_status.action_update == "" ? "No Action": self.station.status.auto_status.action_update)
+                            Text(autoStatus.status.action_update == "" ? "No Action": autoStatus.status.action_update)
                                 .padding()
                                 .contentTransition(.numericText(countsDown: true))
                                 .frame(maxWidth: .infinity)
@@ -125,7 +126,7 @@ struct AutoView : View{
                                             .tint(.primary)
                                         .contentTransition(.numericText(countsDown: true))
                                         if name.contains(String("🏃🏻‍➡️")){
-                                            Text(self.station.status.auto_status.action_update)
+                                            Text(autoStatus.status.action_update)
                                                 .foregroundStyle(.orange)
                                                 .id("current_Action")
                                             .contentTransition(.numericText(countsDown: true))
@@ -142,30 +143,30 @@ struct AutoView : View{
                         .padding()
                     }
                     .onAppear(perform: {
-                        viewModel.custom_ip = station.ip
+                        viewModel.custom_ip = settings.ip
                         viewModel.custom_cam_ip = settings.cam_ip
                     })
-                    .alert("Slect Fetch Rate", isPresented:$viewModel.showAlert_fetch){
-                        Button("Slow"){
-                            station.dataUpdateRate(Constants.SLOW_RATE)
-                            Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
-                        }
-                        Button("Medium"){
-                            station.dataUpdateRate(Constants.MEDIUM_RATE)
-                            Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
-                        }
-                        Button("Intense"){
-                            station.dataUpdateRate(Constants.INTENSE_RATE)
-                            Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
-                        }
-                        
-                    }
+//                    .alert("Slect Fetch Rate", isPresented:$viewModel.showAlert_fetch){
+//                        Button("Slow"){
+//                            station.dataUpdateRate(Constants.SLOW_RATE)
+//                            Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
+//                        }
+//                        Button("Medium"){
+//                            station.dataUpdateRate(Constants.MEDIUM_RATE)
+//                            Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
+//                        }
+//                        Button("Intense"){
+//                            station.dataUpdateRate(Constants.INTENSE_RATE)
+//                            Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
+//                        }
+//                        
+//                    }
                     .alert("Enter custom IP", isPresented:$viewModel.showAlert) {
                         TextField("Enter custom IP", text: $viewModel.custom_ip)
                             .font(.caption)
                         Button("Cancel", role: .cancel, action: {})
                         Button("OK", action: {
-                            station.ip = viewModel.custom_ip
+                            settings.ip = viewModel.custom_ip
                         })
                     } message: {
                         Text("Xcode will print whatever you type.")
@@ -183,7 +184,7 @@ struct AutoView : View{
                     HStack{
                         autoMenu
                         Spacer()
-                        Text(station.status.auto_status.mode)
+                        Text(autoStatus.status.mode)
                             .lineLimit(1)
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
@@ -195,7 +196,7 @@ struct AutoView : View{
             
         }
         .overlay(content: {
-            if !station.connected{
+            if !autoStatus.status.connected {
                 ProgressView("Please Wait")
                     .padding()
                     .background(
@@ -203,6 +204,9 @@ struct AutoView : View{
                             .fill(.ultraThinMaterial)
                     )
             }
+        })
+        .onReceive(autoStatus.timer, perform: {_ in 
+            autoStatus.fetchStatus(ip: settings.ip, port: settings.port)
         })
     }
 }
@@ -241,7 +245,7 @@ extension AutoView{
                  }
     }
     func tree2List() -> [String]{
-        let tree = self.station.status.auto_status.tree_ascii
+        let tree = autoStatus.status.tree_ascii
         let better = tree.replacingOccurrences(of: "[o]", with: String("✅")).replacingOccurrences(of: "[x]", with: String("❌")).replacingOccurrences(of: "[*]", with: String("🏃🏻‍➡️")).replacingOccurrences(of: "[-]", with: String("💬"))
         let filtered = splitAndFilterLines(text:better, targetStrings:["-->",])
         return filtered
@@ -250,10 +254,13 @@ extension AutoView{
 
 
 #Preview {
-    @Previewable var station = Station()
+    @Previewable var autoStatus = AutomationStatusObject()
+    @Previewable var settings = SettingsHandler()
     AutoView()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
         .padding()
-        .environmentObject(station)
+        .environmentObject(autoStatus)
+        .environmentObject(settings)
 }
 

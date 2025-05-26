@@ -46,8 +46,12 @@
 			membershipExceptions = (
 				" Constants.swift",
 				CLP_Inspection_Robot_PanelApp.swift,
+				EnvironmentObject/DeviceStatus.swift,
 				EnvironmentObject/SettingsHandler.swift,
 				EnvironmentObject/Station.swift,
+				EnvironmentObject/StatusObject.swift,
+				MainView/AudioSystemView.swift,
+				SharedClass/NetworkManager.swift,
 			);
 			target = 235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */;
 		};
@@ -56,18 +60,21 @@
 			membershipExceptions = (
 				" Constants.swift",
 				Assets.xcassets,
-				ContentView.swift,
+				EnvironmentObject/DeviceStatus.swift,
 				EnvironmentObject/SettingsHandler.swift,
 				EnvironmentObject/Station.swift,
+				EnvironmentObject/StatusObject.swift,
 				MainView/AudioSystemView.swift,
 				MainView/AutoView.swift,
 				MainView/ConceptView.swift,
+				MainView/ContentView.swift,
 				MainView/ControlView.swift,
 				MainView/InspectionProgressView.swift,
 				MainView/LaunchPlatformView.swift,
 				MainView/PressureView.swift,
 				MainView/ToFView.swift,
 				SaveFile.swift,
+				SharedClass/NetworkManager.swift,
 				SubView/GridRelayView.swift,
 				SubView/SensorBarView.swift,
 				SubView/VerticalSlider.swift,

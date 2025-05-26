@@ -5,6 +5,8 @@ import os
 struct ControlView: View {
     @State var viewModel = ViewModel()
     @EnvironmentObject var station : Station
+    @EnvironmentObject var settings : SettingsHandler
+    @EnvironmentObject var robotStatus : RobotStatusObject
     let notBlack = Color(red: 24/335, green: 24/335, blue: 24/335)
     var compact : Bool = false
     var body: some View {

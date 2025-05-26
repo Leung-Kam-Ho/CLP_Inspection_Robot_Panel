@@ -12,8 +12,11 @@ import SwiftUI
 
 class SettingsHandler : ObservableObject {
     
-//    @AppStorage("ip_selection") var ip : String = "192.168.10.5"
-    @AppStorage("camera_ip_selection") var cam_ip : String = "localhost"  
+    @AppStorage("rosIP") var ip : String = "localhost"
+    @AppStorage("rosPort") var port : Int = 5000
+    @AppStorage("cameraIP") var cam_ip : String = "localhost"
+    @AppStorage("cameraPort") var cam_port : Int = 4000
+    @AppStorage("updateRate") var updateRate : Double = 1.0
 
     init() {
 
