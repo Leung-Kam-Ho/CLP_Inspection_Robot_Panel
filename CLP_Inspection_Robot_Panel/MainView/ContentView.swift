@@ -2,7 +2,12 @@ import SwiftUI
 import os
 
 struct ContentView: View {
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var robotStatus : RobotStatusObject
+    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
+    @EnvironmentObject var autoStatus : AutomationStatusObject
+    @EnvironmentObject var elcidStatus : ElCidStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     @State var viewModel = ViewModel()
     var body: some View {
         GeometryReader{ screen in
@@ -47,7 +52,7 @@ struct ContentView: View {
                     .padding()
                     .padding(.vertical)
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 33.0).fill(station.status.digital_valve_status.connected ? .green : .red))
+                    .background(RoundedRectangle(cornerRadius: 33.0).fill(digitalValveStatus.status.connected ? .green : .red))
                     
                 PressureView(enabled : true)
                     .padding()
@@ -179,16 +184,16 @@ struct ContentView: View {
         .bold()
 //        .background(Constants.notBlack)
         .preferredColorScheme(.dark)
-        .onReceive(station.timer, perform: station.updateData)
+//        .onReceive(station.timer, perform: station.updateData)
         .monospacedDigit()
         
     }
     
-    func status_update_loop(){
-        while true{
-            _ = self.station.get_request("/data")
-        }
-    }
+//    func status_update_loop(){
+//        while true{
+//            _ = self.station.get_request("/data")
+//        }
+//    }
 }
 
 extension ContentView{
@@ -202,6 +207,7 @@ extension ContentView{
         case Camera
         case Camera_full
         case Progress
+        case placeHolder
     }
     enum CameraMode : String , CaseIterable{
         case half = "inset.filled.lefthalf.righthalf.rectangle"
@@ -213,10 +219,4 @@ extension ContentView{
         var camera_tab_toggle = false
         var cameraMode : CameraMode = .none
     }
-}
-
-#Preview {
-    @Previewable var station = Station()
-    ContentView()
-        .environmentObject(station)
 }

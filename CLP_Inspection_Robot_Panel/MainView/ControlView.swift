@@ -4,9 +4,12 @@ import os
 
 struct ControlView: View {
     @State var viewModel = ViewModel()
-    @EnvironmentObject var station : Station
     @EnvironmentObject var settings : SettingsHandler
     @EnvironmentObject var robotStatus : RobotStatusObject
+    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
+    @EnvironmentObject var autoStatus : AutomationStatusObject
+    @EnvironmentObject var elCidStatus : ElCidStatusObject
+    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
     let notBlack = Color(red: 24/335, green: 24/335, blue: 24/335)
     var compact : Bool = false
     var body: some View {
@@ -41,20 +44,19 @@ struct ControlView: View {
             .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThinMaterial))
         let controlButton_L =
         Button(action:{
-            switch station.autoMode {
+            switch autoStatus.autoMode {
             
             case .Standing:
-                _  = self.station.post_request("/auto", value: AutoMode.Drop.rawValue)
+                autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Drop.rawValue)
             case .Lauch:
-                _  = self.station.post_request("/auto", value: AutoMode.Enter.rawValue)
+                autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Enter.rawValue)
             case .Baffle:
-                _  = self.station.post_request("/auto", value: AutoMode.Enter_Generator.rawValue)
+                autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Enter_Generator.rawValue)
             default:
                 let left = Int(1500 - 400 * Double(self.viewModel.leftPower) / 100.0)
                 let right = Int(1500 - 400 * Double(self.viewModel.rightPower) / 100.0)
                 Logger().info("\(left),\(right)")
-                _ = self.station.post_request("/servo", value: [left,right,
-                                                                left,right])
+                robotStatus.setServo(ip: settings.ip, port: settings.port, servo: [left,right,left,right])
  
             }
             
@@ -68,11 +70,10 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_S =
         Button(action:{
-//            _ = self.station.post_request("/servo", value: [0,0,0,0])
-            if self.station.autoMode == .Manual {
-                _ = self.station.post_request("/servo", value: [1500,1500,1500,1500])
+            if autoStatus.autoMode == .Manual {
+                robotStatus.setServo(ip: settings.ip, port: settings.port, servo: [1500,1500,1500,1500])
             }
-            _  = self.station.post_request("/auto", value: AutoMode.Manual.rawValue)
+            autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
         }){
             Image(systemName: "stop.fill")
                 .padding()
@@ -83,19 +84,18 @@ struct ControlView: View {
         //                                        Spacer()
         let controlButton_R =
         Button(action:{
-            switch station.autoMode {
+            switch autoStatus.autoMode {
             
             case .Standing:
-                _  = self.station.post_request("/auto", value: AutoMode.Elevate.rawValue)
+                autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Elevate.rawValue)
             case .Lauch:
-                _  = self.station.post_request("/auto", value: AutoMode.Exit.rawValue)
+                autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Exit.rawValue)
             case .Baffle:
-                _  = self.station.post_request("/auto", value: AutoMode.Exit_Generator.rawValue)
+                autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Exit_Generator.rawValue)
             default:
                 let left = Int(1500 + 400 * Double(self.viewModel.leftPower) / 100.0)
                 let right = Int(1500 + 400 * Double(self.viewModel.rightPower) / 100.0)
-                _ = self.station.post_request("/servo", value: [left,right,
-                                                            left,right])
+                robotStatus.setServo(ip: settings.ip, port: settings.port, servo: [left,right,left,right])
  
             }
             
@@ -109,7 +109,7 @@ struct ControlView: View {
         }.keyboardShortcut(.downArrow, modifiers: [])
         let SetpointMeter =
         HStack{
-            Text(String(format:"%05.1f",station.status.launch_platform_status.setpoint))
+            Text(String(format:"%05.1f",launchPlatformStatus.status.setpoint))
                 .padding()
 //                .background(Capsule().fill(.ultraThickMaterial))
         }
@@ -119,14 +119,14 @@ struct ControlView: View {
                 viewModel.popup.toggle()
             }
         }){
-            Text(String(format:"%05.1f",station.status.launch_platform_status.angle))
+            Text(String(format:"%05.1f",launchPlatformStatus.status.angle))
                 .padding()
-                .foregroundStyle( station.status.launch_platform_status.connected ? .green : .red)
+                .foregroundStyle( launchPlatformStatus.status.connected ? .green : .red)
                 .background(Capsule().fill(.ultraThinMaterial))
         }.popover(isPresented: $viewModel.popup, content: {
             VStack{
                 HStack{
-                    Text(String(format: "robot: %03d",station.status.robot_status.roll_angle))
+                    Text(String(format: "robot: %03d",robotStatus.status.roll_angle))
                         .padding()
                 }
                 HStack{
@@ -148,7 +148,7 @@ struct ControlView: View {
                             .padding()
                             .foregroundStyle(.green)
                             .onAppear{
-                                viewModel.angleTarget = station.status.launch_platform_status.angle
+                                viewModel.angleTarget = launchPlatformStatus.status.angle
                             }
                     }
                     Button(action:{
@@ -164,11 +164,11 @@ struct ControlView: View {
         let SensorRelay =
         ForEach(7...8, id:\.self){ idx in
             Button(action:{
-                _ = self.station.post_request("/relay", value: [idx-1])
+                robotStatus.setRelay(ip: settings.ip, port: settings.port, relay: idx-1)
             }){
-                let s = self.station.status.robot_status.relay
+                let s = robotStatus.status.relay
                 let index = s.index(s.startIndex, offsetBy: idx-1)
-                let state : String = String(self.station.status.robot_status.relay[index])
+                let state : String = String(robotStatus.status.relay[index])
                 
                 Image(systemName: "\(idx).circle.fill")
                     .padding()
@@ -181,11 +181,11 @@ struct ControlView: View {
         let Relay_1_3 =
         ForEach(1...3, id:\.self){ idx in
             Button(action:{
-                _ = self.station.post_request("/relay", value: [idx-1])
+                robotStatus.setRelay(ip: settings.ip, port: settings.port, relay: idx-1)
             }){
-                let s = self.station.status.robot_status.relay
+                let s = robotStatus.status.relay
                 let index = s.index(s.startIndex, offsetBy: idx-1)
-                let state : String = String(self.station.status.robot_status.relay[index])
+                let state : String = String(robotStatus.status.relay[index])
                 //                                        let state = "1"
                 
                 Image(systemName: "\(idx).circle.fill")
@@ -198,11 +198,11 @@ struct ControlView: View {
         let Relay_4_6 =
         ForEach(4...6, id:\.self){ idx in
             Button(action:{
-                _ = self.station.post_request("/relay", value: [idx-1])
+                robotStatus.setRelay(ip: settings.ip, port: settings.port, relay: idx-1)
             }){
-                let s = self.station.status.robot_status.relay
+                let s = robotStatus.status.relay
                 let index = s.index(s.startIndex, offsetBy: idx-1)
-                let state : String = String(self.station.status.robot_status.relay[index])
+                let state : String = String(robotStatus.status.relay[index])
                 //                                        let state = "1"
                 
                 Image(systemName: "\(idx).circle.fill")
@@ -225,7 +225,7 @@ struct ControlView: View {
                     .padding(.vertical)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 33.0).fill(self.station.status.robot_status.connected ? .green : .red))
+                    .background(RoundedRectangle(cornerRadius: 33.0).fill(robotStatus.status.connected ? .green : .red))
             }.buttonStyle(.plain)
             HStack{
                 //Button Here
@@ -240,11 +240,11 @@ struct ControlView: View {
                                 HStack{
                                     ForEach(1...4, id:\.self){ idx in
                                         Button(action:{
-                                            _ = self.station.post_request("/relay", value: [idx-1])
+                                            robotStatus.setRelay(ip: settings.ip, port: settings.port, relay: idx-1)
                                         }){
-                                            let s = self.station.status.robot_status.relay
+                                            let s = robotStatus.status.relay
                                             let index = s.index(s.startIndex, offsetBy: idx-1)
-                                            let state : String = String(self.station.status.robot_status.relay[index])
+                                            let state : String = String(robotStatus.status.relay[index])
                                             //                                        let state = "1"
                                             
                                             Image(systemName: "\(idx).circle.fill")
@@ -258,11 +258,11 @@ struct ControlView: View {
                                 HStack{
                                     ForEach(5...8, id:\.self){ idx in
                                         Button(action:{
-                                            _ = self.station.post_request("/relay", value: [idx-1])
+                                            robotStatus.setRelay(ip: settings.ip, port: settings.port, relay: idx-1)
                                         }){
-                                            let s = self.station.status.robot_status.relay
+                                            let s = robotStatus.status.relay
                                             let index = s.index(s.startIndex, offsetBy: idx-1)
-                                            let state : String = String(self.station.status.robot_status.relay[index])
+                                            let state : String = String(robotStatus.status.relay[index])
                                             //                                        let state = "1"
                                             
                                             Image(systemName: "\(idx).circle.fill")
@@ -285,7 +285,6 @@ struct ControlView: View {
 //                                SetpointMeter
                                 connectIcon
                                 EL_CID_TriggerButton()
-                                RecordingButton()
                             }
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 33 ).fill(.ultraThinMaterial))
@@ -333,7 +332,7 @@ struct ControlView: View {
                                         HStack{
                                             VStack{
                                                 AutoMenu(content: {
-                                                    Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+                                                    Label(String(format : "%05d",robotStatus.status.lazer), systemImage: "ruler.fill")
                                                         .padding()
                                                         .frame(maxWidth: .infinity)
                                                         .contentTransition(.numericText(countsDown: true))
@@ -369,7 +368,7 @@ struct ControlView: View {
                                                     .background(Circle().fill(viewModel.showHints ? .yellow : Constants.notBlack))
                                             }.buttonStyle(.plain)
                                             AutoMenu(content: {
-                                                Text(station.autoMode.rawValue)
+                                                Text(autoStatus.autoMode.rawValue)
                                                     .lineLimit(1)
                                                     .padding()
                                                     .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
@@ -380,19 +379,21 @@ struct ControlView: View {
                                                 SetpointMeter
                                                 connectIcon
                                                 EL_CID_TriggerButton()
-                                                RecordingButton()
                                             }
                                             .padding()
                                             .background(Capsule().fill(.ultraThinMaterial))
                                         }
                                     }
                                 }
+                                
 //                                        AudioCurveView(title:false)
 //                                            .padding()
                                 
                             }.tabViewStyle(.page)
                         }
                         HStack{
+//                            AutoView()
+//                                .padding()
                             if viewModel.showHints{
                                 VStack{
                                     VStack{
@@ -406,8 +407,47 @@ struct ControlView: View {
                             }
 //                                    LaunchPlatformView(compact:true,title:false)
 //                                        .padding()
-                            AudioCurveView(title:false)
-                                .padding()
+//                            AudioCurveView(title:false)
+                            Chart {
+                                ForEach(Array(robotStatus.status.tof.prefix(14).enumerated()), id: \.offset) { index, value in
+                                    LineMark(
+                                        x: .value("Sensor", index + 1),
+                                        y: .value("Distance", value)
+                                    )
+                                    .foregroundStyle(.blue)
+                                    .symbol(.circle)
+                                    
+                                    PointMark(
+                                        x: .value("Sensor", index + 1),
+                                        y: .value("Distance", value)
+                                    )
+                                    .foregroundStyle(.blue)
+                                    .annotation(position: .top) {
+                                        Text("\(value)")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                            .chartYAxis {
+                                AxisMarks(position: .leading)
+                            }
+                            .chartXAxis {
+                                AxisMarks(values: .automatic) { value in
+                                    if let index = value.as(Int.self) {
+                                        AxisValueLabel {
+                                            Text("\(index)")
+                                                .font(.caption)
+                                        }
+                                    }
+                                }
+                            }
+//                            .frame(height: 200)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial))
+//                                .padding()
+                            
+                                
                         }
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 33).stroke(.white))
@@ -420,11 +460,11 @@ struct ControlView: View {
                     
                     
                     VStack{
-                        let data = self.station.status.robot_status.tof
+                        let data = robotStatus.status.tof
                         
                         ScrollView(showsIndicators: false){
                             VStack(spacing : 20){
-                                Label(String(format: "%03d",station.status.robot_status.roll_angle), systemImage: "arrow.trianglehead.clockwise")
+                                Label(String(format: "%03d",robotStatus.status.roll_angle), systemImage: "arrow.trianglehead.clockwise")
                                     .padding()
                                     .font(.title)
                                     .contentTransition(.numericText(countsDown: true))
@@ -453,10 +493,10 @@ struct ControlView: View {
                 }
             }
         }
-//        .fullScreenCover(isPresented: $viewModel.webShow) {
-//           
-//        }
-//        
+        .fullScreenCover(isPresented: $viewModel.webShow) {
+           
+        }
+        
         
         
     }
@@ -477,15 +517,7 @@ extension ControlView {
     }
     
     func sendCommand(){
-        _ = station.RotatePlatform(Angle: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
+//        launchPlatformStatus.RotatePlatform(ip: settings.ip, port: settings.port, value: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
     }
-}
-
-
-
-#Preview {
-    @Previewable var station = Station()
-    ControlView(compact: true)
-        .environmentObject(station)
 }
 

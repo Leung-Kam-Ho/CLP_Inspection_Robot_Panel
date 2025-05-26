@@ -9,14 +9,19 @@ import SwiftUI
 import Charts
 
 struct ToFView: View {
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var robotStatus : RobotStatusObject
+    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
+    @EnvironmentObject var autoStatus : AutomationStatusObject
+    @EnvironmentObject var elcidStatus : ElCidStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     let columns = [
         GridItem(.adaptive(minimum: 150,maximum: 200))
     ]
     var body: some View {
-        let data = self.station.status.robot_status.tof
+        let data = robotStatus.status.tof
         VStack{
-            Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+            Label(String(format : "%05d",robotStatus.status.lazer), systemImage: "ruler.fill")
                 .padding()
                 .padding(.vertical)
                 .font(.title)
@@ -39,8 +44,4 @@ struct ToFView: View {
         }.padding()
             .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
     }
-}
-
-#Preview {
-    ToFView()
 }

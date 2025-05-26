@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import os
 
 @main
 struct CLP_Inspection_Robot_PanelApp: App {
@@ -22,10 +23,29 @@ struct CLP_Inspection_Robot_PanelApp: App {
     var body: some Scene {
         WindowGroup {
             HStack {
-//                ContentView()
-                Spacer()
+                ContentView()
+//                Spacer()
+//                AutoView()
             }
             .background(Image("Watermark"))
+            .onReceive(launchPlatformStatus.timer, perform: { _ in
+                withAnimation {
+                    
+                    launchPlatformStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                }
+                })
+            .onReceive(automationStatus.timer, perform: {_ in
+                Logger().info("Auto Fetching Status")
+                withAnimation {
+                    automationStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                }
+                Logger().debug("Auto Status: \(automationStatus.status.connected)")
+            })
+            .onReceive(robotStatus.timer, perform: {_ in
+                withAnimation {
+                    robotStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                }
+            })
             .font(.title2)
 //            .environmentObject(station)
             .environmentObject(settings)

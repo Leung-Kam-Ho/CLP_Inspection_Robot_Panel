@@ -1,11 +1,17 @@
 import SwiftUI
 struct Robot_Image : View{
-    @EnvironmentObject var station : Station
+
+    @EnvironmentObject var robotStatus : RobotStatusObject
+    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
+    @EnvironmentObject var autoStatus : AutomationStatusObject
+    @EnvironmentObject var elcidStatus : ElCidStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     var body: some View{
         ZStack{
             // forward pwm is 1100
-            let leftPWM = self.station.status.robot_status.servo[0]
-            let rightPWM = self.station.status.robot_status.servo[1]
+            let leftPWM = robotStatus.status.servo[0]
+            let rightPWM = robotStatus.status.servo[1]
             Image("Robot")
                 .resizable()
                 .scaledToFit()
@@ -50,7 +56,7 @@ struct Robot_Image : View{
     }
 }
 struct GridRelayView : View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var robotStatus : RobotStatusObject
     let notBlack = Color(red: 24/255, green: 24/255, blue: 24/255)
     var body: some View{
         VStack{
@@ -119,8 +125,8 @@ struct GridRelayView : View{
         
     }
     func get_state(_ idx : Int) -> Bool{
-        let s = self.station.status.robot_status.relay
+        let s = robotStatus.status.relay
         let index = s.index(s.startIndex, offsetBy: idx-1)
-        return String(self.station.status.robot_status.relay[index]) == "1"
+        return String(robotStatus.status.relay[index]) == "1"
     }
 }

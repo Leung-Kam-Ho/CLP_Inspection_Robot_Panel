@@ -205,9 +205,7 @@ struct AutoView : View{
                     )
             }
         })
-        .onReceive(autoStatus.timer, perform: {_ in 
-            autoStatus.fetchStatus(ip: settings.ip, port: settings.port)
-        })
+        
     }
 }
 

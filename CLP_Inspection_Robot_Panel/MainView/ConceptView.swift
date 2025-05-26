@@ -3,7 +3,11 @@ import Charts
 
 struct ConceptView : View{
     @Binding var selection : ContentView.Tabs
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var robotStatus : RobotStatusObject
+    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
+    @EnvironmentObject var elcidStatus : ElCidStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     var body: some View{
         let pressure_btn =
         Button(action:{
@@ -21,7 +25,7 @@ struct ConceptView : View{
                     .fill(.ultraThinMaterial))
         }
         .buttonStyle(.plain)
-        .opacity(self.station.status.robot_status.connected ? 1 : 0.5)
+        .opacity(robotStatus.status.connected ? 1 : 0.5)
         let launch_platform_btn =
         Button(action:{
             self.selection = .LaunchPlatform
@@ -39,7 +43,7 @@ struct ConceptView : View{
                     .fill(.ultraThinMaterial))
             
             
-        }.buttonStyle(.plain).opacity(self.station.status.launch_platform_status.connected ? 1 : 0.5)
+        }.buttonStyle(.plain).opacity(launchPlatformStatus.status.connected ? 1 : 0.5)
         let auto_btn =
         AutoView()
             .padding()
@@ -47,16 +51,23 @@ struct ConceptView : View{
                 .fill(.ultraThinMaterial)
                 .stroke(.white)
             )
-//        let audio_btn =
-//        Button(action:{
-//            self.selection = .Audio
-//        }){
+        let audio_btn =
+        Button(action:{
+            self.selection = .placeHolder
+        }){
 //            AudioCurveView()
-//                .opacity(self.station.status.audio_status.connected ? 1 : 0.5)
-//        }.buttonStyle(.plain)
+            AutoView()
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 49.0)
+                    .fill(.ultraThinMaterial)
+                    .stroke(.white)
+                )
+            
+//                .opacity(/*self.station.status.audio_*/status.connected ? 1 : 0.5)
+        }.buttonStyle(.plain)
         let sensor_bar =
         SensorBarView()
-            .opacity(self.station.status.robot_status.connected ? 1 : 0.5)
+            .opacity(robotStatus.status.connected ? 1 : 0.5)
         
         
         //View
@@ -64,7 +75,7 @@ struct ConceptView : View{
             VStack{
                 sensor_bar
                 HStack{
-//                    audio_btn
+                    audio_btn
                     pressure_btn
                 }.frame(maxHeight: .infinity)
                 HStack{
@@ -84,10 +95,4 @@ extension CaseIterable where Self: Equatable {
         let next = all.index(after: idx)
         return all[next == all.endIndex ? all.startIndex : next]
     }
-}
-
-#Preview {
-    @Previewable var station = Station()
-    ConceptView(selection: .constant(.All))
-        .environmentObject(station)
 }

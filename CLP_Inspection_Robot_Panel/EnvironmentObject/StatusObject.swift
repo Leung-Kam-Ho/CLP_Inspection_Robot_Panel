@@ -6,6 +6,12 @@
 
 import Foundation
 import SwiftUI
+import os
+
+
+enum AutoMode_segment: String, CaseIterable {
+    case Manual, Standing, Lauch, Baffle, Testing
+}
 
 // Base class for status objects to avoid code duplication
 class BaseStatusObject<T>: ObservableObject where T: Decodable {
@@ -13,6 +19,7 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable {
     private let initialStatus: T
     private let networkManager = NetworkManager.shared
     private let statusRoute: String
+    @Published var timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
     
     init(initialStatus: T, statusRoute: String) {
         self.initialStatus = initialStatus
@@ -54,15 +61,42 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable {
 
 // Robot status object
 class RobotStatusObject: BaseStatusObject<RobotStatus> {
+    struct setServoCommand: Encodable {
+        var servo: [Int]
+    }
+    struct setRelayCommand: Encodable {
+        var relay: Int
+    }
     init() {
         super.init(initialStatus: RobotStatus(), statusRoute: "/robot_status")
     }
+    func setServo(ip: String, port: Int, servo: [Int]) {
+        let command = setServoCommand(servo: servo)
+        
+        sendCommand(ip: ip, port: port, route: "/servo", data: command)
+    }
+    
+    func setRelay(ip: String, port: Int, relay: Int) {
+        
+        let command = setRelayCommand(relay: relay)
+        
+        sendCommand(ip: ip, port: port, route: "/relay", data: command)
+    }
+
 }
 
 // Launch platform status object
 class LaunchPlatformStatusObject: BaseStatusObject<LaunchPlatformStatus> {
+    struct setAngleCommand : Encodable {
+        var angle : Float
+    }
     init() {
         super.init(initialStatus: LaunchPlatformStatus(), statusRoute: "/launch_platform_status")
+    }
+    func RotatePlatform(ip: String, port: Int, value : Angle = .degrees(0)){
+        let angle = value.degrees < 0 ? 360 + value.degrees : value.degrees
+        Logger().info("set \(angle)")
+        sendCommand(ip: ip, port: port, route: "/launch_platform", data: setAngleCommand(angle: Float(angle)))
     }
 }
 
@@ -71,7 +105,6 @@ class AutomationStatusObject: BaseStatusObject<AutomationStatus> {
     struct setModeCommand : Encodable {
         var mode : String
     }
-    var timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
     var autoMode: AutomationStatus.AutoMode_segment = .Manual
     init() {
         super.init(initialStatus: AutomationStatus(), statusRoute: "/auto_status")
@@ -82,10 +115,20 @@ class AutomationStatusObject: BaseStatusObject<AutomationStatus> {
     }
 }
 
+
+
 // ElCid status object
 class ElCidStatusObject: BaseStatusObject<ElCidstatus> {
+    struct setRelayCommand: Encodable {
+        var state : Bool
+    }
     init() {
         super.init(initialStatus: ElCidstatus(), statusRoute: "/elcid_status")
+    }
+    
+    func setRelay(ip: String, port: Int, state: Bool) {
+        let command = setRelayCommand(state: state)
+        sendCommand(ip: ip, port: port, route: "/EL_CID", data: command)
     }
 }
 

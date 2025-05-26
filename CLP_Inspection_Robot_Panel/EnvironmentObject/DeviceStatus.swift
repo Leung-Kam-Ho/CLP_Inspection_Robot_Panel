@@ -42,6 +42,19 @@ class AutomationStatus: Codable, ObservableObject {
     var connected: Bool = false
 }
 
+class AudioStatus: Codable, ObservableObject {
+    var recording: Bool = false
+    var file_num: Int = 0
+    var date: String = ""
+    var slot: Int = 0
+    var distance: Int = 0
+    var FFT: [Float] = []
+    var FFT_freq: [Float] = []
+    var Audio: [Float] = []
+    var connected: Bool = false
+    
+}
+
 class ElCidstatus: Codable, ObservableObject {
     var distance_per_click = 100
     var relay_state = 0

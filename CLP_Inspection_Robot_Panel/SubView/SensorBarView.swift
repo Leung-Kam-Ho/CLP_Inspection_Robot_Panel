@@ -9,7 +9,8 @@ import Foundation
 import SwiftUI
 
 struct SensorBarView : View{
-    @EnvironmentObject var station : Station
+
+    @EnvironmentObject var robotStatus : RobotStatusObject
     var body: some View {
         HStack{
             LazerView()
@@ -25,9 +26,9 @@ struct SensorBarView : View{
 }
 
 struct LazerView : View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var robotStatus : RobotStatusObject
     var body: some View {
-        Label(String(format : "%05d",self.station.status.robot_status.lazer), systemImage: "ruler.fill")
+        Label(String(format : "%05d",robotStatus.status.lazer), systemImage: "ruler.fill")
             .padding()
             .contentTransition(.numericText(countsDown: true))
             .background(RoundedRectangle(cornerRadius: 25.0).fill(.red))
@@ -36,12 +37,12 @@ struct LazerView : View{
 
 
 struct SensorTabsView : View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var robotStatus : RobotStatusObject
     @State var selectedTab = 0
     var horizontal = true
     var body: some View {
-        let tof = self.station.status.robot_status.tof
-        let ToF_Show = (0..<self.station.status.robot_status.tof.count).map{$0}
+        let tof = robotStatus.status.tof
+        let ToF_Show = (0..<robotStatus.status.tof.count).map{$0}
         
         
         TabView(content: {

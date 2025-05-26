@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 
 struct PressureView : View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var digitalvalveStatus : DigitalValveStatusObject
     @State var viewModel = ViewModel()
     var enabled = true
     var body: some View{
@@ -12,11 +12,11 @@ struct PressureView : View{
             HStack{
                 ForEach(1...4, id:\.self){ channel in
                     VStack{
-                        let r = self.station.status.digital_valve_status.pressure[channel - 1] / self.viewModel.pressure_max
+                        let r = digitalvalveStatus.status.pressure[channel - 1] / self.viewModel.pressure_max
                         VerticalSlider(value: enabled ? self.$viewModel.pressure[channel - 1] : .constant(0), referenceValue: r, onEnd: {
                             if enabled{
                                 let value = Float(self.viewModel.pressure[channel - 1] * self.viewModel.pressure_max)
-                                _ = self.station.post_request("/pressure", value: [Float(channel - 1), value])
+//                                _ = self.station.post_request("/pressure", value: [Float(channel - 1), value])
                             }
                         },icon: { _ in
                             return Image(systemName: "\(channel).circle.fill")
@@ -33,8 +33,8 @@ struct PressureView : View{
         }.frame(maxHeight: .infinity)
             .contentTransition(.numericText(countsDown: true))
             .onAppear{
-                for idx in 0...self.station.status.digital_valve_status.pressure.count - 1{
-                    self.viewModel.pressure[idx] = self.station.status.digital_valve_status.pressure[idx] / self.viewModel.pressure_max
+                for idx in 0...digitalvalveStatus.status.pressure.count - 1{
+                    self.viewModel.pressure[idx] = digitalvalveStatus.status.pressure[idx] / self.viewModel.pressure_max
                 }
             }
     }

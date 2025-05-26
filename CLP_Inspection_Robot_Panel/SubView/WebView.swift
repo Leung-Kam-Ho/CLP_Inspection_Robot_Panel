@@ -94,10 +94,3 @@ struct WebView: UIViewRepresentable {
     }
     
 }
-
-struct WebView_Previews: PreviewProvider {
-    static var previews: some View {
-        Camera_WebView()
-            .environmentObject(Station())
-    }
-}

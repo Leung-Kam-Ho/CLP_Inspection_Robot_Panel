@@ -3,7 +3,10 @@ import os
 
 
 struct LaunchPlatformView : View{
-    @EnvironmentObject var station : Station
+    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
+    @EnvironmentObject var elcidStatus : ElCidStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     @State var viewModel = ViewModel()
     var enabled = true
     var compact = false
@@ -17,7 +20,7 @@ struct LaunchPlatformView : View{
             .padding()
             .tint(.primary)
             .aspectRatio(contentMode: .fit)
-            .rotationEffect(.degrees(Double(self.station.status.launch_platform_status.angle)))
+            .rotationEffect(.degrees(Double(launchPlatformStatus.status.angle)))
             .overlay(alignment: .center, content: {
                 ZStack{
                     Image(systemName: "circle.fill")
@@ -27,8 +30,8 @@ struct LaunchPlatformView : View{
                         show_slot.toggle()
                     }){
                         VStack(alignment:.center){
-                            let fractionalPart : Double = enabled ? Double(self.viewModel.previewLP_angle - Double(Int(self.viewModel.previewLP_angle))) : Double(self.station.status.launch_platform_status.angle - Float(Int(self.station.status.launch_platform_status.angle)))
-                            let slot : Int = enabled ? Int(self.viewModel.previewLP_angle / Constants.SLOT_DISTANCE_DEGREE) + 1 : Int(self.station.status.launch_platform_status.angle / Float(Constants.SLOT_DISTANCE_DEGREE)) + 1
+                            let fractionalPart : Double = enabled ? Double(self.viewModel.previewLP_angle - Double(Int(self.viewModel.previewLP_angle))) : Double(launchPlatformStatus.status.angle - Float(Int(launchPlatformStatus.status.angle)))
+                            let slot : Int = enabled ? Int(self.viewModel.previewLP_angle / Constants.SLOT_DISTANCE_DEGREE) + 1 : Int(launchPlatformStatus.status.angle / Float(Constants.SLOT_DISTANCE_DEGREE)) + 1
                             
                             
 
@@ -44,7 +47,7 @@ struct LaunchPlatformView : View{
                                 Text("Angle")
                                     .foregroundStyle(Constants.offWhite)
                                     .font(enabled && !compact ? .title : .caption)
-                                Text(enabled ? String(format : "%03d",Int(self.viewModel.previewLP_angle)) : String(format : "%03d",Int(station.status.launch_platform_status.angle)))
+                                Text(enabled ? String(format : "%03d",Int(self.viewModel.previewLP_angle)) : String(format : "%03d",Int(launchPlatformStatus.status.angle)))
                                     .tint(.primary)
                                     .contentTransition(.numericText(countsDown: true))
                                     .font(.system(size: enabled && !compact ? 180 : 50))
@@ -120,11 +123,11 @@ struct LaunchPlatformView : View{
                     HStack{
                         ForEach(1...4, id:\.self){ idx in
                             Button(action:{
-                                _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+//                                _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
                             }){
-                                let s = self.station.status.launch_platform_status.relay
+                                let s = launchPlatformStatus.status.relay
                                 let index = s.index(s.startIndex, offsetBy: idx-1)
-                                let state : String = String(self.station.status.launch_platform_status.relay[index])
+                                let state : String = String(launchPlatformStatus.status.relay[index])
                                 
                                 Image(systemName: img_list[idx-1])
                                     .padding()
@@ -151,13 +154,13 @@ struct LaunchPlatformView : View{
                             .padding(.vertical)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity)
-                            .background(RoundedRectangle(cornerRadius: 33.0).fill(self.station.status.launch_platform_status.connected ? .orange : .red))
+                            .background(RoundedRectangle(cornerRadius: 33.0).fill(launchPlatformStatus.status.connected ? .orange : .red))
                     }
                     LaunchPlatform_Drag_overlay
                         .frame(maxHeight: .infinity, alignment : .top)
                         .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
                         .overlay(alignment: .bottom, content: {
-                            Text(String(format:"%05d",station.status.launch_platform_status.lazer))
+                            Text(String(format:"%05d",launchPlatformStatus.status.lazer))
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 33).fill(.red))
                                 .padding()
@@ -169,7 +172,7 @@ struct LaunchPlatformView : View{
                             Button(action: {
                                 //go to function
                                 
-                                viewModel.success = station.RotatePlatform(Angle: .degrees(viewModel.previewLP_angle))
+                                launchPlatformStatus.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
                                 
                             }) {
                                 Text(String(format:"%05.1f",Float(viewModel.previewLP_angle)))
@@ -193,8 +196,8 @@ struct LaunchPlatformView : View{
                         if !compact{
                             VStack{
                                 Text("Info")
-                                let ang = self.station.status.launch_platform_status.angle
-                                let tar = self.station.status.launch_platform_status.setpoint
+                                let ang = launchPlatformStatus.status.angle
+                                let tar = launchPlatformStatus.status.setpoint
                                 Text(String(format: "curPos : °%05.1f ", ang))
                                     .contentTransition(.numericText(countsDown: true))
                                     .padding()
@@ -213,11 +216,11 @@ struct LaunchPlatformView : View{
                             HStack{
                                 ForEach(1...2, id:\.self){ idx in
                                     Button(action:{
-                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+//                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
                                     }){
-                                        let s = self.station.status.launch_platform_status.relay
+                                        let s = launchPlatformStatus.status.relay
                                         let index = s.index(s.startIndex, offsetBy: idx-1)
-                                        let state : String = String(self.station.status.launch_platform_status.relay[index])
+                                        let state : String = String(launchPlatformStatus.status.relay[index])
                                         
                                         Image(systemName: img_list[idx-1])
                                             .padding()
@@ -231,11 +234,11 @@ struct LaunchPlatformView : View{
                             HStack{
                                 ForEach(3...4, id:\.self){ idx in
                                     Button(action:{
-                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+//                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
                                     }){
-                                        let s = self.station.status.launch_platform_status.relay
+                                        let s = launchPlatformStatus.status.relay
                                         let index = s.index(s.startIndex, offsetBy: idx-1)
-                                        let state : String = String(self.station.status.launch_platform_status.relay[index])
+                                        let state : String = String(launchPlatformStatus.status.relay[index])
                                         
                                         Image(systemName: img_list[idx-1])
                                             .padding()
@@ -268,7 +271,7 @@ struct LaunchPlatformView : View{
             
         })
         .onAppear{
-            self.viewModel.previewLP_angle = Double(self.station.status.launch_platform_status.angle)
+            self.viewModel.previewLP_angle = Double(launchPlatformStatus.status.angle)
             self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
             
         }
@@ -300,15 +303,16 @@ extension LaunchPlatformView{
     
     func MovePlatform(value : Int = 0){
         // negative is backward, positive is forward, 0 is stop
-        viewModel.success = station.post_request("/launch_platform_movement",value: [value])
+//        viewModel.success = station.post_request("/launch_platform_movement",value: [value])
     }
-    
-    
     
 }
 
 #Preview {
-    @Previewable var station = Station()
-    LaunchPlatformView(enabled: true)
-        .environmentObject(station)
+    @Previewable var launchPlatformStatus = LaunchPlatformStatusObject()
+    @Previewable var settings = SettingsHandler()
+    LaunchPlatformView()
+        .environmentObject(launchPlatformStatus)
+        .environmentObject(settings)
+        
 }
