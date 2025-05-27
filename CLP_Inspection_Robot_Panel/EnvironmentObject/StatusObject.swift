@@ -28,11 +28,11 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable {
     }
     
     func fetchStatus(ip: String, port: Int) {
-        networkManager.getRequest(ip: ip, port: port, route: statusRoute) { (result: Result<T, Error>) in
+        NetworkManager.getRequest(ip: ip, port: port, route: statusRoute) { (result: Result<T, Error>) in
             switch result {
             case .success(let status):
                 DispatchQueue.main.async {
-                    withAnimation(.easeOut(duration: 0.1)){
+                    withAnimation(.easeInOut(duration: 1/30)){
                         
                         
                         self.status = status
@@ -50,8 +50,8 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable {
         }
     }
     
-    func sendCommand<V: Encodable>(ip: String, port: Int, route: String, data: V) {
-        networkManager.postRequest(ip: ip, port: port, route: route, value: data) { success in
+    static func sendCommand<V: Encodable>(ip: String, port: Int, route: String, data: V) {
+        NetworkManager.postRequest(ip: ip, port: port, route: route, value: data) { success in
             DispatchQueue.main.async {
                 if success {
                     print("POST request succeeded")
@@ -74,13 +74,13 @@ class RobotStatusObject: BaseStatusObject<RobotStatus> {
     init() {
         super.init(initialStatus: RobotStatus(), statusRoute: "/robot_status")
     }
-    func setServo(ip: String, port: Int, servo: [Int]) {
+    static func setServo(ip: String, port: Int, servo: [Int]) {
         let command = setServoCommand(servo: servo)
         
         sendCommand(ip: ip, port: port, route: "/servo", data: command)
     }
     
-    func setRelay(ip: String, port: Int, relay: Int) {
+    static func setRelay(ip: String, port: Int, relay: Int) {
         
         let command = setRelayCommand(relay: relay)
         
@@ -100,11 +100,11 @@ class LaunchPlatformStatusObject: BaseStatusObject<LaunchPlatformStatus> {
     init() {
         super.init(initialStatus: LaunchPlatformStatus(), statusRoute: "/launch_platform_status")
     }
-    func setRelay(ip: String, port: Int, idx: Int) {
+    static func setRelay(ip: String, port: Int, idx: Int) {
         let command = setRelayCommand(idx: idx)
         sendCommand(ip: ip, port: port, route: "/relay_launch_platform", data: command)
     }
-    func RotatePlatform(ip: String, port: Int, value : Angle = .degrees(0)){
+    static func RotatePlatform(ip: String, port: Int, value : Angle = .degrees(0)){
         let angle = value.degrees < 0 ? 360 + value.degrees : value.degrees
         Logger().info("set \(angle)")
         sendCommand(ip: ip, port: port, route: "/launch_platform", data: setAngleCommand(angle: Float(angle)))
@@ -120,7 +120,7 @@ class AutomationStatusObject: BaseStatusObject<AutomationStatus> {
     init() {
         super.init(initialStatus: AutomationStatus(), statusRoute: "/auto_status")
     }
-    func setMode(ip: String, port: Int, mode: String) {
+    static func setMode(ip: String, port: Int, mode: String) {
         let command = setModeCommand(mode: mode)
         sendCommand(ip: ip, port: port, route: "/auto", data: command)
     }
@@ -137,7 +137,7 @@ class ElCidStatusObject: BaseStatusObject<ElCidstatus> {
         super.init(initialStatus: ElCidstatus(), statusRoute: "/elcid_status")
     }
     
-    func setRelay(ip: String, port: Int, state: Bool) {
+    static func setRelay(ip: String, port: Int, state: Bool) {
         let command = setRelayCommand(state: state)
         sendCommand(ip: ip, port: port, route: "/EL_CID", data: command)
     }
@@ -153,7 +153,7 @@ class DigitalValveStatusObject: BaseStatusObject<DigitalValve_Status> {
         super.init(initialStatus: DigitalValve_Status(), statusRoute: "/digital_valve_status")
     }
     
-    func setPressure(ip: String, port: Int, channel: Int, pressure: Double) {
+    static func setPressure(ip: String, port: Int, channel: Int, pressure: Double) {
         let command = setPressureCommand(channel : channel,pressure: pressure)
         
         sendCommand(ip: ip, port: port, route: "/pressure", data: command)

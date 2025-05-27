@@ -9,11 +9,13 @@ struct ContentView: View {
     @EnvironmentObject var elcidStatus : ElCidStatusObject
     @EnvironmentObject var settings : SettingsHandler
     @State var viewModel = ViewModel()
+    @AppStorage("MyAppTabViewCustomization")
+    private var customization: TabViewCustomization
     var body: some View {
+        
         GeometryReader{ screen in
             let bigEnough = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
             let contentMinSize = CGSize(width: 1100, height: 1000)
-            let fullscreen = screen.size.width > contentMinSize.width * 2
             //Views
             let camera =
             Camera_WebView()
@@ -71,133 +73,72 @@ struct ContentView: View {
             HStack{
                 
                 TabView(selection: self.$viewModel.selectedTab){
-                    if bigEnough{
-                        Tab("Camera", systemImage: "camera.fill",value: .Camera_full){
-                            camera
-                        }
-                        
-                        Tab("All", systemImage: "widget.small", value: .All){
-                            conceptView
-                                
-                        }
-                    }
-                    Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: .Auto){
+//                    if bigEnough{
+//                        Tab("Camera", systemImage: "camera.fill",value: Tabs.Camera_full){
+//                            camera
+//                        }
+//                        
+//                        
+//                    }
+                    Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
                         autoView
                         
                     }
                     
-                    Tab("Progress", systemImage:"switch.programmable", value: .Progress){
+                    Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
                         progressView
                             
                     }
-                    Tab("Robot", systemImage:"macstudio.fill",value: .Robot){
+
+                    
+
+                }
+                .tabViewStyle(.sidebarAdaptable)
+                
+                
+                TabView(selection: self.$viewModel.selectedTabRight){
+                    if bigEnough{
+                        Tab("All", systemImage: "widget.small", value: Tabs.All){
+                            conceptView
+                                
+                        }
+                    }
+                    Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
                         controlView
                             
                     }
-                    Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: .LaunchPlatform){
+                    
+                    Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform){
                         launchPlatformView
                             
                     }
                     
-                    Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: .Pressure){
-                        pressureView
-                    }
-                    
-                    
-                    Tab("Sensor", systemImage:"ruler.fill", value: .ToF){
-                        tofView
-                            
-                    }
-                    
-                    
-                }
-                if (viewModel.cameraMode == .half) && fullscreen{
-                    TabView(content: {
-                        if bigEnough{
-                            Tab("Camera", systemImage: "camera.fill"){
-                                camera
-                            }
-                            
-                            Tab("All", systemImage: "widget.small"){
-                                conceptView
-                                    
-                            }
-                        }
-                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath"){
-                            autoView
-                            
-                        }
-                        
-                        Tab("Progress", systemImage:"switch.programmable"){
-                            progressView
-                                
-                        }
-                        Tab("Robot", systemImage:"macstudio.fill"){
-                            controlView
-                                
-                        }
-                        Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered"){
-                            launchPlatformView
-                                
-                        }
-                        
-                        Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent"){
-                            pressureView
-                        }
-                        
-                        
-                        Tab("Sensor", systemImage:"ruler.fill"){
-                            tofView
-                                
-                        }
-                    }).tabViewStyle(.tabBarOnly)
-//                    if screen.size.width > contentMinSize.width * 2{
-//                        camera
+//                    Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: Tabs.Pressure){
+//                        pressureView
 //                    }
                     
                     
-                }
+//                    Tab("Sensor", systemImage:"ruler.fill", value: Tabs.ToF){
+//                        tofView
+//                            
+//                    }
+                }.tabViewStyle(.tabBarOnly)
                 
             }
-            .tabViewStyle(.sidebarAdaptable)
-            
-            .tabViewSidebarHeader(content: {
-                if fullscreen{
-                    VStack{
-                        Picker("Mode", selection: $viewModel.cameraMode, content: {
-                            ForEach(CameraMode.allCases, id: \.self) { mode in
-                                
-                                Image(systemName: mode.rawValue)
-                                    .id(mode)
-                            }
-
-                        }).pickerStyle(.segmented)
-                    }
-                    .padding()
-                }
-              
-            })
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
         }
         
         .scrollContentBackground(.hidden)
         .bold()
-//        .background(Constants.notBlack)
         .preferredColorScheme(.dark)
-//        .onReceive(station.timer, perform: station.updateData)
+
         .monospacedDigit()
         
     }
-    
-//    func status_update_loop(){
-//        while true{
-//            _ = self.station.get_request("/data")
-//        }
-//    }
+
 }
 
 extension ContentView{
-    enum Tabs{
+    enum Tabs : Hashable{
         case All
         case Auto
         case Robot
@@ -215,7 +156,8 @@ extension ContentView{
     }
     @Observable
     class ViewModel{
-        var selectedTab: Tabs = .All
+        var selectedTab: Tabs = .Auto
+        var selectedTabRight: Tabs = .All
         var camera_tab_toggle = false
         var cameraMode : CameraMode = .none
     }

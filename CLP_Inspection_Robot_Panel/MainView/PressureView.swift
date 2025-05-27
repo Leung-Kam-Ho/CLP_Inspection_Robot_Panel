@@ -18,7 +18,7 @@ struct PressureView : View{
                         VerticalSlider(value: enabled ? self.$viewModel.pressure[channel - 1] : .constant(0), referenceValue: r, onEnd: {
                             if enabled{
                                 let value = Float(self.viewModel.pressure[channel - 1] * self.viewModel.pressure_max)
-                                digitalvalveStatus.setPressure(ip: settings.ip, port: settings.port, channel: channel - 1, pressure: Double(value))
+                                DigitalValveStatusObject.setPressure(ip: settings.ip, port: settings.port, channel: channel - 1, pressure: Double(value))
                                 Logger().info("\(viewModel.pressure)")
 //                                _ = self.station.post_request("/pressure", value: [Float(channel - 1), value])
                             }

@@ -75,6 +75,7 @@ struct RangeToFView : View{
         ForEach(idx, id:\.self){ idx in
             Spacer()
             Label(String(format : "%03d",ToF[idx]), systemImage: "\(idx+1).circle.fill")
+                .foregroundStyle(ToF[idx] == 153 ? .red : Constants.offWhite)
                 .padding()
 //                .font(.title)
                 .contentTransition(.numericText(countsDown: true))

@@ -18,9 +18,9 @@ struct AutoMenu<Content : View>: View{
 //                        _  = self.station.post_request("/auto", value: name)
                         switch mode{
                         case .Manual:
-                            autoStatus.setMode(ip: settings.ip, port: settings.port, mode: name)
+                            AutomationStatusObject.setMode(ip: settings.ip, port: settings.port, mode: name)
                         case .Testing:
-                            autoStatus.setMode(ip: settings.ip, port: settings.port, mode: name)
+                            AutomationStatusObject.setMode(ip: settings.ip, port: settings.port, mode: name)
                         default:
                             autoStatus.autoMode = mode
                         }
@@ -37,7 +37,7 @@ struct AutoMenu<Content : View>: View{
             }
             if inProgress{
                 Button(role: .destructive, action: {
-                    autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
+                    AutomationStatusObject.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
                 }, label: {
                     Text("Stop Inspection")
                         .font(.title)
@@ -45,7 +45,7 @@ struct AutoMenu<Content : View>: View{
                 }).keyboardShortcut("s",modifiers: .command)
             }else{
                 Button(action: {
-                    autoStatus.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
+                    AutomationStatusObject.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Manual.rawValue)
                 }, label: {
                     Label("Start Inspection",systemImage: "text.page.badge.magnifyingglass")
                     //                                        .font(.title)

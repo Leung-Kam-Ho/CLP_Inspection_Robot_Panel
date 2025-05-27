@@ -28,6 +28,11 @@ struct CLP_Inspection_Robot_PanelApp: App {
 //                AutoView()
             }
             .background(Image("Watermark"))
+            .onReceive(elCidStatus.timer, perform: { _ in
+                Logger().info("elCid Fetching Status")
+                elCidStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                
+            })
             .onReceive(launchPlatformStatus.timer, perform: { _ in
                 Logger().info("launchplatform Fetching Status")
                     

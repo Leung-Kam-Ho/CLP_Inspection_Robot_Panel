@@ -7,13 +7,13 @@ class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
 
-    func createURL(ip: String, port: Int, route: String) -> URL {
+    static func createURL(ip: String, port: Int, route: String) -> URL {
         URL(string: "http://\(ip):\(port)\(route)") ?? URL(string: "http://127.0.0.1")!
     }
     
 
-    func getRequest<T: Decodable>(ip: String, port: Int, route: String, completion: @escaping (Result<T, Error>) -> Void) {
-        let url = createURL(ip: ip, port: port, route: route)
+    static func getRequest<T: Decodable>(ip: String, port: Int, route: String, completion: @escaping (Result<T, Error>) -> Void) {
+        let url = NetworkManager.createURL(ip: ip, port: port, route: route)
         let request = URLRequest(url: url, timeoutInterval: 1)
         let task = URLSession.shared.dataTask(with: request) { data, _, error in
             if let error = error {
@@ -31,7 +31,7 @@ class NetworkManager {
         task.resume()
     }
 
-    func postRequest<T: Encodable>(ip: String, port: Int, route: String, value: T, completion: ((Bool) -> Void)? = nil) {
+    static func postRequest<T: Encodable>(ip: String, port: Int, route: String, value: T, completion: ((Bool) -> Void)? = nil) {
         let url = createURL(ip: ip, port: port, route: route)
         var request = URLRequest(url: url, timeoutInterval: 1)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

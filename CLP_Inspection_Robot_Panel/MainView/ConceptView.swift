@@ -55,15 +55,14 @@ struct ConceptView : View{
         Button(action:{
             self.selection = .placeHolder
         }){
-//            AudioCurveView()
-            AutoView()
+            ToFChartView()
+//            Spacer()
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 49.0)
                     .fill(.ultraThinMaterial)
-                    .stroke(.white)
+//                    .stroke(.white)
                 )
             
-//                .opacity(/*self.station.status.audio_*/status.connected ? 1 : 0.5)
         }.buttonStyle(.plain)
         let sensor_bar =
         SensorBarView()

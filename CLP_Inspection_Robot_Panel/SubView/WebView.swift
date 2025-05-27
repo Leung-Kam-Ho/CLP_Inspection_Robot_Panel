@@ -20,34 +20,12 @@ struct Camera_WebView : View {
         WebView(ip: "http://\(settings.cam_ip)")
             .disabled(true)
             .id(refreshView)
-            .scaledToFit()
+        //            .scaledToFit()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay(alignment: .bottomTrailing, content: {
-                if !cleanUI{
-                    VStack{
-                        Section{
-                            Button(action:{
-                                refreshView.toggle()
-                                    
-                            }){
-                                Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                                    .padding()
-                                    .foregroundStyle(.yellow)
-                                    .background(Circle().fill(.ultraThinMaterial))
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        .padding()
-                    }
-                }
-            })
-            .clipShape(.rect(cornerRadius: 33))
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(cleanUI ? .clear : .white))
-            .padding()
-//            .onChange(of: station.status.camera_status, { oldValue, newValue in
-//                refreshView.toggle()
-//            })
+            .onAppear{
+                refreshView.toggle()
+            }
+
     }
 }
 

@@ -49,8 +49,8 @@
 				EnvironmentObject/DeviceStatus.swift,
 				EnvironmentObject/SettingsHandler.swift,
 				EnvironmentObject/StatusObject.swift,
-				MainView/AudioSystemView.swift,
 				SharedClass/NetworkManager.swift,
+				SubView/SensorView.swift,
 			);
 			target = 235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */;
 		};
@@ -62,7 +62,6 @@
 				EnvironmentObject/DeviceStatus.swift,
 				EnvironmentObject/SettingsHandler.swift,
 				EnvironmentObject/StatusObject.swift,
-				MainView/AudioSystemView.swift,
 				MainView/AutoView.swift,
 				MainView/ConceptView.swift,
 				MainView/ContentView.swift,
@@ -70,11 +69,13 @@
 				MainView/InspectionProgressView.swift,
 				MainView/LaunchPlatformView.swift,
 				MainView/PressureView.swift,
-				MainView/ToFView.swift,
 				SaveFile.swift,
 				SharedClass/NetworkManager.swift,
+				SubView/AutoControlView.swift,
 				SubView/GridRelayView.swift,
 				SubView/SensorBarView.swift,
+				SubView/SensorView.swift,
+				SubView/ToFView.swift,
 				SubView/VerticalSlider.swift,
 				SubView/WebView.swift,
 			);
