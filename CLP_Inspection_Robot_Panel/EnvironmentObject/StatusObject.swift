@@ -14,7 +14,7 @@ enum AutoMode_segment: String, CaseIterable {
 }
 
 // Base class for status objects to avoid code duplication
-class BaseStatusObject<T>: ObservableObject where T: Decodable {
+class BaseStatusObject<T>: ObservableObject where T: Decodable & Equatable {
     @Published var status: T
     private let initialStatus: T
     private let networkManager = NetworkManager.shared
@@ -34,8 +34,11 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable {
                 DispatchQueue.main.async {
                     withAnimation(.easeInOut(duration: 1/30)){
                         
-                        
-                        self.status = status
+                        if self.status != status {
+                            print("Status updated: \(status)")
+                            
+                            self.status = status
+                        }
                     }
                 }
             case .failure(let error):
@@ -134,7 +137,7 @@ class ElCidStatusObject: BaseStatusObject<ElCidstatus> {
         var state : Bool
     }
     init() {
-        super.init(initialStatus: ElCidstatus(), statusRoute: "/elcid_status")
+        super.init(initialStatus: ElCidstatus(), statusRoute: "/el_cid_status")
     }
     
     static func setRelay(ip: String, port: Int, state: Bool) {
