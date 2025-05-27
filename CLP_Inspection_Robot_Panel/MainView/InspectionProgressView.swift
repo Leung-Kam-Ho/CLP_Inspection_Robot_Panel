@@ -8,10 +8,6 @@
 import SwiftUI
 
 struct InspectionProgressView: View {
-    @EnvironmentObject var robotStatus : RobotStatusObject
-    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
-    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
-    @EnvironmentObject var elcidStatus : ElCidStatusObject
     @EnvironmentObject var settings : SettingsHandler
     @State var viewModel = ViewModel()
     let columns = [
@@ -19,7 +15,7 @@ struct InspectionProgressView: View {
     ]
     var body: some View {
         let data = viewModel.progress
-        let slot_now = Int(launchPlatformStatus.status.angle / 12) + 1
+        let slot_now = 0
         VStack{
             Label("Progress", systemImage: "chart.bar.yaxis")
                 .padding()
@@ -81,17 +77,7 @@ struct InspectionProgressView: View {
                             .background(RoundedRectangle(cornerRadius: 33.0).stroke( current_slot ? .white : .clear, lineWidth: 5).fill(.ultraThickMaterial))
                             .padding()
                         }
-                    }.onAppear(perform: {
-                        withAnimation{
-                            proxy.scrollTo(slot_now)
-                        }
-                    })
-                    .onChange(of: launchPlatformStatus.status.angle, { old, new in
-                        withAnimation{
-                            proxy.scrollTo(Int(launchPlatformStatus.status.angle / 12) + 1)
-                        }
-                        
-                    })
+                    }
                 }
             }
         }.padding()

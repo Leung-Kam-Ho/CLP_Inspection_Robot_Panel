@@ -8,6 +8,7 @@ struct ConceptView : View{
     @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
     @EnvironmentObject var elcidStatus : ElCidStatusObject
     @EnvironmentObject var settings : SettingsHandler
+    @State var show = false
     var body: some View{
         let pressure_btn =
         Button(action:{
@@ -71,18 +72,25 @@ struct ConceptView : View{
         
         //View
         ZStack(alignment : .center){
-            VStack{
-                sensor_bar
-                HStack{
-                    audio_btn
-                    pressure_btn
-                }.frame(maxHeight: .infinity)
-                HStack{
-                    auto_btn
-                    launch_platform_btn
-                }
-            }.padding()
-        }
+            if show{
+                VStack{
+                    sensor_bar
+                    HStack{
+                        audio_btn
+                        pressure_btn
+                    }.frame(maxHeight: .infinity)
+                    HStack{
+                        auto_btn
+                        launch_platform_btn
+                    }
+                }.padding()
+            }
+        }.onAppear(perform: {
+            show = true
+        })
+        .onDisappear(perform: {
+            show = false
+        })
     }
     
 }

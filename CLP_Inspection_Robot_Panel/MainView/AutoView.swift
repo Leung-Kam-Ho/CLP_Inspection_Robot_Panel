@@ -80,120 +80,128 @@ struct AutoView : View{
         })
 
         VStack{
-            ZStack{
-                Color.clear
-                VStack{
-                    let connected = autoStatus.status.connected
-                    Menu(content: {
-                        Button("custom"){
-                            viewModel.showAlert.toggle()
-                        }.tag(viewModel.custom_ip)
-                        Text("IP : \(settings.ip)")
-                        Divider()
-                        Button("custom camera ip"){
-                            viewModel.showAlert_camera.toggle()
-                        }.tag(viewModel.custom_cam_ip)
-                        Text("Camera IP : \(settings.cam_ip)")
-                        Divider()
-                        Button("Change Fetch Rate"){
-                            viewModel.showAlert_fetch.toggle()
-                        }
-                        
-                    }, label: {
-                        VStack{
-                            let mt = autoStatus.status.action_update == ""
-                            Text(connected ? (mt ? self.autoStatus.autoMode.rawValue : "Current Action") : "Server offline")
-                                
-                                .padding()
-                                .contentTransition(.numericText(countsDown: true))
-                            Text(autoStatus.status.action_update == "" ? "No Action": autoStatus.status.action_update)
-                                .padding()
-                                .contentTransition(.numericText(countsDown: true))
-                                .frame(maxWidth: .infinity)
-                                .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
-                                .padding()
-                        }
-                        .background(RoundedRectangle(cornerRadius: 33.0)
-                            .fill(connected ? .green : .red))
-                    }).buttonStyle(.plain)
-                   
-                    ScrollViewReader{ scrollView in
-                        ScrollView(.vertical,showsIndicators: false){
-                            VStack(alignment : .leading,spacing : 40){
-                                ForEach(Array(tree2List().enumerated()), id:\.0){ idx,name in
-                                    VStack(alignment : .leading){
-                                        Text(name.replacingOccurrences(of: "-->", with: "").trimmingCharacters(in: .whitespacesAndNewlines))
-                                            .tint(.primary)
-                                        .contentTransition(.numericText(countsDown: true))
-                                        if name.contains(String("🏃🏻‍➡️")){
-                                            Text(autoStatus.status.action_update)
-                                                .foregroundStyle(.orange)
-                                                .id("current_Action")
-                                            .contentTransition(.numericText(countsDown: true))
-                                            .onAppear{
-                                                scrollView.scrollTo("current_Action")
-                                            }
-                                        }
-                                    }.padding()
-                                        .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
-                                }
-                            }.frame(maxWidth: .infinity, alignment : .leading)
+            if viewModel.show{
+                ZStack{
+                    Color.clear
+                    VStack{
+                        let connected = autoStatus.status.connected
+                        Menu(content: {
+                            Button("custom"){
+                                viewModel.showAlert.toggle()
+                            }.tag(viewModel.custom_ip)
+                            Text("IP : \(settings.ip)")
+                            Divider()
+                            Button("custom camera ip"){
+                                viewModel.showAlert_camera.toggle()
+                            }.tag(viewModel.custom_cam_ip)
+                            Text("Camera IP : \(settings.cam_ip)")
+                            Divider()
+                            Button("Change Fetch Rate"){
+                                viewModel.showAlert_fetch.toggle()
+                            }
                             
+                        }, label: {
+                            VStack{
+                                let mt = autoStatus.status.action_update == ""
+                                Text(connected ? (mt ? self.autoStatus.autoMode.rawValue : "Current Action") : "Server offline")
+                                    
+                                    .padding()
+                                    .contentTransition(.numericText(countsDown: true))
+                                Text(autoStatus.status.action_update == "" ? "No Action": autoStatus.status.action_update)
+                                    .padding()
+                                    .contentTransition(.numericText(countsDown: true))
+                                    .frame(maxWidth: .infinity)
+                                    .background(RoundedRectangle(cornerRadius: 25.0).fill(.ultraThinMaterial))
+                                    .padding()
+                            }
+                            .background(RoundedRectangle(cornerRadius: 33.0)
+                                .fill(connected ? .green : .red))
+                        }).buttonStyle(.plain)
+                       
+                        ScrollViewReader{ scrollView in
+                            ScrollView(.vertical,showsIndicators: false){
+                                VStack(alignment : .leading,spacing : 40){
+                                    ForEach(Array(tree2List().enumerated()), id:\.0){ idx,name in
+                                        VStack(alignment : .leading){
+                                            Text(name.replacingOccurrences(of: "-->", with: "").trimmingCharacters(in: .whitespacesAndNewlines))
+                                                .tint(.primary)
+                                            .contentTransition(.numericText(countsDown: true))
+                                            if name.contains(String("🏃🏻‍➡️")){
+                                                Text(autoStatus.status.action_update)
+                                                    .foregroundStyle(.orange)
+                                                    .id("current_Action")
+                                                .contentTransition(.numericText(countsDown: true))
+                                                .onAppear{
+                                                    scrollView.scrollTo("current_Action")
+                                                }
+                                            }
+                                        }.padding()
+                                            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
+                                    }
+                                }.frame(maxWidth: .infinity, alignment : .leading)
+                                
+                            }
+                            .padding()
                         }
-                        .padding()
-                    }
-                    .onAppear(perform: {
-                        viewModel.custom_ip = settings.ip
-                        viewModel.custom_cam_ip = settings.cam_ip
-                    })
-//                    .alert("Slect Fetch Rate", isPresented:$viewModel.showAlert_fetch){
-//                        Button("Slow"){
-//                            station.dataUpdateRate(Constants.SLOW_RATE)
-//                            Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
-//                        }
-//                        Button("Medium"){
-//                            station.dataUpdateRate(Constants.MEDIUM_RATE)
-//                            Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
-//                        }
-//                        Button("Intense"){
-//                            station.dataUpdateRate(Constants.INTENSE_RATE)
-//                            Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
-//                        }
-//                        
-//                    }
-                    .alert("Enter custom IP", isPresented:$viewModel.showAlert) {
-                        TextField("Enter custom IP", text: $viewModel.custom_ip)
-                            .font(.caption)
-                        Button("Cancel", role: .cancel, action: {})
-                        Button("OK", action: {
-                            settings.ip = viewModel.custom_ip
+                        .onAppear(perform: {
+                            viewModel.custom_ip = settings.ip
+                            viewModel.custom_cam_ip = settings.cam_ip
                         })
-                    } message: {
-                        Text("Xcode will print whatever you type.")
+    //                    .alert("Slect Fetch Rate", isPresented:$viewModel.showAlert_fetch){
+    //                        Button("Slow"){
+    //                            station.dataUpdateRate(Constants.SLOW_RATE)
+    //                            Logger().info("Changed FPS to \(Constants.SLOW_RATE)")
+    //                        }
+    //                        Button("Medium"){
+    //                            station.dataUpdateRate(Constants.MEDIUM_RATE)
+    //                            Logger().info("Changed FPS to \(Constants.MEDIUM_RATE)")
+    //                        }
+    //                        Button("Intense"){
+    //                            station.dataUpdateRate(Constants.INTENSE_RATE)
+    //                            Logger().info("Changed FPS to \(Constants.INTENSE_RATE)")
+    //                        }
+    //
+    //                    }
+                        .alert("Enter custom IP", isPresented:$viewModel.showAlert) {
+                            TextField("Enter custom IP", text: $viewModel.custom_ip)
+                                .font(.caption)
+                            Button("Cancel", role: .cancel, action: {})
+                            Button("OK", action: {
+                                settings.ip = viewModel.custom_ip
+                            })
+                        } message: {
+                            Text("Xcode will print whatever you type.")
+                        }
+                        .alert("Enter custom camera IP", isPresented:$viewModel.showAlert_camera) {
+                            TextField("Enter custom camera IP", text: $viewModel.custom_cam_ip)
+                                .font(.caption)
+                            Button("Cancel", role: .cancel, action: {})
+                            Button("OK", action: {
+                                settings.cam_ip = viewModel.custom_cam_ip
+                            })
+                        } message: {
+                            Text("Xcode will print whatever you type.")
+                        }
+                        HStack{
+                            autoMenu
+                            Spacer()
+                            Text(autoStatus.status.mode)
+                                .lineLimit(1)
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
+                                .padding()
+                        }
                     }
-                    .alert("Enter custom camera IP", isPresented:$viewModel.showAlert_camera) {
-                        TextField("Enter custom camera IP", text: $viewModel.custom_cam_ip)
-                            .font(.caption)
-                        Button("Cancel", role: .cancel, action: {})
-                        Button("OK", action: {
-                            settings.cam_ip = viewModel.custom_cam_ip
-                        })
-                    } message: {
-                        Text("Xcode will print whatever you type.")
-                    }
-                    HStack{
-                        autoMenu
-                        Spacer()
-                        Text(autoStatus.status.mode)
-                            .lineLimit(1)
-                            .padding()
-                            .background(RoundedRectangle(cornerRadius: 33.0).fill(.ultraThickMaterial))
-                            .padding()
-                    }
+                    
                 }
-                
             }
             
+        }
+        .onAppear(){
+            viewModel.show = true
+        }
+        .onDisappear(){
+            viewModel.show = false
         }
         .overlay(content: {
             if !autoStatus.status.connected {
@@ -232,6 +240,7 @@ extension AutoView{
         var showAlert_fetch = false
         var custom_ip = ""
         var custom_cam_ip = ""
+        var show = false
     }
     func splitAndFilterLines(text: String, targetStrings: [String]) -> [String] {
       return text.split(separator: "\n")

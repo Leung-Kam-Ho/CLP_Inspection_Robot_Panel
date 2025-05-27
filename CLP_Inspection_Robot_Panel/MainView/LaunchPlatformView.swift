@@ -115,152 +115,154 @@ struct LaunchPlatformView : View{
         
         
         HStack{
-            if !self.enabled{
-                VStack{
-                    Spacer()
-                    LP_image
-                    Spacer()
-                    HStack{
-                        ForEach(1...4, id:\.self){ idx in
-                            Button(action:{
-//                                _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-                                LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : idx - 1)
-                            }){
-                                let s = launchPlatformStatus.status.relay
-                                let index = s.index(s.startIndex, offsetBy: idx-1)
-                                let state : String = String(launchPlatformStatus.status.relay[index])
-                                
-                                Image(systemName: img_list[idx-1])
-                                    .padding()
-                                    .tint(.primary)
-                                    .background( Circle()
-                                        .fill(state == "1" ? .orange : Constants.notBlack))
-                                
-                            }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
-                            if idx != 4{
-                                
-                                Spacer()
-                            }
-                        }
-                        
-                    }
-                }
-                
-                
-            }else{
-                VStack{
-                    if title{
-                        Label("Launch Platform", systemImage: "chart.bar.yaxis")
-                            .padding()
-                            .padding(.vertical)
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity)
-                            .background(RoundedRectangle(cornerRadius: 33.0).fill(launchPlatformStatus.status.connected ? .orange : .red))
-                    }
-                    LaunchPlatform_Drag_overlay
-                        .frame(maxHeight: .infinity, alignment : .top)
-                        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                        .overlay(alignment: .bottom, content: {
-                            Text(String(format:"%05d",launchPlatformStatus.status.lazer))
-                                .padding()
-                                .background(RoundedRectangle(cornerRadius: 33).fill(.red))
-                                .padding()
-                        })
-                    HStack{
-                        
-                        VStack{
-                            Text("Setpoint")
-                            Button(action: {
-                                //go to function
-                                
-                                LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
-                                
-                            }) {
-                                Text(String(format:"%05.1f",Float(viewModel.previewLP_angle)))
-                                    .padding()
-                                    .background(Capsule().fill(Constants.notBlack))
-                            }
-                            Button(action:{
-                                withAnimation{
-                                    viewModel.locked.toggle()
+            if viewModel.show{
+                if !self.enabled{
+                    VStack{
+                        Spacer()
+                        LP_image
+                        Spacer()
+                        HStack{
+                            ForEach(1...4, id:\.self){ idx in
+                                Button(action:{
+    //                                _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+                                    LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : idx - 1)
+                                }){
+                                    let s = launchPlatformStatus.status.relay
+                                    let index = s.index(s.startIndex, offsetBy: idx-1)
+                                    let state : String = String(launchPlatformStatus.status.relay[index])
+                                    
+                                    Image(systemName: img_list[idx-1])
+                                        .padding()
+                                        .tint(.primary)
+                                        .background( Circle()
+                                            .fill(state == "1" ? .orange : Constants.notBlack))
+                                    
+                                }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
+                                if idx != 4{
+                                    
+                                    Spacer()
                                 }
-                            }){
-                                
-                                Text(viewModel.locked ? "Slots" : "Deg")
-                                    .padding()
-                                    .background(Capsule().fill(Constants.notBlack))
-                              
                             }
-                        }.lineLimit(1)
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                        if !compact{
+                            
+                        }
+                    }
+                    
+                    
+                }else{
+                    VStack{
+                        if title{
+                            Label("Launch Platform", systemImage: "chart.bar.yaxis")
+                                .padding()
+                                .padding(.vertical)
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity)
+                                .background(RoundedRectangle(cornerRadius: 33.0).fill(launchPlatformStatus.status.connected ? .orange : .red))
+                        }
+                        LaunchPlatform_Drag_overlay
+                            .frame(maxHeight: .infinity, alignment : .top)
+                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                            .overlay(alignment: .bottom, content: {
+                                Text(String(format:"%05d",launchPlatformStatus.status.lazer))
+                                    .padding()
+                                    .background(RoundedRectangle(cornerRadius: 33).fill(.red))
+                                    .padding()
+                            })
+                        HStack{
+                            
                             VStack{
-                                Text("Info")
-                                let ang = launchPlatformStatus.status.angle
-                                let tar = launchPlatformStatus.status.setpoint
-                                Text(String(format: "curPos : °%05.1f ", ang))
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .padding()
-                                    .lineLimit(1)
-                                    .background(Capsule()
-                                        .fill(.ultraThinMaterial))
-                                Text("Tar :\(String(format: "%05.1f", tar))°")
-                                    .padding()
-                                    .background(Capsule().fill(Constants.notBlack))
+                                Text("Setpoint")
+                                Button(action: {
+                                    //go to function
+                                    
+                                    LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
+                                    
+                                }) {
+                                    Text(String(format:"%05.1f",Float(viewModel.previewLP_angle)))
+                                        .padding()
+                                        .background(Capsule().fill(Constants.notBlack))
+                                }
+                                Button(action:{
+                                    withAnimation{
+                                        viewModel.locked.toggle()
+                                    }
+                                }){
+                                    
+                                    Text(viewModel.locked ? "Slots" : "Deg")
+                                        .padding()
+                                        .background(Capsule().fill(Constants.notBlack))
+                                  
+                                }
+                            }.lineLimit(1)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                            if !compact{
+                                VStack{
+                                    Text("Info")
+                                    let ang = launchPlatformStatus.status.angle
+                                    let tar = launchPlatformStatus.status.setpoint
+                                    Text(String(format: "curPos : °%05.1f ", ang))
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .padding()
+                                        .lineLimit(1)
+                                        .background(Capsule()
+                                            .fill(.ultraThinMaterial))
+                                    Text("Tar :\(String(format: "%05.1f", tar))°")
+                                        .padding()
+                                        .background(Capsule().fill(Constants.notBlack))
+                                }
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                            }
+                            VStack{
+                                Text("Relay")
+                                HStack{
+                                    ForEach(1...2, id:\.self){ idx in
+                                        Button(action:{
+    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+                                            LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
+                                        }){
+                                            let s = launchPlatformStatus.status.relay
+                                            let index = s.index(s.startIndex, offsetBy: idx-1)
+                                            let state : String = String(launchPlatformStatus.status.relay[index])
+                                            
+                                            Image(systemName: img_list[idx-1])
+                                                .padding()
+                                                .tint(.primary)
+                                                .background( Circle()
+                                                    .fill(state == "1" ? .orange : Constants.notBlack))
+                                            
+                                        }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
+                                    }
+                                }
+                                HStack{
+                                    ForEach(3...4, id:\.self){ idx in
+                                        Button(action:{
+    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+                                            LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
+                                        }){
+                                            let s = launchPlatformStatus.status.relay
+                                            let index = s.index(s.startIndex, offsetBy: idx-1)
+                                            let state : String = String(launchPlatformStatus.status.relay[index])
+                                            
+                                            Image(systemName: img_list[idx-1])
+                                                .padding()
+                                                .tint(.primary)
+                                                .background( Circle()
+                                                    .fill(state == "1" ? .orange : Constants.notBlack))
+                                            
+                                        }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
+                                    }
+                                }
                             }
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                           
+                            
                         }
-                        VStack{
-                            Text("Relay")
-                            HStack{
-                                ForEach(1...2, id:\.self){ idx in
-                                    Button(action:{
-//                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                    }){
-                                        let s = launchPlatformStatus.status.relay
-                                        let index = s.index(s.startIndex, offsetBy: idx-1)
-                                        let state : String = String(launchPlatformStatus.status.relay[index])
-                                        
-                                        Image(systemName: img_list[idx-1])
-                                            .padding()
-                                            .tint(.primary)
-                                            .background( Circle()
-                                                .fill(state == "1" ? .orange : Constants.notBlack))
-                                        
-                                    }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
-                                }
-                            }
-                            HStack{
-                                ForEach(3...4, id:\.self){ idx in
-                                    Button(action:{
-//                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                    }){
-                                        let s = launchPlatformStatus.status.relay
-                                        let index = s.index(s.startIndex, offsetBy: idx-1)
-                                        let state : String = String(launchPlatformStatus.status.relay[index])
-                                        
-                                        Image(systemName: img_list[idx-1])
-                                            .padding()
-                                            .tint(.primary)
-                                            .background( Circle()
-                                                .fill(state == "1" ? .orange : Constants.notBlack))
-                                        
-                                    }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
-                                }
-                            }
-                        }
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                       
                         
                     }
                     
                 }
-                
             }
             
         }
@@ -276,6 +278,11 @@ struct LaunchPlatformView : View{
         .onAppear{
             self.viewModel.previewLP_angle = Double(launchPlatformStatus.status.angle)
             self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
+            self.viewModel.show = true
+            
+        }
+        .onDisappear{
+            self.viewModel.show = false
             
         }
         .frame(maxHeight: .infinity)
@@ -295,6 +302,7 @@ extension LaunchPlatformView{
         var locked = false
         var show_Relay = true
         var success = false
+        var show = false
         
         func closestMultipleOf12(for number: Int) -> Int {
             let remainder = number % Int(Constants.SLOT_DISTANCE_DEGREE)

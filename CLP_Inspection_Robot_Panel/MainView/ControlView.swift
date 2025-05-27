@@ -385,10 +385,12 @@ struct ControlView: View {
         }
         .onAppear(perform: {
             viewModel.show = true
+            Logger().info("Control View appeared")
 //            robotStatus.timer = Timer.publish(every: Constants.SLOW_RATE, on: .main, in: .common).autoconnect()
         })
         .onDisappear(perform: {
             viewModel.show = false
+            Logger().info("Control View disappeared")
 //            robotStatus.timer = Timer.publish(every: 10.0, on: .main, in: .common).autoconnect()
         })
         
