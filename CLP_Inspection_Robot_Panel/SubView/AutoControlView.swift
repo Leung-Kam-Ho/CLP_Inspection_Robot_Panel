@@ -11,6 +11,8 @@ import os
 struct AutoControlView: View {
     @EnvironmentObject var settings : SettingsHandler
     @EnvironmentObject var autoStatus : AutomationStatusObject
+    @Binding var leftPower : Int
+    @Binding var rightPower : Int
     var tight = true
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.default", category: "AutoControlView")
     
@@ -29,8 +31,8 @@ struct AutoControlView: View {
                 logger.info("Setting mode to Enter_Generator from Baffle")
                 AutomationStatusObject.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Enter_Generator.rawValue)
             default:
-                let left = Int(1500 - 400 * 10 / 100.0)
-                let right = Int(1500 - 400 * 10 / 100.0)
+                let left = Int(1500 - 400 * Double(leftPower) / 100.0)
+                let right = Int(1500 - 400 * Double(rightPower) / 100.0)
                 logger.info("Moving robot: left=\(left), right=\(right)")
                 RobotStatusObject.setServo(ip: settings.ip, port: settings.port, servo: [left,right,left,right])
             }
@@ -73,8 +75,8 @@ struct AutoControlView: View {
                 logger.info("Setting mode to Exit_Generator from Baffle")
                 AutomationStatusObject.setMode(ip: settings.ip, port: settings.port, mode: AutoMode.Exit_Generator.rawValue)
             default:
-                let left = Int(1500 + 400 * 10 / 100.0)
-                let right = Int(1500 + 400 * 10 / 100.0)
+                let left = Int(1500 + 400 * Double(leftPower) / 100.0)
+                let right = Int(1500 + 400 * Double(rightPower) / 100.0)
                 logger.info("Moving robot backwards: left=\(left), right=\(right)")
                 RobotStatusObject.setServo(ip: settings.ip, port: settings.port, servo: [left,right,left,right])
             }
@@ -98,10 +100,10 @@ struct AutoControlView: View {
     }
 }
 
-#Preview {
-    @Previewable var settings = SettingsHandler()
-    @Previewable var autoStatus = AutomationStatusObject()
-    AutoControlView()
-        .environmentObject(settings)
-        .environmentObject(autoStatus)
-}
+//#Preview {
+//    @Previewable var settings = SettingsHandler()
+//    @Previewable var autoStatus = AutomationStatusObject()
+//    AutoControlView()
+//        .environmentObject(settings)
+//        .environmentObject(autoStatus)
+//}

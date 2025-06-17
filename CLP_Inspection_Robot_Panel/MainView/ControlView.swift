@@ -229,7 +229,7 @@ struct ControlView: View {
                                 HStack{
                                     L_Adj
                                     Spacer()
-                                    AutoControlView(tight:false)
+                                    AutoControlView(leftPower: $viewModel.leftPower, rightPower: $viewModel.rightPower,tight:false)
                                     Spacer()
                                     R_Adj
                                 }
@@ -377,7 +377,7 @@ struct ControlView: View {
                             }
                             Spacer()
                             
-                            AutoControlView()
+                            AutoControlView(leftPower: self.$viewModel.leftPower, rightPower: self.$viewModel.rightPower)
                         }
                     }
                 }
@@ -404,8 +404,8 @@ extension ControlView {
     class ViewModel{
         var l = 0.1
         var r = 0.1
-        var leftPower = 50
-        var rightPower = 50
+        var leftPower = 100
+        var rightPower = 100
         var popup = false
         var angleTarget : Float = 0.0
         var webShow = false

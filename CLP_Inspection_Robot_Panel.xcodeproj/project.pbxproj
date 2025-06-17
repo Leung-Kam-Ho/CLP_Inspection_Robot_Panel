@@ -6,20 +6,6 @@
 	objectVersion = 70;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		235158762CC11A5900C4EBBA /* Inspection_Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		235158742CC11A5900C4EBBA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 23405E992C42FC9B00A7281D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 235158682CC11A5800C4EBBA;
-			remoteInfo = "Inspection_Watch Watch App";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		235158772CC11A5900C4EBBA /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -27,7 +13,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				235158762CC11A5900C4EBBA /* Inspection_Watch Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -36,24 +21,10 @@
 
 /* Begin PBXFileReference section */
 		23405EA12C42FC9B00A7281D /* CLP_Inspection_Robot_Panel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CLP_Inspection_Robot_Panel.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Inspection_Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		23DC2C992CCF42B700EB2CFF /* InspectionRobotMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InspectionRobotMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2351587D2CC11BB000C4EBBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				" Constants.swift",
-				CLP_Inspection_Robot_PanelApp.swift,
-				EnvironmentObject/DeviceStatus.swift,
-				EnvironmentObject/SettingsHandler.swift,
-				EnvironmentObject/StatusObject.swift,
-				SharedClass/NetworkManager.swift,
-				SubView/SensorView.swift,
-			);
-			target = 235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */;
-		};
 		23DC2CB52CCF42E400EB2CFF /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -84,20 +55,12 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2351587D2CC11BB000C4EBBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 23DC2CB52CCF42E400EB2CFF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CLP_Inspection_Robot_Panel; sourceTree = "<group>"; };
-		2351586A2CC11A5800C4EBBA /* Inspection_Watch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Inspection_Watch Watch App"; sourceTree = "<group>"; };
+		23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (23DC2CB52CCF42E400EB2CFF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CLP_Inspection_Robot_Panel; sourceTree = "<group>"; };
 		23DC2C9A2CCF42B700EB2CFF /* InspectionRobotMac */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = InspectionRobotMac; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		23405E9E2C42FC9B00A7281D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		235158662CC11A5800C4EBBA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -118,7 +81,6 @@
 			isa = PBXGroup;
 			children = (
 				23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */,
-				2351586A2CC11A5800C4EBBA /* Inspection_Watch Watch App */,
 				23DC2C9A2CCF42B700EB2CFF /* InspectionRobotMac */,
 				23405EA22C42FC9B00A7281D /* Products */,
 			);
@@ -128,7 +90,6 @@
 			isa = PBXGroup;
 			children = (
 				23405EA12C42FC9B00A7281D /* CLP_Inspection_Robot_Panel.app */,
-				235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */,
 				23DC2C992CCF42B700EB2CFF /* InspectionRobotMac.app */,
 			);
 			name = Products;
@@ -149,7 +110,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				235158752CC11A5900C4EBBA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				23405EA32C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */,
@@ -159,28 +119,6 @@
 			);
 			productName = CLP_Inspection_Robot_Panel;
 			productReference = 23405EA12C42FC9B00A7281D /* CLP_Inspection_Robot_Panel.app */;
-			productType = "com.apple.product-type.application";
-		};
-		235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2351587A2CC11A5900C4EBBA /* Build configuration list for PBXNativeTarget "Inspection_Watch Watch App" */;
-			buildPhases = (
-				235158652CC11A5800C4EBBA /* Sources */,
-				235158662CC11A5800C4EBBA /* Frameworks */,
-				235158672CC11A5800C4EBBA /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				2351586A2CC11A5800C4EBBA /* Inspection_Watch Watch App */,
-			);
-			name = "Inspection_Watch Watch App";
-			packageProductDependencies = (
-			);
-			productName = "Inspection_Watch Watch App";
-			productReference = 235158692CC11A5800C4EBBA /* Inspection_Watch Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 		23DC2C982CCF42B700EB2CFF /* InspectionRobotMac */ = {
@@ -218,9 +156,6 @@
 					23405EA02C42FC9B00A7281D = {
 						CreatedOnToolsVersion = 16.0;
 					};
-					235158682CC11A5800C4EBBA = {
-						CreatedOnToolsVersion = 16.0;
-					};
 					23DC2C982CCF42B700EB2CFF = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -240,7 +175,6 @@
 			projectRoot = "";
 			targets = (
 				23405EA02C42FC9B00A7281D /* CLP_Inspection_Robot_Panel */,
-				235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */,
 				23DC2C982CCF42B700EB2CFF /* InspectionRobotMac */,
 			);
 		};
@@ -248,13 +182,6 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		23405E9F2C42FC9B00A7281D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		235158672CC11A5800C4EBBA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -278,13 +205,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		235158652CC11A5800C4EBBA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		23DC2C952CCF42B700EB2CFF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -293,15 +213,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		235158752CC11A5900C4EBBA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = 235158682CC11A5800C4EBBA /* Inspection_Watch Watch App */;
-			targetProxy = 235158742CC11A5900C4EBBA /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		23405EAD2C42FC9E00A7281D /* Debug */ = {
@@ -503,66 +414,6 @@
 			};
 			name = Release;
 		};
-		235158782CC11A5900C4EBBA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Inspection_Watch Watch App/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Inspection_Watch;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.CLP-Inspection.app";
-				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.CLP-Inspection.app.watchkitapp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Debug;
-		};
-		235158792CC11A5900C4EBBA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Inspection_Watch Watch App/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Inspection_Watch;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.CLP-Inspection.app";
-				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.CLP-Inspection.app.watchkitapp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Release;
-		};
 		23DC2CA62CCF42B900EB2CFF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -650,15 +501,6 @@
 			buildConfigurations = (
 				23405EB02C42FC9E00A7281D /* Debug */,
 				23405EB12C42FC9E00A7281D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2351587A2CC11A5900C4EBBA /* Build configuration list for PBXNativeTarget "Inspection_Watch Watch App" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				235158782CC11A5900C4EBBA /* Debug */,
-				235158792CC11A5900C4EBBA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

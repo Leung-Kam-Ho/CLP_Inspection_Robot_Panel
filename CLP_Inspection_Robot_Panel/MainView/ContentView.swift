@@ -71,58 +71,105 @@ struct ContentView: View {
 
             //Main
             HStack{
-                
-                TabView(selection: self.$viewModel.selectedTab){
-//                    if bigEnough{
-//                        Tab("Camera", systemImage: "camera.fill",value: Tabs.Camera_full){
-//                            camera
-//                        }
-//                        
-//                        
-//                    }
-                    Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
-                        autoView
-                        
-                    }
-                    
-                    Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
-                        progressView
+                if !bigEnough{
+                    TabView(selection: self.$viewModel.selectedTab){
+    //                    if bigEnough{
+    //                        Tab("Camera", systemImage: "camera.fill",value: Tabs.Camera_full){
+    //                            camera
+    //                        }
+    //
+    //
+    //                    }
+                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
+                            autoView
                             
-                    }
-
-                    
-
-                }
-                .tabViewStyle(.sidebarAdaptable)
-                
-                
-                TabView(selection: self.$viewModel.selectedTabRight){
-                    if bigEnough{
-                        Tab("All", systemImage: "widget.small", value: Tabs.All){
-                            conceptView
+                        }
+                        
+                        Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
+                            progressView
                                 
                         }
+                        
+                        if bigEnough{
+                            Tab("All", systemImage: "widget.small", value: Tabs.All){
+                                conceptView
+                                    
+                            }
+                        }
+                        Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
+                            controlView
+                                
+                        }
+                        
+                        Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform){
+                            launchPlatformView
+                                
+                        }
+                        
+                        Tab("Pressure", systemImage:"chart.bar.fill", value: Tabs.Pressure){
+                            pressureView
+                                
+                        }
+
+                        
+
                     }
-                    Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
-                        controlView
+                    .tabViewStyle(.sidebarAdaptable)
+                    
+                } else {
+                    TabView(selection: self.$viewModel.selectedTab){
+    //                    if bigEnough{
+    //                        Tab("Camera", systemImage: "camera.fill",value: Tabs.Camera_full){
+    //                            camera
+    //                        }
+    //
+    //
+    //                    }
+                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
+                            autoView
                             
+                        }
+                        
+                        Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
+                            progressView
+                                
+                        }
+
+                        
+
                     }
-                    
-                    Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform){
-                        launchPlatformView
-                            
-                    }
-                    
-//                    Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: Tabs.Pressure){
-//                        pressureView
-//                    }
+                    .tabViewStyle(.sidebarAdaptable)
                     
                     
-//                    Tab("Sensor", systemImage:"ruler.fill", value: Tabs.ToF){
-//                        tofView
-//                            
-//                    }
-                }.tabViewStyle(.tabBarOnly)
+                    TabView(selection: self.$viewModel.selectedTabRight){
+                        if bigEnough{
+                            Tab("All", systemImage: "widget.small", value: Tabs.All){
+                                conceptView
+                                    
+                            }
+                        }
+                        Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
+                            controlView
+                                
+                        }
+                        
+                        Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform){
+                            launchPlatformView
+                                
+                        }
+                        
+    //                    Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: Tabs.Pressure){
+    //                        pressureView
+    //                    }
+                        
+                        
+    //                    Tab("Sensor", systemImage:"ruler.fill", value: Tabs.ToF){
+    //                        tofView
+    //
+    //                    }
+                    }.tabViewStyle(.tabBarOnly)
+                }
+                
                 
             }
         }
