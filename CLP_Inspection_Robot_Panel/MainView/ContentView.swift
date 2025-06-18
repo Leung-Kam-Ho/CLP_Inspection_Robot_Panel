@@ -71,25 +71,13 @@ struct ContentView: View {
 
             //Main
             HStack{
-                if !bigEnough{
+
                     TabView(selection: self.$viewModel.selectedTab){
-    //                    if bigEnough{
-    //                        Tab("Camera", systemImage: "camera.fill",value: Tabs.Camera_full){
-    //                            camera
-    //                        }
-    //
-    //
-    //                    }
-                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
-                            autoView
-                            
-                        }
-                        
-                        Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
-                            progressView
-                                
-                        }
-                        
+//                        if bigEnough{
+//                            Tab("Concept")
+//
+//    
+//                        }
                         if bigEnough{
                             Tab("All", systemImage: "widget.small", value: Tabs.All){
                                 conceptView
@@ -110,21 +98,6 @@ struct ContentView: View {
                             pressureView
                                 
                         }
-
-                        
-
-                    }
-                    .tabViewStyle(.sidebarAdaptable)
-                    
-                } else {
-                    TabView(selection: self.$viewModel.selectedTab){
-    //                    if bigEnough{
-    //                        Tab("Camera", systemImage: "camera.fill",value: Tabs.Camera_full){
-    //                            camera
-    //                        }
-    //
-    //
-    //                    }
                         Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
                             autoView
                             
@@ -134,41 +107,15 @@ struct ContentView: View {
                             progressView
                                 
                         }
+                        
+                        
 
                         
 
                     }
                     .tabViewStyle(.sidebarAdaptable)
                     
-                    
-                    TabView(selection: self.$viewModel.selectedTabRight){
-                        if bigEnough{
-                            Tab("All", systemImage: "widget.small", value: Tabs.All){
-                                conceptView
-                                    
-                            }
-                        }
-                        Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
-                            controlView
-                                
-                        }
-                        
-                        Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform){
-                            launchPlatformView
-                                
-                        }
-                        
-    //                    Tab("Pressure", systemImage:"gauge.with.dots.needle.100percent", value: Tabs.Pressure){
-    //                        pressureView
-    //                    }
-                        
-                        
-    //                    Tab("Sensor", systemImage:"ruler.fill", value: Tabs.ToF){
-    //                        tofView
-    //
-    //                    }
-                    }.tabViewStyle(.tabBarOnly)
-                }
+
                 
                 
             }
@@ -203,8 +150,8 @@ extension ContentView{
     }
     @Observable
     class ViewModel{
-        var selectedTab: Tabs = .Auto
-        var selectedTabRight: Tabs = .All
+        var selectedTab: Tabs = .All
+//        var selectedTabRight: Tabs = .All
         var camera_tab_toggle = false
         var cameraMode : CameraMode = .none
     }

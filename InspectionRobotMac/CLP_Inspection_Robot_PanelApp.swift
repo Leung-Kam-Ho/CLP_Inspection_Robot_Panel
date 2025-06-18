@@ -26,6 +26,11 @@ struct CLP_Inspection_Robot_PanelApp: App {
                 ContentView()
 //                Spacer()
 //                AutoView()
+                Camera_WebView()
+                    .clipShape(RoundedRectangle(cornerRadius: 33))
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
+                    .padding()
             }
             .background(Image("Watermark"))
             .onReceive(elCidStatus.timer, perform: { _ in

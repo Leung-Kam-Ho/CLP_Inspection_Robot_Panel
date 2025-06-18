@@ -30,7 +30,11 @@ struct ToFChartView: View {
                     }
                 }
             }
+            .chartBackground { chartProxy in
+                Color.clear // Make the background transparent
+            }
         }
+        
         .onAppear(perform: {
             show = true
         })

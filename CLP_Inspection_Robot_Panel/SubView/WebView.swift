@@ -19,6 +19,15 @@ struct Camera_WebView : View {
     var body: some View {
         WebView(ip: "http://\(settings.cam_ip)")
             .disabled(true)
+            .overlay(alignment: .bottomTrailing, content: {
+                Button(action: {
+                    refreshView.toggle()
+                }){
+                    Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
+                        .padding()
+                        .background(Circle().fill(Material.ultraThick))
+                }
+            })
             .id(refreshView)
         //            .scaledToFit()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -35,7 +44,7 @@ struct WebView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> WKWebView {
         webView.isOpaque = false
-        webView.backgroundColor = UIColor(Constants.notBlack)
+        webView.backgroundColor = UIColor(Color.clear)
         return webView
     }
     
