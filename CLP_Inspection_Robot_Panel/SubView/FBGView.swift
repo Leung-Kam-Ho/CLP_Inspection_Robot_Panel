@@ -28,9 +28,13 @@ struct FBGView: View {
                             width: 15
                         )
                         .annotation {
-                            Image(systemName: "\(index+1).circle.fill")
-                                .font(.caption)
-                                .foregroundStyle(value == 255 ? .red : .blue)
+                            Button(action:{
+                                print("FB \(index)")
+                            }){
+                                Image(systemName: "\(index+1).circle.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(value == 255 ? .red : .blue)
+                            }
                         }
                         .foregroundStyle(value == 255 ? .red : .blue)
                         
