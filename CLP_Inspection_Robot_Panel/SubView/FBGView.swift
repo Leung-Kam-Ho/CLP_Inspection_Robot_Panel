@@ -60,6 +60,7 @@ struct FBGView: View {
                 Color.clear // Make the background transparent
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: 17))
         
         .onAppear(perform: {
             show = true
@@ -83,8 +84,6 @@ struct FBGView: View {
         .padding()
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-//        .padding()
-//        .background(RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial))
 
     }
 }

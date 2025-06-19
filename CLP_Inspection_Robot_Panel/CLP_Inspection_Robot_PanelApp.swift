@@ -65,6 +65,7 @@ struct CLP_Inspection_Robot_PanelApp: App {
             .environmentObject(automationStatus)
             .environmentObject(elCidStatus)
             .environmentObject(digitalValveStatus)
+            .environmentObject(fbgStatus)
         }
     }
 }

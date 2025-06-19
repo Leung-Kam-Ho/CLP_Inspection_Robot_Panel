@@ -334,13 +334,8 @@ struct ControlView: View {
                                         
                                     }.frame(maxHeight: .infinity).padding()
                                 }
-    //                                    LaunchPlatformView(compact:true,title:false)
-    //                                        .padding()
-    //                            AudioCurveView(title:false)
+
                                 FBGView()
-//                                Camera_WebView()
-//                                    .clipShape(.rect(cornerRadius: 17))
-//                                    .padding()
                                     
                             }
     //                        .padding()
