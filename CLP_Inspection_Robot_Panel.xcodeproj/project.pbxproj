@@ -43,6 +43,7 @@
 				SaveFile.swift,
 				SharedClass/NetworkManager.swift,
 				SubView/AutoControlView.swift,
+				SubView/FBGView.swift,
 				SubView/GridRelayView.swift,
 				SubView/SensorBarView.swift,
 				SubView/SensorView.swift,

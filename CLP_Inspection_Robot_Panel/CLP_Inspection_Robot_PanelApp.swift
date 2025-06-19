@@ -16,6 +16,7 @@ struct CLP_Inspection_Robot_PanelApp: App {
     @StateObject var automationStatus = AutomationStatusObject()
     @StateObject var elCidStatus = ElCidStatusObject()
     @StateObject var digitalValveStatus = DigitalValveStatusObject()
+    @StateObject var fbgStatus = FBGStatusObject()
     var body: some Scene {
         WindowGroup {
             HStack {
@@ -49,6 +50,11 @@ struct CLP_Inspection_Robot_PanelApp: App {
             .onReceive(digitalValveStatus.timer, perform: {_ in
                 Logger().info("digital valve Fetching Status")
                 digitalValveStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                
+            })
+            .onReceive(fbgStatus.timer, perform: {_ in
+                Logger().info("FBG Fetching Status")
+                fbgStatus.fetchStatus(ip: settings.ip, port: settings.port)
                 
             })
             .font(.title2)

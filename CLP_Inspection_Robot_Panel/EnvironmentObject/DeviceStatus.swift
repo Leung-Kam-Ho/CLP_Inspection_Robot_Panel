@@ -107,3 +107,15 @@ class ElCidstatus: Codable, ObservableObject, Equatable {
             lhs.connected == rhs.connected
     }
 }
+
+class FBGStatus: Codable, ObservableObject, Equatable {
+    var feet: [Float] = [255,255,255,255]
+    var tank: [Float] = [255,255,255,255]
+    var connected: Bool = false
+    
+    static func == (lhs: FBGStatus, rhs: FBGStatus) -> Bool {
+        return lhs.feet == rhs.feet &&
+            lhs.tank == rhs.tank &&
+            lhs.connected == rhs.connected
+    }
+}

@@ -8,6 +8,7 @@ struct ConceptView : View{
     @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
     @EnvironmentObject var elcidStatus : ElCidStatusObject
     @EnvironmentObject var settings : SettingsHandler
+    @EnvironmentObject var fbgStatus : FBGStatusObject
     @State var show = false
     var body: some View{
         let pressure_btn =
@@ -56,7 +57,7 @@ struct ConceptView : View{
         Button(action:{
             self.selection = .placeHolder
         }){
-            ToFChartView()
+            FBGView()
 //            Spacer()
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 49.0)

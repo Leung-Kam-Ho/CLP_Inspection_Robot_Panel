@@ -337,7 +337,7 @@ struct ControlView: View {
     //                                    LaunchPlatformView(compact:true,title:false)
     //                                        .padding()
     //                            AudioCurveView(title:false)
-                                ToFChartView()
+                                FBGView()
 //                                Camera_WebView()
 //                                    .clipShape(.rect(cornerRadius: 17))
 //                                    .padding()

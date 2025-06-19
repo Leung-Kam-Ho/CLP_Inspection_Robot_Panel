@@ -32,7 +32,7 @@ class BaseStatusObject<T>: ObservableObject where T: Decodable & Equatable {
             switch result {
             case .success(let status):
                 DispatchQueue.main.async {
-                    withAnimation(.easeInOut(duration: 1/30)){
+                    withAnimation(.easeInOut){
                         
                         if self.status != status {
                             print("Status updated: \(status)")
@@ -161,4 +161,14 @@ class DigitalValveStatusObject: BaseStatusObject<DigitalValve_Status> {
         
         sendCommand(ip: ip, port: port, route: "/pressure", data: command)
     }
+}
+
+
+// Robot status object
+class FBGStatusObject: BaseStatusObject<FBGStatus> {
+
+    init() {
+        super.init(initialStatus: FBGStatus(), statusRoute: "/fbg_status")
+    }
+
 }
