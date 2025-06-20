@@ -11,6 +11,7 @@ import Charts
 struct FBGView: View {
     @EnvironmentObject var fbgStatus : FBGStatusObject
     @State var show = false
+    @State var hovered = false
     let columns = [
         GridItem(.adaptive(minimum: 150,maximum: 150))
     ]
@@ -28,13 +29,10 @@ struct FBGView: View {
                             width: 15
                         )
                         .annotation {
-                            Button(action:{
-                                print("FB \(index)")
-                            }){
-                                Image(systemName: "\(index+1).circle.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(value == 255 ? .red : .blue)
-                            }
+                            Image(systemName: "\(index+1).circle.fill")
+                                .font(.caption)
+                                .foregroundStyle(value == 255 ? .red : .blue)
+                            
                         }
                         .foregroundStyle(value == 255 ? .red : .blue)
                         
@@ -59,6 +57,30 @@ struct FBGView: View {
             .chartBackground { chartProxy in
                 Color.clear // Make the background transparent
             }
+            .overlay(content: {
+                if hovered{
+                    HStack(){
+                        ForEach(Array(data.enumerated()), id: \.offset) { index, value in
+                            
+                            Image(systemName: "\(index+1).circle.fill")
+                            .foregroundStyle(value == 255 ? .red : .blue)
+                            Spacer()
+                            
+                            
+                        }
+                        ForEach(Array(data.enumerated()), id: \.offset) { index, value in
+                            
+                            Image(systemName: "\(index+1).circle.fill")
+                            .foregroundStyle(value == 255 ? .red : .orange)
+                            Spacer()
+                            
+                        }
+                    }
+                    .padding()
+                    .background(Capsule().stroke(Color.white).fill(Material.thin))
+                    .padding()
+                }
+            })
         }
         .clipShape(RoundedRectangle(cornerRadius: 17))
         
@@ -81,6 +103,10 @@ struct FBGView: View {
                 }
             }
         }
+        .onHover(perform: {state in
+            hovered = state
+        })
+        
         .padding()
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
