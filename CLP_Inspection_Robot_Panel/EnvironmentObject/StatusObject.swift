@@ -166,9 +166,22 @@ class DigitalValveStatusObject: BaseStatusObject<DigitalValve_Status> {
 
 // Robot status object
 class FBGStatusObject: BaseStatusObject<FBGStatus> {
-
+    struct setTargetCommand: Encodable {
+        var channel: String
+        var value: Int
+    }
     init() {
         super.init(initialStatus: FBGStatus(), statusRoute: "/fbg_status")
+    }
+    static func setTarget(ip: String, port: Int, channel: String, value: Int) {
+        let command = setTargetCommand(channel : channel,value: value)
+        
+        sendCommand(ip: ip, port: port, route: "/fbg_target", data: command)
+    }
+    static func resetTarget(ip: String, port: Int, channel: String, value: Int) {
+        let command = setTargetCommand(channel : channel,value: value)
+        
+        sendCommand(ip: ip, port: port, route: "/fbg_target_reset", data: command)
     }
 
 }

@@ -10,6 +10,7 @@ import Charts
 
 struct FBGView: View {
     @EnvironmentObject var fbgStatus : FBGStatusObject
+    @EnvironmentObject var settings : SettingsHandler
     @State var show = false
     @State var hovered = false
     let columns = [
@@ -62,17 +63,43 @@ struct FBGView: View {
                     HStack(){
                         ForEach(Array(data.enumerated()), id: \.offset) { index, value in
                             
-                            Image(systemName: "\(index+1).circle.fill")
-                            .foregroundStyle(value == 255 ? .red : .blue)
+                            VStack{
+                                Button(action:{
+                                    FBGStatusObject.resetTarget(ip: settings.ip, port: settings.port, channel: "feet", value: index + 1)
+                                }){
+                                    Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle.fill")
+                                    .foregroundStyle(value == 255 ? .red : .blue)
+                                }
+                                Button(action:{
+                                    FBGStatusObject.setTarget(ip: settings.ip, port: settings.port, channel: "feet", value: index + 1)
+                                }){
+                                    Image(systemName: "\(index+1).circle.fill")
+                                    .foregroundStyle(value == 255 ? .red : .blue)
+                                }
+                            }
                             Spacer()
                             
                             
                         }
-                        ForEach(Array(data.enumerated()), id: \.offset) { index, value in
-                            
-                            Image(systemName: "\(index+1).circle.fill")
-                            .foregroundStyle(value == 255 ? .red : .orange)
-                            Spacer()
+                        ForEach(Array(data_b.enumerated()), id: \.offset) { index, value in
+                            VStack{
+                                Button(action:{
+                                    FBGStatusObject.resetTarget(ip: settings.ip, port: settings.port, channel: "tank", value: index + 1)
+                                }){
+                                    Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle.fill")
+                                    .foregroundStyle(value == 255 ? .red : .orange)
+                                }
+                                
+                                Button(action:{
+                                    FBGStatusObject.setTarget(ip: settings.ip, port: settings.port, channel: "tank", value: index + 1)
+                                }){
+                                    Image(systemName: "\(index+1).circle.fill")
+                                }
+                                .foregroundStyle(value == 255 ? .red : .orange)
+                            }
+                            if index + 1 != data_b.count{
+                                Spacer()
+                            }
                             
                         }
                     }
