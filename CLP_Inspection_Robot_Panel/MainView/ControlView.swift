@@ -399,8 +399,8 @@ extension ControlView {
     class ViewModel{
         var l = 0.1
         var r = 0.1
-        var leftPower = 100
-        var rightPower = 100
+        var leftPower = 10
+        var rightPower = 10
         var popup = false
         var angleTarget : Float = 0.0
         var webShow = false
