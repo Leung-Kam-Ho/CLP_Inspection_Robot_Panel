@@ -15,10 +15,12 @@ struct ContentView: View {
         
         GeometryReader{ screen in
             let bigEnough = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-            let contentMinSize = CGSize(width: 1100, height: 1000)
             //Views
             let camera =
             Camera_WebView()
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
+                .padding()
 
             let controlView =
             ControlView(compact: !bigEnough)
@@ -76,7 +78,7 @@ struct ContentView: View {
 //                        if bigEnough{
 //                            Tab("Concept")
 //
-//    
+//
 //                        }
                         if bigEnough{
                             Tab("All", systemImage: "widget.small", value: Tabs.All){
@@ -84,6 +86,13 @@ struct ContentView: View {
                                     
                             }
                         }
+                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
+                            autoView
+                        }
+                        Tab("Camera", systemImage: "camera.fill", value: Tabs.Camera) {
+                            camera
+                        }
+                        
                         Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
                             controlView
                                 
@@ -98,10 +107,7 @@ struct ContentView: View {
                             pressureView
                                 
                         }
-                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
-                            autoView
-                            
-                        }
+                        
                         
                         Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
                             progressView

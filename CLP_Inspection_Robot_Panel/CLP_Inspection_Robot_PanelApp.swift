@@ -10,6 +10,7 @@ import os
 
 @main
 struct CLP_Inspection_Robot_PanelApp: App {
+
     @StateObject var settings = SettingsHandler()
     @StateObject var robotStatus = RobotStatusObject()
     @StateObject var launchPlatformStatus = LaunchPlatformStatusObject()

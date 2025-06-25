@@ -10,7 +10,6 @@ import os
 
 @main
 struct CLP_Inspection_Robot_PanelApp: App {
-//    @StateObject var station = Station()
     @State private var isFullScreen = false
     @StateObject var settings = SettingsHandler()
     @StateObject var robotStatus = RobotStatusObject()
@@ -25,56 +24,49 @@ struct CLP_Inspection_Robot_PanelApp: App {
     var body: some Scene {
         
         WindowGroup {
-            HStack {
-                
-                ContentView()
-//                Spacer()
-//                AutoView()
-//                if window.is
-                    
-                Camera_WebView()
-                    .clipShape(RoundedRectangle(cornerRadius: 33))
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
-                    .padding()
+            GeometryReader{ proxy in
+                    HStack {
+                        ContentView()
+                        if proxy.size.width > contentMinSize.width && proxy.size.height > contentMinSize.height {
+                            Camera_WebView()
+                                .clipShape(RoundedRectangle(cornerRadius: 33))
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 49)
+                                        .fill(.ultraThinMaterial)
+                                        .stroke(.white)
+                                )
+                                .padding()
+                        }
+                    }
                 
             }
             .background(Image("Watermark"))
             .onReceive(elCidStatus.timer, perform: { _ in
                 Logger().info("elCid Fetching Status")
                 elCidStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                
             })
             .onReceive(launchPlatformStatus.timer, perform: { _ in
                 Logger().info("launchplatform Fetching Status")
-                    
-                    launchPlatformStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                
-                })
-            .onReceive(automationStatus.timer, perform: {_ in
+                launchPlatformStatus.fetchStatus(ip: settings.ip, port: settings.port)
+            })
+            .onReceive(automationStatus.timer, perform: { _ in
                 Logger().info("Auto Fetching Status")
-                
-                    automationStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                
+                automationStatus.fetchStatus(ip: settings.ip, port: settings.port)
             })
-            .onReceive(robotStatus.timer, perform: {_ in
+            .onReceive(robotStatus.timer, perform: { _ in
                 Logger().info("robot Fetching Status")
-                    robotStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                
+                robotStatus.fetchStatus(ip: settings.ip, port: settings.port)
             })
-            .onReceive(digitalValveStatus.timer, perform: {_ in
+            .onReceive(digitalValveStatus.timer, perform: { _ in
                 Logger().info("digital valve Fetching Status")
                 digitalValveStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                
             })
-            .onReceive(fbgStatus.timer, perform: {_ in
+            .onReceive(fbgStatus.timer, perform: { _ in
                 Logger().info("FBG Fetching Status")
                 fbgStatus.fetchStatus(ip: settings.ip, port: settings.port)
-                
             })
-
             .font(.title2)
-//            .environmentObject(station)
             .environmentObject(settings)
             .environmentObject(robotStatus)
             .environmentObject(launchPlatformStatus)
