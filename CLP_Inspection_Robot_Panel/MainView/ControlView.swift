@@ -409,7 +409,8 @@ extension ControlView {
     }
     
     func sendCommand(){
-//        launchPlatformStatus.RotatePlatform(ip: settings.ip, port: settings.port, value: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
+        LaunchPlatformStatusObject.RotatePlatform(ip: settings.ip, port: settings.port, value: .degrees(Double(viewModel.angleTarget).truncatingRemainder(dividingBy: 360)))
+//        LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
     }
 }
 

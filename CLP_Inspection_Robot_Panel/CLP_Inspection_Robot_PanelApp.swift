@@ -67,6 +67,12 @@ struct CLP_Inspection_Robot_PanelApp: App {
             .environmentObject(elCidStatus)
             .environmentObject(digitalValveStatus)
             .environmentObject(fbgStatus)
+            
+            .scrollContentBackground(.hidden)
+            .bold()
+            .preferredColorScheme(.dark)
+
+            .monospacedDigit()
         }
     }
 }

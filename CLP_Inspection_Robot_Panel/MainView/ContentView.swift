@@ -126,12 +126,7 @@ struct ContentView: View {
                 
             }
         }
-        
-        .scrollContentBackground(.hidden)
-        .bold()
-        .preferredColorScheme(.dark)
 
-        .monospacedDigit()
         
     }
 

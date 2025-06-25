@@ -28,7 +28,7 @@ struct CLP_Inspection_Robot_PanelApp: App {
                     HStack {
                         ContentView()
                         if proxy.size.width > contentMinSize.width && proxy.size.height > contentMinSize.height {
-                            Camera_WebView()
+                            ControlView()
                                 .clipShape(RoundedRectangle(cornerRadius: 33))
                                 .padding()
                                 .background(
@@ -40,11 +40,18 @@ struct CLP_Inspection_Robot_PanelApp: App {
                         }
                     }
                 
+                    .scrollContentBackground(.hidden)
+                    .bold()
+                    .preferredColorScheme(.dark)
+
+                    .monospacedDigit()
+                
             }
             .background(Image("Watermark"))
             .onReceive(elCidStatus.timer, perform: { _ in
                 Logger().info("elCid Fetching Status")
                 elCidStatus.fetchStatus(ip: settings.ip, port: settings.port)
+                
             })
             .onReceive(launchPlatformStatus.timer, perform: { _ in
                 Logger().info("launchplatform Fetching Status")
