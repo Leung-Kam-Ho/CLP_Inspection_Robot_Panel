@@ -83,7 +83,6 @@ struct ContentView: View {
                         if bigEnough{
                             Tab("All", systemImage: "widget.small", value: Tabs.All){
                                 conceptView
-                                    
                             }
                         }
                         Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){

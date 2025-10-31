@@ -256,6 +256,75 @@ struct LaunchPlatformView : View{
                             }
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                            if !compact{
+                                VStack{
+                                    Text("Preset")
+                                    HStack{
+                                        Button(action:{
+    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
+                                            withAnimation{
+                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint - 12)
+                                            }
+                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
+                                        }){
+                                            
+                                            Text("-12")
+                                                .padding()
+                                                .background(Capsule().fill(Constants.notBlack))
+                                            
+                                        }
+                                        
+                                        Button(action:{
+    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
+                                            withAnimation{
+                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint + 12)
+                                            }
+                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
+                                        }){
+                                            
+                                            Text("+12")
+                                                .padding()
+                                                .background(Capsule().fill(Constants.notBlack))
+                                            
+                                        }
+                                    }
+                                    HStack{
+                                        Button(action:{
+    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
+                                            withAnimation{
+                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint - 0.5)
+                                            }
+                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
+                                        }){
+                                            
+                                            Text("-.5")
+                                                .padding()
+                                                .background(Capsule().fill(Constants.notBlack))
+                                            
+                                        }
+                                        
+                                        Button(action:{
+    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
+    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
+                                            withAnimation{
+                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint + 0.5)
+                                            }
+                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
+                                        }){
+                                            
+                                            Text("+.5")
+                                                .padding()
+                                                .background(Capsule().fill(Constants.notBlack))
+                                            
+                                        }
+                                    }
+                                }
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                            }
                            
                             
                         }
