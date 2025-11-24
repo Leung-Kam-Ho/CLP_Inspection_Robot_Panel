@@ -2,6 +2,8 @@
 
 ![CLP Inspection Robot Panel](Overview_1.png)
 ![CLP Inspection Robot Panel](Overview_2.png)
+![CLP Inspection Robot Panel](Overview_3.png)
+![CLP Inspection Robot Panel](Overview_4.png)
 
 Welcome to the CLP Inspection Robot Panel repository!
 
