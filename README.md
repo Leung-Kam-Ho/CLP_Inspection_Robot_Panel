@@ -1,15 +1,11 @@
 # CLP Inspection Robot Panel
 
+The CLP Inspection Robot Panel is a software application designed to control and monitor inspection robots used in the CLP (Centralized Logistics Platform) system. This repository contains all the necessary code and documentation to set up and use the panel.
 ![CLP Inspection Robot Panel](Overview_1.png)
 ![CLP Inspection Robot Panel](Overview_2.png)
 ![CLP Inspection Robot Panel](Overview_3.png)
 ![CLP Inspection Robot Panel](Overview_4.png)
 
-Welcome to the CLP Inspection Robot Panel repository!
-
-## Overview
-
-The CLP Inspection Robot Panel is a software application designed to control and monitor inspection robots used in the CLP (Centralized Logistics Platform) system. This repository contains all the necessary code and documentation to set up and use the panel.
 
 ## Features
 
