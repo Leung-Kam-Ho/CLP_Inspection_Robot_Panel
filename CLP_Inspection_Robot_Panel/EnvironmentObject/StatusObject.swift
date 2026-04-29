@@ -74,6 +74,9 @@ class RobotStatusObject: BaseStatusObject<RobotStatus> {
     struct setRelayCommand: Encodable {
         var relay: Int
     }
+    struct setLEDBrightness : Encodable{
+        var brightness: Float
+    }
     init() {
         super.init(initialStatus: RobotStatus(), statusRoute: "/robot_status")
     }
@@ -88,6 +91,11 @@ class RobotStatusObject: BaseStatusObject<RobotStatus> {
         let command = setRelayCommand(relay: relay)
         
         sendCommand(ip: ip, port: port, route: "/robot/relay", data: command)
+    }
+    static func setLED(ip: String, port: Int, brightness: Float) {
+        let command = setLEDBrightness(brightness: brightness)
+        sendCommand(ip: ip, port: port, route: "/robot/led", data: command)
+        Logger().info("set \(brightness)")
     }
 
 }

@@ -10,6 +10,7 @@ import os
 
 struct LEDControlView: View {
     @EnvironmentObject var settings : SettingsHandler
+    @EnvironmentObject var robotStatus : RobotStatusObject
     @State var viewModel = ViewModel()
     var enabled = true
     
@@ -21,6 +22,7 @@ struct LEDControlView: View {
                         let value = Int(self.viewModel.ledValue * self.viewModel.led_max)
                         // TODO: Implement actual LED control network call here
                         // Example: StatusObject.setLED(ip: settings.ip, port: settings.port, value: value)
+                        RobotStatusObject.setLED(ip: settings.ip, port: settings.port, brightness: Float(value) / 100)
                         Logger().info("LED set to: \(value)")
                     }
                 }, icon: { _ in
