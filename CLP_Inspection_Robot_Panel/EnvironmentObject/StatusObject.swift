@@ -80,14 +80,14 @@ class RobotStatusObject: BaseStatusObject<RobotStatus> {
     static func setServo(ip: String, port: Int, servo: [Int]) {
         let command = setServoCommand(servo: servo)
         
-        sendCommand(ip: ip, port: port, route: "/servo", data: command)
+        sendCommand(ip: ip, port: port, route: "/robot/servo", data: command)
     }
     
     static func setRelay(ip: String, port: Int, relay: Int) {
         
         let command = setRelayCommand(relay: relay)
         
-        sendCommand(ip: ip, port: port, route: "/relay", data: command)
+        sendCommand(ip: ip, port: port, route: "/robot/relay", data: command)
     }
 
 }
@@ -105,12 +105,12 @@ class LaunchPlatformStatusObject: BaseStatusObject<LaunchPlatformStatus> {
     }
     static func setRelay(ip: String, port: Int, idx: Int) {
         let command = setRelayCommand(idx: idx)
-        sendCommand(ip: ip, port: port, route: "/relay_launch_platform", data: command)
+        sendCommand(ip: ip, port: port, route: "/launch_platform/relay", data: command)
     }
     static func RotatePlatform(ip: String, port: Int, value : Angle = .degrees(0)){
         let angle = value.degrees < 0 ? 360 + value.degrees : value.degrees
         Logger().info("set \(angle)")
-        sendCommand(ip: ip, port: port, route: "/launch_platform", data: setAngleCommand(angle: Float(angle)))
+        sendCommand(ip: ip, port: port, route: "/launch_platform/angle", data: setAngleCommand(angle: Float(angle)))
     }
 }
 
@@ -159,7 +159,7 @@ class DigitalValveStatusObject: BaseStatusObject<DigitalValve_Status> {
     static func setPressure(ip: String, port: Int, channel: Int, pressure: Double) {
         let command = setPressureCommand(channel : channel,pressure: pressure)
         
-        sendCommand(ip: ip, port: port, route: "/pressure", data: command)
+        sendCommand(ip: ip, port: port, route: "/robot/pressure", data: command)
     }
 }
 
