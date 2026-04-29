@@ -70,7 +70,14 @@ struct ContentView: View {
             let tofView =
             ToFView()
                 .padding()
-
+            let ledView =
+            LEDControlView()
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 49.0)
+                    .fill(.ultraThinMaterial)
+                    .stroke(.white)
+                )
+                .padding()
             //Main
             HStack{
 
@@ -112,6 +119,13 @@ struct ContentView: View {
                             progressView
                                 
                         }
+                        Tab("ToF", systemImage:"pencil.and.ruler", value: Tabs.ToF){
+                            tofView
+                        }
+                        Tab("LED", systemImage:"flashlight.off.fill", value: Tabs.LED){
+                            ledView
+                        }
+                        
                         
                         
 
@@ -142,6 +156,7 @@ extension ContentView{
         case Camera
         case Camera_full
         case Progress
+        case LED
         case placeHolder
     }
     enum CameraMode : String , CaseIterable{

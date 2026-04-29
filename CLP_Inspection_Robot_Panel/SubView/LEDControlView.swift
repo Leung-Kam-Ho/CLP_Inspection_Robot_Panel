@@ -32,7 +32,7 @@ struct LEDControlView: View {
                 .multilineTextAlignment(.center)
             }
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxWidth:100, maxHeight: .infinity)
         .contentTransition(.numericText(countsDown: true))
     }
 }
