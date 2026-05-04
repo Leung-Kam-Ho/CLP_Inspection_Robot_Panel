@@ -22,12 +22,13 @@ struct CLP_Inspection_Robot_PanelApp: App {
     private let contentMinSize = CGSize(width: 1300, height: 1000)
     
     var body: some Scene {
-        
+
         WindowGroup {
             GeometryReader{ proxy in
+                let fullscreen = proxy.size.width > contentMinSize.width && proxy.size.height > contentMinSize.height
                     HStack {
-                        ContentView()
-                        if proxy.size.width > contentMinSize.width && proxy.size.height > contentMinSize.height {
+                        ContentView(disable_robot : fullscreen)
+                        if fullscreen{
                             ControlView()
                                 .clipShape(RoundedRectangle(cornerRadius: 33))
                                 .padding()

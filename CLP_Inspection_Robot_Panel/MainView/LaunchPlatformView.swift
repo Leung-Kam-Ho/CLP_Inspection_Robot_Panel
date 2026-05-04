@@ -245,7 +245,7 @@ extension LaunchPlatformView {
             Text("Info")
             let ang = launchPlatformStatus.status.angle
             let tar = launchPlatformStatus.status.setpoint
-            Text(String(format: "curPos : °%05.1f ", ang))
+            Text("Cur :\(String(format: "%05.1f", ang))°")
                 .contentTransition(.numericText(countsDown: true))
                 .padding()
                 .lineLimit(1)
@@ -295,13 +295,9 @@ extension LaunchPlatformView {
     private var presetControlView: some View {
         VStack {
             Text("Preset")
-            HStack {
+            VStack {
                 presetButton(label: "-12", offset: -12.0)
                 presetButton(label: "+12", offset: 12.0)
-            }
-            HStack {
-                presetButton(label: "-.5", offset: -0.5)
-                presetButton(label: "+.5", offset: 0.5)
             }
         }
         .padding()

@@ -11,6 +11,7 @@ struct ControlView: View {
     
     let notBlack = Color(red: 24/335, green: 24/335, blue: 24/335)
     var compact: Bool = false
+    var disable_control = false
     
     var body: some View {
         VStack {
@@ -23,7 +24,7 @@ struct ControlView: View {
                             LEDControlView()
                                 .padding()
                                 .background(
-                                    RoundedRectangle(cornerRadius: 49.0)
+                                    RoundedRectangle(cornerRadius: 33.0)
                                         .fill(.ultraThinMaterial)
                                         .stroke(.white)
                                 )
@@ -284,14 +285,14 @@ extension ControlView {
                             
                             Group {
                                 HStack {
-                                    Button(action: {
-                                        withAnimation { viewModel.showHints.toggle() }
-                                    }) {
-                                        Image(systemName: "lightbulb.fill")
-                                            .padding()
-                                            .background(Circle().fill(viewModel.showHints ? .yellow : Constants.notBlack))
-                                    }
-                                    .buttonStyle(.plain)
+//                                    Button(action: {
+//                                        withAnimation { viewModel.showHints.toggle() }
+//                                    }) {
+//                                        Image(systemName: "lightbulb.fill")
+//                                            .padding()
+//                                            .background(Circle().fill(viewModel.showHints ? .yellow : Constants.notBlack))
+//                                    }
+//                                    .buttonStyle(.plain)
                                     
                                     AutoMenu(content: {
                                         Text(autoStatus.autoMode.rawValue)

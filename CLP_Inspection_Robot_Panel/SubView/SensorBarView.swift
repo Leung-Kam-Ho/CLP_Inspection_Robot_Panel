@@ -46,16 +46,20 @@ struct SensorTabsView : View{
         
         
         TabView(content: {
-            
             HStack{
-                RangeToFView(ToF: tof, idx: ToF_Show[0..<6])
+                RangeToFView(ToF: tof, idx: ToF_Show[0..<4])
             }
             HStack{
-                RangeToFView(ToF: tof, idx: ToF_Show[6..<12])
+                RangeToFView(ToF: tof, idx: ToF_Show[4..<8])
             }
             HStack{
-                RangeToFView(ToF: tof, idx: ToF_Show[12..<ToF_Show.count])
-                
+                RangeToFView(ToF: tof, idx: ToF_Show[8..<12])
+            }
+            HStack{
+                RangeToFView(ToF: tof, idx: ToF_Show[12..<16])
+            }
+            HStack{
+                RangeToFView(ToF: tof, idx: ToF_Show[16..<18])
             }
 
         })

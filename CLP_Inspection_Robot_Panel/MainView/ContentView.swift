@@ -10,6 +10,7 @@ struct ContentView: View {
     @EnvironmentObject var settings: SettingsHandler
     
     @State var viewModel = ViewModel()
+    var disable_robot = false
     @AppStorage("MyAppTabViewCustomization") private var customization: TabViewCustomization
     
     var body: some View {
@@ -31,10 +32,12 @@ struct ContentView: View {
                     Tab("Camera", systemImage: "camera.fill", value: Tabs.Camera) {
                         cameraView
                     }
-                    
-                    Tab("Robot", systemImage: "macstudio.fill", value: Tabs.Robot) {
-                        controlView(compact: !bigEnough)
+                    if !disable_robot{
+                        Tab("Robot", systemImage: "macstudio.fill", value: Tabs.Robot) {
+                            controlView(compact: !bigEnough)
+                        }
                     }
+                    
                     
                     Tab("Launch Platform", systemImage: "circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform) {
                         launchPlatformView(compact: !bigEnough)
