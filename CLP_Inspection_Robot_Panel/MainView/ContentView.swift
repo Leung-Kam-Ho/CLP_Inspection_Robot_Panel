@@ -2,151 +2,125 @@ import SwiftUI
 import os
 
 struct ContentView: View {
-    @EnvironmentObject var robotStatus : RobotStatusObject
-    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
-    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
-    @EnvironmentObject var autoStatus : AutomationStatusObject
-    @EnvironmentObject var elcidStatus : ElCidStatusObject
-    @EnvironmentObject var settings : SettingsHandler
+    @EnvironmentObject var robotStatus: RobotStatusObject
+    @EnvironmentObject var digitalValveStatus: DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus: LaunchPlatformStatusObject
+    @EnvironmentObject var autoStatus: AutomationStatusObject
+    @EnvironmentObject var elcidStatus: ElCidStatusObject
+    @EnvironmentObject var settings: SettingsHandler
+    
     @State var viewModel = ViewModel()
-    @AppStorage("MyAppTabViewCustomization")
-    private var customization: TabViewCustomization
+    @AppStorage("MyAppTabViewCustomization") private var customization: TabViewCustomization
+    
     var body: some View {
-        
-        GeometryReader{ screen in
+        GeometryReader { screen in
             let bigEnough = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-            //Views
-            let camera =
-            Camera_WebView()
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
-                .padding()
-
-            let controlView =
-            ControlView(compact: !bigEnough)
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
-                .padding()
             
-            let conceptView =
-            ConceptView(selection : self.$viewModel.selectedTab)
-            let autoView =
-            AutoView()
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 49.0)
-                    .fill(.ultraThinMaterial)
-                    .stroke(.white)
-                )
-                .padding()
-
-            let progressView =
-            InspectionProgressView()
-                .padding()
-            let launchPlatformView =
-            LaunchPlatformView(compact: !bigEnough, show_slot:false)
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 49.0)
-                .fill(.ultraThinMaterial)
-                .stroke(.white)
-            )
-            .padding()
-            let pressureView =
-            VStack{
-                Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
-                    .padding()
-                    .padding(.vertical)
-                    .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 33.0).fill(digitalValveStatus.status.connected ? .green : .red))
-                    
-                PressureView(enabled : true)
-                    .padding()
-            }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 49.0)
-                .fill(.ultraThinMaterial)
-                .stroke(.white)
-            )
-            .padding()
-            let tofView =
-            ToFView()
-                .padding()
-            let ledView =
-            LEDControlView()
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 49.0)
-                    .fill(.ultraThinMaterial)
-                    .stroke(.white)
-                )
-                .padding()
-            //Main
-            HStack{
-
-                    TabView(selection: self.$viewModel.selectedTab){
-//                        if bigEnough{
-//                            Tab("Concept")
-//
-//
-//                        }
-                        if bigEnough{
-                            Tab("All", systemImage: "widget.small", value: Tabs.All){
-                                conceptView
-                            }
+            HStack {
+                TabView(selection: self.$viewModel.selectedTab) {
+                    if bigEnough {
+                        Tab("All", systemImage: "widget.small", value: Tabs.All) {
+                            ConceptView(selection: self.$viewModel.selectedTab)
                         }
-                        Tab("Auto",systemImage:"point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath",value: Tabs.Auto){
-                            autoView
-                        }
-                        Tab("Camera", systemImage: "camera.fill", value: Tabs.Camera) {
-                            camera
-                        }
-                        
-                        Tab("Robot", systemImage:"macstudio.fill",value: Tabs.Robot){
-                            controlView
-                                
-                        }
-                        
-                        Tab("Launch Platform", systemImage:"circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform){
-                            launchPlatformView
-                                
-                        }
-                        
-                        Tab("Pressure", systemImage:"chart.bar.fill", value: Tabs.Pressure){
-                            pressureView
-                                
-                        }
-                        
-                        
-                        Tab("Progress", systemImage:"switch.programmable", value: Tabs.Progress){
-                            progressView
-                                
-                        }
-                        Tab("ToF", systemImage:"pencil.and.ruler", value: Tabs.ToF){
-                            tofView
-                        }
-                        Tab("LED", systemImage:"flashlight.off.fill", value: Tabs.LED){
-                            ledView
-                        }
-                        
-                        
-                        
-
-                        
-
                     }
-                    .tabViewStyle(.sidebarAdaptable)
                     
-
-                
-                
+                    Tab("Auto", systemImage: "point.topright.filled.arrow.triangle.backward.to.point.bottomleft.scurvepath", value: Tabs.Auto) {
+                        autoView
+                    }
+                    
+                    Tab("Camera", systemImage: "camera.fill", value: Tabs.Camera) {
+                        cameraView
+                    }
+                    
+                    Tab("Robot", systemImage: "macstudio.fill", value: Tabs.Robot) {
+                        controlView(compact: !bigEnough)
+                    }
+                    
+                    Tab("Launch Platform", systemImage: "circle.bottomrighthalf.pattern.checkered", value: Tabs.LaunchPlatform) {
+                        launchPlatformView(compact: !bigEnough)
+                    }
+                    
+                    Tab("Pressure", systemImage: "chart.bar.fill", value: Tabs.Pressure) {
+                        pressureView
+                    }
+                    
+                    Tab("Progress", systemImage: "switch.programmable", value: Tabs.Progress) {
+                        InspectionProgressView()
+                            .padding()
+                    }
+                    
+                    Tab("ToF", systemImage: "pencil.and.ruler", value: Tabs.ToF) {
+                        ToFView()
+                            .padding()
+                    }
+                    
+                    Tab("LED", systemImage: "flashlight.off.fill", value: Tabs.LED) {
+                        ledView
+                    }
+                }
+                .tabViewStyle(.sidebarAdaptable)
             }
         }
-
-        
     }
-
 }
 
-extension ContentView{
-    enum Tabs : Hashable{
+// MARK: - Subviews
+extension ContentView {
+    private var cameraView: some View {
+        Camera_WebView()
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
+            .padding()
+    }
+    
+    private func controlView(compact: Bool) -> some View {
+        ControlView(compact: compact)
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 49).fill(.ultraThinMaterial).stroke(.white))
+            .padding()
+    }
+    
+    private var autoView: some View {
+        AutoView()
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
+            .padding()
+    }
+    
+    private func launchPlatformView(compact: Bool) -> some View {
+        LaunchPlatformView(compact: compact, show_slot: false)
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
+            .padding()
+    }
+    
+    private var pressureView: some View {
+        VStack {
+            Label("Pressure CTRL", systemImage: "chart.bar.yaxis")
+                .padding()
+                .padding(.vertical)
+                .frame(maxWidth: .infinity)
+                .background(RoundedRectangle(cornerRadius: 33.0).fill(digitalValveStatus.status.connected ? .green : .red))
+            
+            PressureView(enabled: true)
+                .padding()
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
+        .padding()
+    }
+    
+    private var ledView: some View {
+        LEDControlView()
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 49.0).fill(.ultraThinMaterial).stroke(.white))
+            .padding()
+    }
+}
+
+// MARK: - Types
+extension ContentView {
+    enum Tabs: Hashable {
         case All
         case Auto
         case Robot
@@ -159,15 +133,16 @@ extension ContentView{
         case LED
         case placeHolder
     }
-    enum CameraMode : String , CaseIterable{
+    
+    enum CameraMode: String, CaseIterable {
         case half = "inset.filled.lefthalf.righthalf.rectangle"
         case none = "inset.filled.topleft.topright.bottomleft.bottomright.rectangle"
     }
+    
     @Observable
-    class ViewModel{
+    class ViewModel {
         var selectedTab: Tabs = .All
-//        var selectedTabRight: Tabs = .All
         var camera_tab_toggle = false
-        var cameraMode : CameraMode = .none
+        var cameraMode: CameraMode = .none
     }
 }

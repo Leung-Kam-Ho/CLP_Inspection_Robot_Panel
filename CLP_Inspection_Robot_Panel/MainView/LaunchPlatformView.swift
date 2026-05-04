@@ -1,370 +1,331 @@
 import SwiftUI
 import os
 
-
-struct LaunchPlatformView : View{
-    @EnvironmentObject var digitalValveStatus : DigitalValveStatusObject
-    @EnvironmentObject var launchPlatformStatus : LaunchPlatformStatusObject
-    @EnvironmentObject var elcidStatus : ElCidStatusObject
-    @EnvironmentObject var settings : SettingsHandler
+struct LaunchPlatformView: View {
+    @EnvironmentObject var digitalValveStatus: DigitalValveStatusObject
+    @EnvironmentObject var launchPlatformStatus: LaunchPlatformStatusObject
+    @EnvironmentObject var elcidStatus: ElCidStatusObject
+    @EnvironmentObject var settings: SettingsHandler
+    
     @State var viewModel = ViewModel()
+    
     var enabled = true
     var compact = false
     @State var show_slot = true
     var title = true
-    var body: some View{
-        let img_list = ["arrow.left.arrow.right.circle.fill","lock.circle.fill","popcorn.circle.fill","lifepreserver.fill"]
-        let LP_image =
+    
+    let img_list = ["arrow.left.arrow.right.circle.fill", "lock.circle.fill", "popcorn.circle.fill", "lifepreserver.fill"]
+    
+    var body: some View {
+        HStack {
+            if viewModel.show {
+                if !self.enabled {
+                    disabledView
+                } else {
+                    enabledView
+                }
+            }
+        }
+        .sensoryFeedback(.impact(weight: .heavy), trigger: viewModel.success) { old, new in
+            if new {
+                Logger().info("success")
+                viewModel.success = false
+                return true
+            }
+            return false
+        }
+        .onAppear {
+            self.viewModel.previewLP_angle = Double(launchPlatformStatus.status.angle)
+            self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
+            self.viewModel.show = true
+        }
+        .onDisappear {
+            self.viewModel.show = false
+        }
+        .frame(maxHeight: .infinity)
+    }
+}
+
+// MARK: - Subviews
+extension LaunchPlatformView {
+    
+    private var launchPlatformImage: some View {
         Image("LaunchPlatform")
             .resizable()
             .padding()
             .tint(.primary)
             .aspectRatio(contentMode: .fit)
             .rotationEffect(.degrees(Double(launchPlatformStatus.status.angle)))
-            .overlay(alignment: .center, content: {
-                ZStack{
+            .overlay(alignment: .center) {
+                ZStack {
                     Image(systemName: "circle.fill")
                         .font(.system(size: enabled && !compact ? 400 : 150))
                         .foregroundStyle(.ultraThickMaterial)
-                    Button(action:{
+                    
+                    Button(action: {
                         show_slot.toggle()
-                    }){
-                        VStack(alignment:.center){
-                            let fractionalPart : Double = enabled ? Double(self.viewModel.previewLP_angle - Double(Int(self.viewModel.previewLP_angle))) : Double(launchPlatformStatus.status.angle - Float(Int(launchPlatformStatus.status.angle)))
-                            let slot : Int = enabled ? Int(self.viewModel.previewLP_angle / Constants.SLOT_DISTANCE_DEGREE) + 1 : Int(launchPlatformStatus.status.angle / Float(Constants.SLOT_DISTANCE_DEGREE)) + 1
-                            
-                            
-
-                            if show_slot{
-                                Text("Slot")
-                                    .foregroundStyle(Constants.offWhite)
-                                    .font(enabled && !compact ? .title : .caption)
-                                Text(String(format : "%02d",Int(slot)))
-                                    .tint(.primary)
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .font(.system(size: enabled && !compact ? 200 : 70))
-                            }else{
-                                Text("Angle")
-                                    .foregroundStyle(Constants.offWhite)
-                                    .font(enabled && !compact ? .title : .caption)
-                                Text(enabled ? String(format : "%03d",Int(self.viewModel.previewLP_angle)) : String(format : "%03d",Int(launchPlatformStatus.status.angle)))
-                                    .tint(.primary)
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .font(.system(size: enabled && !compact ? 180 : 50))
-                                
-                                Text(String(format : "%02d",Int(fractionalPart*100)))
-                                    .foregroundStyle(Constants.offWhite)
-                                    .font(enabled && !compact ? .title : .caption)
-                            }
-                            
-                            
-                        }
+                    }) {
+                        slotOrAngleDisplay
                     }
-                    
                 }
+            }
+    }
+    
+    private var slotOrAngleDisplay: some View {
+        VStack(alignment: .center) {
+            let fractionalPart: Double = enabled 
+                ? Double(self.viewModel.previewLP_angle - Double(Int(self.viewModel.previewLP_angle))) 
+                : Double(launchPlatformStatus.status.angle - Float(Int(launchPlatformStatus.status.angle)))
                 
-            })
-        let LaunchPlatform_Drag_overlay =
-        GeometryReader{ geometry in
+            let slot: Int = enabled 
+                ? Int(self.viewModel.previewLP_angle / Constants.SLOT_DISTANCE_DEGREE) + 1 
+                : Int(launchPlatformStatus.status.angle / Float(Constants.SLOT_DISTANCE_DEGREE)) + 1
             
-            VStack{
-                Spacer()
-                let length = min(geometry.size.height,geometry.size.width)
-                LP_image
-                    .frame(maxWidth: .infinity ,alignment: .center)
-                    .padding()
-                    .overlay(content: {
-                        ZStack{
-                            Image("LaunchPlatform")
-                                .resizable()
-                                .padding()
-
-                                .frame(maxWidth: .infinity,alignment: .center)
-                                .opacity(0.5)
-                                .aspectRatio(contentMode: .fit)
-                            Image(systemName: "arrow.left.and.right.circle.fill")
-                                .offset(y: length / -2)
-                                .foregroundStyle(.blue)
-                        }
-                        .rotationEffect(.degrees(self.viewModel.previewLP_angle))
-                        .padding()
-                        .gesture(DragGesture()
-                            .onChanged{ v in
-                                var theta = (atan2(v.location.x - length / 2, length / 2 - v.location.y) - atan2(v.startLocation.x - length / 2, length / 2 - v.startLocation.y)) * 180 / .pi
-                                if (theta < 0) { theta += 360 }
-                                let result = Double((theta + self.viewModel.previewLP_angle_lastAngle)).truncatingRemainder(dividingBy: 360)
-                                withAnimation(.easeInOut(duration: 0.2)){
-                                    if viewModel.locked{
-                                        self.viewModel.previewLP_angle = Double(self.viewModel.closestMultipleOf12(for: Int(result))) + self.viewModel.offset
-                                    }else{
-                                        self.viewModel.previewLP_angle = result + self.viewModel.offset
-                                    }
-                                    
-                                    self.viewModel.previewLP_angle = self.viewModel.previewLP_angle.truncatingRemainder(dividingBy: 360)
-                                }
-                            }
-                            .onEnded { v in
-                                self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
-                            }
-                        )
-                    })
-                Spacer()
-            }.scaleEffect(0.9)
+            if show_slot {
+                Text("Slot")
+                    .foregroundStyle(Constants.offWhite)
+                    .font(enabled && !compact ? .title : .caption)
+                Text(String(format: "%02d", Int(slot)))
+                    .tint(.primary)
+                    .contentTransition(.numericText(countsDown: true))
+                    .font(.system(size: enabled && !compact ? 200 : 70))
+            } else {
+                Text("Angle")
+                    .foregroundStyle(Constants.offWhite)
+                    .font(enabled && !compact ? .title : .caption)
+                Text(enabled ? String(format: "%03d", Int(self.viewModel.previewLP_angle)) : String(format: "%03d", Int(launchPlatformStatus.status.angle)))
+                    .tint(.primary)
+                    .contentTransition(.numericText(countsDown: true))
+                    .font(.system(size: enabled && !compact ? 180 : 50))
+                
+                Text(String(format: "%02d", Int(fractionalPart * 100)))
+                    .foregroundStyle(Constants.offWhite)
+                    .font(enabled && !compact ? .title : .caption)
+            }
         }
-        .frame(maxHeight: 828.0, alignment : .center)
-        
-        
-        HStack{
-            if viewModel.show{
-                if !self.enabled{
-                    VStack{
-                        Spacer()
-                        LP_image
-                        Spacer()
-                        HStack{
-                            ForEach(1...4, id:\.self){ idx in
-                                Button(action:{
-    //                                _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-                                    LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : idx - 1)
-                                }){
-                                    let s = launchPlatformStatus.status.relay
-                                    let index = s.index(s.startIndex, offsetBy: idx-1)
-                                    let state : String = String(launchPlatformStatus.status.relay[index])
-                                    
-                                    Image(systemName: img_list[idx-1])
-                                        .padding()
-                                        .tint(.primary)
-                                        .background( Circle()
-                                            .fill(state == "1" ? .orange : Constants.notBlack))
-                                    
-                                }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
-                                if idx != 4{
-                                    
-                                    Spacer()
-                                }
-                            }
-                            
-                        }
+    }
+    
+    private var launchPlatformDragOverlay: some View {
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+                let length = min(geometry.size.height, geometry.size.width)
+                launchPlatformImage
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                    .overlay {
+                        dragOverlayControls(length: length)
                     }
-                    
-                    
-                }else{
-                    VStack{
-                        if title{
-                            Label("Launch Platform", systemImage: "chart.bar.yaxis")
-                                .padding()
-                                .padding(.vertical)
-                                .lineLimit(1)
-                                .frame(maxWidth: .infinity)
-                                .background(RoundedRectangle(cornerRadius: 33.0).fill(launchPlatformStatus.status.connected ? .orange : .red))
+                Spacer()
+            }
+            .scaleEffect(0.9)
+        }
+        .frame(maxHeight: 828.0, alignment: .center)
+    }
+    
+    private func dragOverlayControls(length: CGFloat) -> some View {
+        ZStack {
+            Image("LaunchPlatform")
+                .resizable()
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .opacity(0.5)
+                .aspectRatio(contentMode: .fit)
+            Image(systemName: "arrow.left.and.right.circle.fill")
+                .offset(y: length / -2)
+                .foregroundStyle(.blue)
+        }
+        .rotationEffect(.degrees(self.viewModel.previewLP_angle))
+        .padding()
+        .gesture(
+            DragGesture()
+                .onChanged { v in
+                    var theta = (atan2(v.location.x - length / 2, length / 2 - v.location.y) - atan2(v.startLocation.x - length / 2, length / 2 - v.startLocation.y)) * 180 / .pi
+                    if theta < 0 { theta += 360 }
+                    let result = Double((theta + self.viewModel.previewLP_angle_lastAngle)).truncatingRemainder(dividingBy: 360)
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        if viewModel.locked {
+                            self.viewModel.previewLP_angle = Double(self.viewModel.closestMultipleOf12(for: Int(result))) + self.viewModel.offset
+                        } else {
+                            self.viewModel.previewLP_angle = result + self.viewModel.offset
                         }
-                        LaunchPlatform_Drag_overlay
-                            .frame(maxHeight: .infinity, alignment : .top)
-                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                            .overlay(alignment: .bottom, content: {
-                                Text(String(format:"%05d",launchPlatformStatus.status.lazer))
-                                    .padding()
-                                    .background(RoundedRectangle(cornerRadius: 33).fill(.red))
-                                    .padding()
-                            })
-                        HStack{
-                            
-                            VStack{
-                                Text("Setpoint")
-                                Button(action: {
-                                    //go to function
-                                    
-                                    LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
-                                    
-                                }) {
-                                    Text(String(format:"%05.1f",Float(viewModel.previewLP_angle)))
-                                        .padding()
-                                        .background(Capsule().fill(Constants.notBlack))
-                                }
-                                Button(action:{
-                                    withAnimation{
-                                        viewModel.locked.toggle()
-                                    }
-                                }){
-                                    
-                                    Text(viewModel.locked ? "Slots" : "Deg")
-                                        .padding()
-                                        .background(Capsule().fill(Constants.notBlack))
-                                  
-                                }
-                            }.lineLimit(1)
-                            .padding()
-                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                            if !compact{
-                                VStack{
-                                    Text("Info")
-                                    let ang = launchPlatformStatus.status.angle
-                                    let tar = launchPlatformStatus.status.setpoint
-                                    Text(String(format: "curPos : °%05.1f ", ang))
-                                        .contentTransition(.numericText(countsDown: true))
-                                        .padding()
-                                        .lineLimit(1)
-                                        .background(Capsule()
-                                            .fill(.ultraThinMaterial))
-                                    Text("Tar :\(String(format: "%05.1f", tar))°")
-                                        .padding()
-                                        .background(Capsule().fill(Constants.notBlack))
-                                }
-                                .padding()
-                                .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                            }
-                            VStack{
-                                Text("Relay")
-                                HStack{
-                                    ForEach(1...2, id:\.self){ idx in
-                                        Button(action:{
-    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-                                            LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                        }){
-                                            let s = launchPlatformStatus.status.relay
-                                            let index = s.index(s.startIndex, offsetBy: idx-1)
-                                            let state : String = String(launchPlatformStatus.status.relay[index])
-                                            
-                                            Image(systemName: img_list[idx-1])
-                                                .padding()
-                                                .tint(.primary)
-                                                .background( Circle()
-                                                    .fill(state == "1" ? .orange : Constants.notBlack))
-                                            
-                                        }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
-                                    }
-                                }
-                                HStack{
-                                    ForEach(3...4, id:\.self){ idx in
-                                        Button(action:{
-    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-                                            LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                        }){
-                                            let s = launchPlatformStatus.status.relay
-                                            let index = s.index(s.startIndex, offsetBy: idx-1)
-                                            let state : String = String(launchPlatformStatus.status.relay[index])
-                                            
-                                            Image(systemName: img_list[idx-1])
-                                                .padding()
-                                                .tint(.primary)
-                                                .background( Circle()
-                                                    .fill(state == "1" ? .orange : Constants.notBlack))
-                                            
-                                        }.keyboardShortcut(KeyEquivalent(Character("\(idx)")),modifiers: [])
-                                    }
-                                }
-                            }
-                            .padding()
-                            .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                            if !compact{
-                                VStack{
-                                    Text("Preset")
-                                    HStack{
-                                        Button(action:{
-    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                            withAnimation{
-                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint - 12)
-                                            }
-                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
-                                        }){
-                                            
-                                            Text("-12")
-                                                .padding()
-                                                .background(Capsule().fill(Constants.notBlack))
-                                            
-                                        }
-                                        
-                                        Button(action:{
-    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                            withAnimation{
-                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint + 12)
-                                            }
-                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
-                                        }){
-                                            
-                                            Text("+12")
-                                                .padding()
-                                                .background(Capsule().fill(Constants.notBlack))
-                                            
-                                        }
-                                    }
-                                    HStack{
-                                        Button(action:{
-    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                            withAnimation{
-                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint - 0.5)
-                                            }
-                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
-                                        }){
-                                            
-                                            Text("-.5")
-                                                .padding()
-                                                .background(Capsule().fill(Constants.notBlack))
-                                            
-                                        }
-                                        
-                                        Button(action:{
-    //                                        _ = self.station.post_request("/relay_launch_platform", value: [idx-1])
-    //                                        LaunchPlatformStatusObject.setRelay(ip : settings.ip, port : settings.port, idx : Int(idx - 1))
-                                            withAnimation{
-                                                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint + 0.5)
-                                            }
-                                            LaunchPlatformStatusObject.RotatePlatform(ip:settings.ip, port : settings.port, value: .degrees(viewModel.previewLP_angle))
-                                        }){
-                                            
-                                            Text("+.5")
-                                                .padding()
-                                                .background(Capsule().fill(Constants.notBlack))
-                                            
-                                        }
-                                    }
-                                }
-                                .padding()
-                                .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
-                            }
-                           
-                            
-                        }
-                        
+                        self.viewModel.previewLP_angle = self.viewModel.previewLP_angle.truncatingRemainder(dividingBy: 360)
                     }
-                    
+                }
+                .onEnded { _ in
+                    self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
+                }
+        )
+    }
+    
+    private var disabledView: some View {
+        VStack {
+            Spacer()
+            launchPlatformImage
+            Spacer()
+            HStack {
+                ForEach(1...4, id: \.self) { idx in
+                    relayButton(for: idx)
+                    if idx != 4 {
+                        Spacer()
+                    }
                 }
             }
-            
         }
-        .sensoryFeedback(.impact(weight:.heavy), trigger: viewModel.success, condition: { old, new in
-            if new{
-                Logger().info("sucess")
-                viewModel.success = false
-                return true
+    }
+    
+    private var enabledView: some View {
+        VStack {
+            if title {
+                Label("Launch Platform", systemImage: "chart.bar.yaxis")
+                    .padding()
+                    .padding(.vertical)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity)
+                    .background(RoundedRectangle(cornerRadius: 33.0).fill(launchPlatformStatus.status.connected ? .orange : .red))
             }
-            return false
             
-        })
-        .onAppear{
-            self.viewModel.previewLP_angle = Double(launchPlatformStatus.status.angle)
-            self.viewModel.previewLP_angle_lastAngle = self.viewModel.previewLP_angle
-            self.viewModel.show = true
+            launchPlatformDragOverlay
+                .frame(maxHeight: .infinity, alignment: .top)
+                .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+                .overlay(alignment: .bottom) {
+                    Text(String(format: "%05d", launchPlatformStatus.status.lazer))
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 33).fill(.red))
+                        .padding()
+                }
             
+            controlsRow
         }
-        .onDisappear{
-            self.viewModel.show = false
+    }
+    
+    private var controlsRow: some View {
+        HStack {
+            setpointControlView
             
+            if !compact {
+                infoDisplayView
+            }
+            
+            relayControlGrid
+            
+            if !compact {
+                presetControlView
+            }
         }
-        .frame(maxHeight: .infinity)
-        
-        
-        
+    }
+    
+    private var setpointControlView: some View {
+        VStack {
+            Text("Setpoint")
+            Button(action: {
+                LaunchPlatformStatusObject.RotatePlatform(ip: settings.ip, port: settings.port, value: .degrees(viewModel.previewLP_angle))
+            }) {
+                Text(String(format: "%05.1f", Float(viewModel.previewLP_angle)))
+                    .padding()
+                    .background(Capsule().fill(Constants.notBlack))
+            }
+            Button(action: {
+                withAnimation {
+                    viewModel.locked.toggle()
+                }
+            }) {
+                Text(viewModel.locked ? "Slots" : "Deg")
+                    .padding()
+                    .background(Capsule().fill(Constants.notBlack))
+            }
+        }
+        .lineLimit(1)
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+    }
+    
+    private var infoDisplayView: some View {
+        VStack {
+            Text("Info")
+            let ang = launchPlatformStatus.status.angle
+            let tar = launchPlatformStatus.status.setpoint
+            Text(String(format: "curPos : °%05.1f ", ang))
+                .contentTransition(.numericText(countsDown: true))
+                .padding()
+                .lineLimit(1)
+                .background(Capsule().fill(.ultraThinMaterial))
+            Text("Tar :\(String(format: "%05.1f", tar))°")
+                .padding()
+                .background(Capsule().fill(Constants.notBlack))
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+    }
+    
+    private var relayControlGrid: some View {
+        VStack {
+            Text("Relay")
+            HStack {
+                ForEach(1...2, id: \.self) { idx in
+                    relayButton(for: idx)
+                }
+            }
+            HStack {
+                ForEach(3...4, id: \.self) { idx in
+                    relayButton(for: idx)
+                }
+            }
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+    }
+    
+    private func relayButton(for idx: Int) -> some View {
+        Button(action: {
+            LaunchPlatformStatusObject.setRelay(ip: settings.ip, port: settings.port, idx: Int(idx - 1))
+        }) {
+            let s = launchPlatformStatus.status.relay
+            let index = s.index(s.startIndex, offsetBy: idx - 1)
+            let state = String(launchPlatformStatus.status.relay[index])
+            
+            Image(systemName: img_list[idx - 1])
+                .padding()
+                .tint(.primary)
+                .background(Circle().fill(state == "1" ? .orange : Constants.notBlack))
+        }
+        .keyboardShortcut(KeyEquivalent(Character("\(idx)")), modifiers: [])
+    }
+    
+    private var presetControlView: some View {
+        VStack {
+            Text("Preset")
+            HStack {
+                presetButton(label: "-12", offset: -12.0)
+                presetButton(label: "+12", offset: 12.0)
+            }
+            HStack {
+                presetButton(label: "-.5", offset: -0.5)
+                presetButton(label: "+.5", offset: 0.5)
+            }
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 33).fill(.ultraThinMaterial))
+    }
+    
+    private func presetButton(label: String, offset: Double) -> some View {
+        Button(action: {
+            withAnimation {
+                viewModel.previewLP_angle = Double(launchPlatformStatus.status.setpoint) + offset
+            }
+            LaunchPlatformStatusObject.RotatePlatform(ip: settings.ip, port: settings.port, value: .degrees(viewModel.previewLP_angle))
+        }) {
+            Text(label)
+                .padding()
+                .background(Capsule().fill(Constants.notBlack))
+        }
     }
 }
 
-
-extension LaunchPlatformView{
+// MARK: - ViewModel & Actions
+extension LaunchPlatformView {
     @Observable
-    class ViewModel{
+    class ViewModel {
         var previewLP_angle_lastAngle = 0.0
         var previewLP_angle = 0.0
         let offset = 6.0
@@ -377,15 +338,11 @@ extension LaunchPlatformView{
             let remainder = number % Int(Constants.SLOT_DISTANCE_DEGREE)
             return number - remainder + (remainder > 6 ? Int(Constants.SLOT_DISTANCE_DEGREE) : 0)
         }
-
-        
     }
     
-    func MovePlatform(value : Int = 0){
+    func MovePlatform(value: Int = 0) {
         // negative is backward, positive is forward, 0 is stop
-//        viewModel.success = station.post_request("/launch_platform_movement",value: [value])
     }
-    
 }
 
 #Preview {
@@ -394,5 +351,4 @@ extension LaunchPlatformView{
     LaunchPlatformView()
         .environmentObject(launchPlatformStatus)
         .environmentObject(settings)
-        
 }
